@@ -8,9 +8,9 @@ The repository also includes a supporting Python package MoBotPy (`mobotpy`) tha
 
 Module Filename | Description
 --------------- | -----------
-`integration.py` | Provides basic Runge-Kutta and Euler integration functions.
-`models.py` | Provides standard vehicle models, plotting, and animation methods.
-`graphics.py` | Provides some basic shape plotting functions (used by `models.py`).
+[integration.py](mobotpy/integration.py) | Provides basic Runge-Kutta and Euler integration functions.
+[models.py](mobotpy/models.py) | Provides standard vehicle models, plotting, and animation methods.
+[graphics.py](mobotpy/models.py) | Provides some basic shape plotting functions (used by [models.py](mobotpy/models.py)).
 
 ## Tables of Examples in this Repository
 
@@ -22,14 +22,14 @@ These examples provide a review of basic concepts from control systems engineeri
 
 Filename | Description
 -------- | -----------
-`oneD_kinematic.py` | Simulation of a linear 1D kinematic vehicle.
-`oneD_dynamic.py` | Simulation of a linear 1D dynamic vehicle.
-`oneD_kinematic_control.py` | Point stabilization of a linear 1D kinematic vehicle.
-`oneD_dynamic_control.py` | Point stabilization of a linear 1D dynamic vehicle.
-`oneD_discrete_control.py` | Point stabilization of a linear 1D dynamic vehicle in discrete time.
-`oneD_integral_control.py` | Point stabilization of a linear 1D dynamic vehicle with integral action for disturbance rejection.
-`oneD_dynamic_observer.py` | State estimation for a linear 1D dynamic vehicle by using a Luenberger observer in discrete time.
-`oneD_combined_control.py` | Point stabilization of a linear 1D dynamic vehicle in discrete time combined with an observer for state estimation.
+[oneD_kinematic.py](oneD_kinematic.py) | Simulation of a linear 1D kinematic vehicle.
+[oneD_dynamic.py](oneD_dynamic.py) | Simulation of a linear 1D dynamic vehicle.
+[oneD_kinematic_control.py](oneD_kinematic_control.py) | Point stabilization of a linear 1D kinematic vehicle.
+[oneD_dynamic_control.py](oneD_kinematic_control.py) | Point stabilization of a linear 1D dynamic vehicle.
+[oneD_discrete_control.py](oneD_discrete_control.py) | Point stabilization of a linear 1D dynamic vehicle in discrete time.
+[oneD_integral_control.py](oneD_integral_control.py) | Point stabilization of a linear 1D dynamic vehicle with integral action for disturbance rejection.
+[oneD_dynamic_observer.py](oneD_dynamic_observer.py) | State estimation for a linear 1D dynamic vehicle by using a Luenberger observer in discrete time.
+[oneD_combined_control.py](oneD_combined_control.py) | Point stabilization of a linear 1D dynamic vehicle in discrete time combined with an observer for state estimation.
 
 ### Vehicle Modelling Examples
 
@@ -37,9 +37,9 @@ These examples provide simple models for a variety of commonly used wheeled vehi
 
 Filename | Description
 -------- | -----------
-`diffdrive_kinematic.py` | Simulation of a differential drive vehicle's kinematics.
-`tricycle_kinematic.py` | Simulation of a tricycle vehicle's kinematics.
-`ackermann_kinematic.py` | Simulation of an Ackermann steered (car-like) vehicle's kinematics.
+[diffdrive_kinematic.py](diffdrive_kinematic.py) | Simulation of a differential drive vehicle's kinematics.
+[tricycle_kinematic.py](tricycle_kinematic.py) | Simulation of a tricycle vehicle's kinematics.
+[ackermann_kinematic.py](ackermann_kinematic.py) | Simulation of an Ackermann steered (car-like) vehicle's kinematics.
  
 ## Cite this Work
 
