@@ -29,9 +29,9 @@ Filename | Description
 [oneD_kinematic_control.py](oneD_kinematic_control.py) | Point stabilization of a linear 1D kinematic vehicle.
 [oneD_dynamic_control.py](oneD_kinematic_control.py) | Point stabilization of a linear 1D dynamic vehicle.
 [oneD_discrete_control.py](oneD_discrete_control.py) | Point stabilization of a linear 1D dynamic vehicle in discrete time.
-[oneD_integral_control.py](oneD_integral_control.py) | Point stabilization of a linear 1D dynamic vehicle with integral action for disturbance rejection.
-[oneD_dynamic_observer.py](oneD_dynamic_observer.py) | State estimation for a linear 1D dynamic vehicle by using a Luenberger observer in discrete time.
-[oneD_combined_control.py](oneD_combined_control.py) | Point stabilization of a linear 1D dynamic vehicle in discrete time combined with an observer for state estimation.
+[oneD_integral_control.py](oneD_integral_control.py) | Example illustrating integral action for disturbance rejection.
+[oneD_dynamic_observer.py](oneD_dynamic_observer.py) | State estimation for a linear 1D dynamic vehicle.
+[oneD_combined_control.py](oneD_combined_control.py) | Example illustrating control combined with a state estimator.
 
 ### Vehicle Modelling Examples
 
