@@ -14,9 +14,9 @@ def rk_four(f, x, u, T, params):
     interval T, and params is an array of the system's parameters.
     """
     k_1 = f(x, u, params)
-    k_2 = f(x+k_1/2.0, u, params)
-    k_3 = f(x+k_2/2.0, u, params)
-    k_4 = f(x+k_3, u, params)
+    k_2 = f(x+T*k_1/2.0, u, params)
+    k_3 = f(x+T*k_2/2.0, u, params)
+    k_4 = f(x+T*k_3, u, params)
     x_new = x+T/6.0*(k_1+2.0*k_2+2.0*k_3+k_4)
     return x_new
 
