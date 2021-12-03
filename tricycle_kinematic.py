@@ -25,6 +25,7 @@ ELL_T = 1.75
 
 # %% MODEL DEFINTION
 
+
 def tricycle_f(x, u, ELL_W):
     """Tricycle vehicle kinematic model."""
     f = np.zeros(4)
@@ -35,6 +36,7 @@ def tricycle_f(x, u, ELL_W):
     return f
 
 # %% RUN SIMULATION
+
 
 # Initialize arrays that will be populated with our inputs and states
 x = np.zeros((4, N))
@@ -107,19 +109,19 @@ fig2 = plt.figure(2)
 plt.plot(x[0, :], x[1, :])
 plt.axis('equal')
 X_L, Y_L, X_R, Y_R, X_F, Y_F, X_B, Y_B = vehicle.draw(x[0, 0],
-                                                                x[1, 0],
-                                                                x[2, 0],
-                                                                x[3, 0], ELL_W,
-                                                                ELL_T)
+                                                      x[1, 0],
+                                                      x[2, 0],
+                                                      x[3, 0], ELL_W,
+                                                      ELL_T)
 plt.fill(X_L, Y_L, 'k')
 plt.fill(X_R, Y_R, 'k')
 plt.fill(X_F, Y_F, 'k')
 plt.fill(X_B, Y_B, 'C0', alpha=0.5, label='Start')
 X_L, Y_L, X_R, Y_R, X_F, Y_F, X_B, Y_B = vehicle.draw(x[0, N-1],
-                                                                x[1, N-1],
-                                                                x[2, N-1],
-                                                                x[3, N-1],
-                                                                ELL_W, ELL_T)
+                                                      x[1, N-1],
+                                                      x[2, N-1],
+                                                      x[3, N-1],
+                                                      ELL_W, ELL_T)
 plt.fill(X_L, Y_L, 'k')
 plt.fill(X_R, Y_R, 'k')
 plt.fill(X_F, Y_F, 'k')
@@ -135,7 +137,7 @@ plt.savefig('../agv-book/figs/ch3/tricycle_kinematic_fig2.pdf')
 
 # Create and save the animation
 ani = vehicle.animate(x, T, ELL_W, ELL_T, True,
-                                '../agv-book/gifs/ch3/tricycle_kinematic.gif')
+                      '../agv-book/gifs/ch3/tricycle_kinematic.gif')
 
 # %%
 
