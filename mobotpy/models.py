@@ -15,7 +15,7 @@ class Cart:
 
     Parameters
     ----------
-    length : double
+    length : float
         Length of the cart [m].    
     """
 
@@ -87,7 +87,7 @@ class DiffDrive:
 
     Parameters
     ----------
-    ell : double
+    ell : float
         The track length of the vehicle [m].    
     """
 
@@ -104,7 +104,7 @@ class DiffDrive:
             The vehicle's state (x, y, theta).
         u : ndarray of length 2
             The left and right wheel speeds (v_L, v_R).
-        ell : double
+        ell : float
             The vehicle's track length [m].
 
         Returns
@@ -126,7 +126,7 @@ class DiffDrive:
         ----------
         u_in : ndarray of length 2
             The speed and turning rate of the vehicle (v, omega).
-        ell : double
+        ell : float
             The vehicle's track length [m].
 
         Returns
@@ -235,9 +235,9 @@ class Tricycle:
 
     Parameters
     ----------
-    ell_W : double
+    ell_W : float
         The wheelbase of the vehicle [m].  
-    ell_T : double
+    ell_T : float
         The vehicle's track length [m].
     """
 
@@ -255,7 +255,7 @@ class Tricycle:
             The vehicle's state (x, y, theta, phi).
         u : ndarray of length 2
             The vehicle's speed and steering angle rate.
-        ell_W : double
+        ell_W : float
             The vehicle's wheelbase [m].
 
         Returns
@@ -369,9 +369,9 @@ class Ackermann:
 
     Parameters
     ----------
-    ell_W : double
+    ell_W : float
         The wheelbase of the vehicle [m].  
-    ell_T : double
+    ell_T : float
         The vehicle's track length [m].
     """
 
@@ -389,7 +389,7 @@ class Ackermann:
             The vehicle's state (x, y, theta, phi).
         u : ndarray of length 2
             The vehicle's speed and steering angle rate.
-        ell_W : double
+        ell_W : float
             The vehicle's wheelbase [m].
 
         Returns
@@ -411,9 +411,9 @@ class Ackermann:
         ----------
         x : ndarray of length 4
             The vehicle's state (x, y, theta, phi).
-        ell_W : double
+        ell_W : float
             The vehicle's wheelbase [m].
-        ell_T :double
+        ell_T :float
             The vehicle's track length [m].
 
         Returns
