@@ -30,7 +30,7 @@ def rk_four(f, x, u, T, P):
     return x_new
 
 def diffdrive_f(x, u, ell):
-    """Differential drive vehicle model."""
+    """Differential drive kinematic vehicle model."""
     f = np.zeros(3)
     f[0] = 0.5*(u[0]+u[1])*np.cos(x[2])
     f[1] = 0.5*(u[0]+u[1])*np.sin(x[2])

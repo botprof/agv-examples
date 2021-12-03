@@ -96,7 +96,7 @@ class DiffDrive:
         self.ell = ell
 
     def f(self, x, u, ell):
-        """Differential drive vehicle kinematic model.
+        """Differential drive kinematic vehicle kinematic model.
 
         Parameters
         ----------
