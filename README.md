@@ -42,7 +42,7 @@ Filename | Description
 [diffdrive_kinematic.py](diffdrive_kinematic.py) | Simulation of a differential drive vehicle's kinematics.
 [tricycle_kinematic.py](tricycle_kinematic.py) | Simulation of a tricycle vehicle's kinematics.
 [ackermann_kinematic.py](ackermann_kinematic.py) | Simulation of an Ackermann steered (car-like) vehicle's kinematics.
-[unicycle_dynamic.py](unicycle_dynamics.py) | Simulation of a dynamic unicycle (i.e, single wheel) illustrating wheel slip
+[unicycle_dynamic.py](unicycle_dynamics.py) | Simulation of a dynamic unicycle (i.e, single wheel) illustrating wheel slip.
  
 ## Cite this Work
 
