@@ -31,7 +31,7 @@ lambda_max = 0.1
 
 def unicycle_f_dyn(x, u, params):
     """Unicycle dynamic vehicle model.
-    
+
     Parameters
     ----------
     x : ndarray of length 6
@@ -54,15 +54,15 @@ def unicycle_f_dyn(x, u, params):
     f_dyn[0] = x[3]
     f_dyn[1] = x[4]
     f_dyn[2] = x[5]
-    f_dyn[3] = 1.0/m*(u[0]*np.cos(x[2]) - lambda_f*np.sin(x[2]))
-    f_dyn[4] = 1.0/m*(u[0]*np.sin(x[2]) + lambda_f*np.cos(x[2]))
-    f_dyn[5] = 1.0/I*u[1]
+    f_dyn[3] = 1.0 / m * (u[0] * np.cos(x[2]) - lambda_f * np.sin(x[2]))
+    f_dyn[4] = 1.0 / m * (u[0] * np.sin(x[2]) + lambda_f * np.cos(x[2]))
+    f_dyn[5] = 1.0 / I * u[1]
     return f_dyn
 
 
 def lateral_force(x, lambda_max, params):
     """Computes the lateral tire force for a single wheel.
-    
+
     Parameters
     ----------
     x : ndarray of length 6
@@ -83,26 +83,25 @@ def lateral_force(x, lambda_max, params):
     I = params[1]
 
     # Compute lateral force
-    lambda_f = m*x[5]*(x[3]*np.cos(x[2])+x[4]*np.sin(x[2]))
+    lambda_f = m * x[5] * (x[3] * np.cos(x[2]) + x[4] * np.sin(x[2]))
 
-    # Check whether the required lateral force is bigger than the tire can
-    # handle
+    # Check if the required lateral force is bigger than the tire can handle
     if np.abs(lambda_f) > lambda_max:
         # Wheel slips
-        lambda_f = lambda_max*np.sign(lambda_f)
+        lambda_f = lambda_max * np.sign(lambda_f)
         old_vx = x[3]
         old_vy = x[4]
     else:
-        # Wheel doesn't slip, so enforce velocity to be in the direction of the
-        # wheel
-        old_vx = x[3]*np.square(np.cos(x[2]))+x[4]*np.sin(x[2])*np.cos(x[2])
-        old_vy = x[4]*np.square(np.sin(x[2]))+x[3]*np.sin(x[2])*np.cos(x[2])
+        # Wheel doesn't slip, so enforce velocity to be in the wheel's direction
+        old_vx = x[3] * np.square(np.cos(x[2])) + x[4] * np.sin(x[2]) * np.cos(x[2])
+        old_vy = x[4] * np.square(np.sin(x[2])) + x[3] * np.sin(x[2]) * np.cos(x[2])
 
     # Assign the new state
     old_x = np.array([x[0], x[1], x[2], old_vx, old_vy, x[5]])
 
     # Return the output
     return lambda_f, old_x
+
 
 # %% RUN SIMULATION
 
@@ -126,69 +125,75 @@ x[:, 0] = x_init
 for k in range(1, N):
 
     # Make some force and torque inputs to steer the vehicle around
-    if k < round(N/6):
-        u[0, k-1] = 0.1
-        u[1, k-1] = 0.0
-    elif k < round(3*N/6):
-        u[0, k-1] = 0.0
-        u[1, k-1] = -0.01
-    elif k < round(4*N/6):
-        u[0, k-1] = 0.0
-        u[1, k-1] = 0.03
+    if k < round(N / 6):
+        u[0, k - 1] = 0.1  # Apply "large" force
+        u[1, k - 1] = -0.01
+    elif k < round(3 * N / 6):
+        u[0, k - 1] = 0.0  # Stop accelerating
+        u[1, k - 1] = -0.01  # Start turning
+    elif k < round(4 * N / 6):
+        u[0, k - 1] = 0.0
+        u[1, k - 1] = 0.1  # Turn the other way
     else:
-        u[0, k-1] = 0.0
-        u[1, k-1] = 0.0
+        u[0, k - 1] = 0.0
+        u[1, k - 1] = 0.0
 
     # Compute the lateral force applied to the vehicle's wheel
-    lambda_f[0, k-1], x[:, k-1] = lateral_force(x[:, k-1], lambda_max,
-                                                np.array([m, I]))
+    lambda_f[0, k - 1], x[:, k - 1] = lateral_force(
+        x[:, k - 1], lambda_max, np.array([m, I])
+    )
 
     # Update the motion of the vehicle
-    x[:, k] = integration.rk_four(unicycle_f_dyn, x[:, k-1], u[:, k-1], T,
-                                  np.array([m, I, lambda_f[0, k-1]]))
+    x[:, k] = integration.rk_four(
+        unicycle_f_dyn,
+        x[:, k - 1],
+        u[:, k - 1],
+        T,
+        np.array([m, I, lambda_f[0, k - 1]]),
+    )
 
 # %% MAKE PLOTS
 
 # Change some plot settings (optional)
-plt.rc('text', usetex=True)
-plt.rc('text.latex', preamble=r'\usepackage{cmbright,amsmath,bm}')
-plt.rc('savefig', format='pdf')
+plt.rc("text", usetex=True)
+plt.rc("text.latex", preamble=r"\usepackage{cmbright,amsmath,bm}")
+plt.rc("savefig", format="pdf")
 
 # Plot the states as a function of time
 fig1 = plt.figure(1)
 ax1 = plt.subplot(311)
 plt.setp(ax1, xticklabels=[])
-plt.plot(t, x[0, :], 'C0')
-plt.ylabel(r'$x$ [m]')
-plt.grid(color='0.95')
+plt.plot(t, x[0, :], "C0")
+plt.ylabel(r"$x$ [m]")
+plt.grid(color="0.95")
 ax2 = plt.subplot(312)
 plt.setp(ax2, xticklabels=[])
-plt.plot(t, x[1, :], 'C0')
-plt.ylabel(r'$y$ [m]')
-plt.grid(color='0.95')
+plt.plot(t, x[1, :], "C0")
+plt.ylabel(r"$y$ [m]")
+plt.grid(color="0.95")
 ax3 = plt.subplot(313)
-plt.plot(t, x[2, :], 'C0')
-plt.xlabel(r'$t$ [s]')
-plt.ylabel(r'$\theta$ [rad]')
-plt.grid(color='0.95')
+plt.plot(t, x[2, :], "C0")
+plt.xlabel(r"$t$ [s]")
+plt.ylabel(r"$\theta$ [rad]")
+plt.grid(color="0.95")
 
 # Save the plot
-plt.savefig('../agv-book/figs/ch3/unicycle_dynamic_fig1.pdf')
+plt.savefig("../agv-book/figs/ch3/unicycle_dynamic_fig1.pdf")
 
 # Plot the lateral tire force
 fig2 = plt.figure(2)
-plt.plot(t[0:N-1], lambda_f[0, 0:N-1], 'C0')
-plt.xlabel(r'$t$ [s]')
-plt.ylabel(r'$\lambda$ [N]')
-plt.grid(color='0.95')
+plt.plot(t[0 : N - 1], lambda_f[0, 0 : N - 1], "C0")
+plt.xlabel(r"$t$ [s]")
+plt.ylabel(r"$\lambda$ [N]")
+plt.grid(color="0.95")
 
 # Save the plot
-plt.savefig('../agv-book/figs/ch3/unicycle_dynamic_fig2.pdf')
+plt.savefig("../agv-book/figs/ch3/unicycle_dynamic_fig2.pdf")
 
-'''
+"""
 To keep thing simple, we plot the unicycle as a differential drive vehicle,
 because the differential drive vehicle has the same nonholonomic constraints.
-'''
+"""
 
 # Set the track of the vehicle [m]
 ELL = 1.0
@@ -198,32 +203,31 @@ vehicle = models.DiffDrive(ELL)
 
 # Plot the position of the vehicle in the plane
 fig3 = plt.figure(3)
-plt.plot(x[0, :], x[1, :], 'C0')
-plt.axis('equal')
-X_L, Y_L, X_R, Y_R, X_B, Y_B, X_C, Y_C = vehicle.draw(x[0, 0], x[1, 0],
-                                                      x[2, 0], ELL)
-plt.fill(X_L, Y_L, 'k')
-plt.fill(X_R, Y_R, 'k')
-plt.fill(X_C, Y_C, 'k')
-plt.fill(X_B, Y_B, 'C0', alpha=0.5, label='Start')
-X_L, Y_L, X_R, Y_R, X_B, Y_B, X_C, Y_C = vehicle.draw(x[0, N-1], x[1, N-1],
-                                                      x[2, N-1], ELL)
-plt.fill(X_L, Y_L, 'k')
-plt.fill(X_R, Y_R, 'k')
-plt.fill(X_C, Y_C, 'k')
-plt.fill(X_B, Y_B, 'C1', alpha=0.5, label='End')
-plt.xlabel(r'$x$ [m]')
-plt.ylabel(r'$y$ [m]')
+plt.plot(x[0, :], x[1, :], "C0")
+plt.axis("equal")
+X_L, Y_L, X_R, Y_R, X_B, Y_B, X_C, Y_C = vehicle.draw(x[0, 0], x[1, 0], x[2, 0], ELL)
+plt.fill(X_L, Y_L, "k")
+plt.fill(X_R, Y_R, "k")
+plt.fill(X_C, Y_C, "k")
+plt.fill(X_B, Y_B, "C0", alpha=0.5, label="Start")
+X_L, Y_L, X_R, Y_R, X_B, Y_B, X_C, Y_C = vehicle.draw(
+    x[0, N - 1], x[1, N - 1], x[2, N - 1], ELL
+)
+plt.fill(X_L, Y_L, "k")
+plt.fill(X_R, Y_R, "k")
+plt.fill(X_C, Y_C, "k")
+plt.fill(X_B, Y_B, "C1", alpha=0.5, label="End")
+plt.xlabel(r"$x$ [m]")
+plt.ylabel(r"$y$ [m]")
 plt.legend()
 
 # Save the plot
-plt.savefig('../agv-book/figs/ch3/unicycle_dynamic_fig3.pdf')
+plt.savefig("../agv-book/figs/ch3/unicycle_dynamic_fig3.pdf")
 
 # %% MAKE AN ANIMATION
 
 # Create and save the animation
-ani = vehicle.animate(x, T, ELL, True,
-                      '../agv-book/gifs/ch3/unicycle_dynamic.gif')
+ani = vehicle.animate(x, T, ELL, True, "../agv-book/gifs/ch3/unicycle_dynamic.gif")
 
 # %%
 
