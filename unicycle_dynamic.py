@@ -20,7 +20,7 @@ t = np.arange(0.0, SIM_TIME, T)
 N = np.size(t)
 
 # Set the vehicle's mass and moment of inertia
-m = 1.0  # kg
+M = 1.0  # kg
 I = 1.0  # kg m^2
 
 # Set the maximum lateral tire force [N]
@@ -47,15 +47,15 @@ def unicycle_f_dyn(x, u, params):
     f_dyn : ndarray of length 6
         The rate of change of the vehicle states.
     """
-    m = params[0]
+    M = params[0]
     I = params[1]
     lambda_f = params[2]
     f_dyn = np.zeros(6)
     f_dyn[0] = x[3]
     f_dyn[1] = x[4]
     f_dyn[2] = x[5]
-    f_dyn[3] = 1.0 / m * (u[0] * np.cos(x[2]) - lambda_f * np.sin(x[2]))
-    f_dyn[4] = 1.0 / m * (u[0] * np.sin(x[2]) + lambda_f * np.cos(x[2]))
+    f_dyn[3] = 1.0 / M * (u[0] * np.cos(x[2]) - lambda_f * np.sin(x[2]))
+    f_dyn[4] = 1.0 / M * (u[0] * np.sin(x[2]) + lambda_f * np.cos(x[2]))
     f_dyn[5] = 1.0 / I * u[1]
     return f_dyn
 
@@ -79,11 +79,11 @@ def lateral_force(x, lambda_max, params):
     old_x : ndarray of length 6
         The vehicle's state with or without slip.
     """
-    m = params[0]
+    M = params[0]
     I = params[1]
 
     # Compute lateral force
-    lambda_f = m * x[5] * (x[3] * np.cos(x[2]) + x[4] * np.sin(x[2]))
+    lambda_f = M * x[5] * (x[3] * np.cos(x[2]) + x[4] * np.sin(x[2]))
 
     # Check if the required lateral force is bigger than the tire can handle
     if np.abs(lambda_f) > lambda_max:
