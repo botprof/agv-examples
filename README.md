@@ -43,6 +43,12 @@ Filename | Description
 [tricycle_kinematic.py](tricycle_kinematic.py) | Simulation of a tricycle vehicle's kinematics.
 [ackermann_kinematic.py](ackermann_kinematic.py) | Simulation of an Ackermann steered (car-like) vehicle's kinematics.
 [unicycle_dynamic.py](unicycle_dynamic.py) | Simulation of a dynamic unicycle (i.e, single wheel) illustrating wheel slip.
+
+### Vehicle Control Examples
+
+Filename | Description
+-------- | -----------
+[control_approx_linearization.py](control_approx_linearization.py) | Trajectory tracking example using control by approximate linearization.
  
 ## Cite this Work
 
