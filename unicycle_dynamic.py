@@ -140,7 +140,7 @@ for k in range(1, N):
 
     # Compute the lateral force applied to the vehicle's wheel
     lambda_f[0, k - 1], x[:, k - 1] = lateral_force(
-        x[:, k - 1], lambda_max, np.array([m, I])
+        x[:, k - 1], lambda_max, np.array([M, I])
     )
 
     # Update the motion of the vehicle
@@ -149,7 +149,7 @@ for k in range(1, N):
         x[:, k - 1],
         u[:, k - 1],
         T,
-        np.array([m, I, lambda_f[0, k - 1]]),
+        np.array([M, I, lambda_f[0, k - 1]]),
     )
 
 # %% MAKE PLOTS
