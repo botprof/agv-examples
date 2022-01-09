@@ -16,7 +16,7 @@ class Cart:
     Parameters
     ----------
     length : float
-        Length of the cart [m].    
+        Length of the cart [m].
     """
 
     def __init__(self, length):
@@ -24,9 +24,9 @@ class Cart:
         self.length = length
 
     def draw(self, x, d):
-        """ Finds the points to draw simple rectangular cart.
+        """Finds the points to draw simple rectangular cart.
 
-        The cart has position x and length d.  The resulting cart has a height 
+        The cart has position x and length d.  The resulting cart has a height
         that is half the length.
         """
         X = np.array(5)
@@ -38,10 +38,10 @@ class Cart:
     def animate(self, x, T, d=1.0, save_ani=False, filename="animate_cart.gif"):
         """Create an animation of a simple 1D cart.
 
-        Returns animation object for array of 1D cart positions x with time 
-        increments T [s], cart width d [m].  
-        
-        To save the animation to a GIF file, set save_ani to True and give a 
+        Returns animation object for array of 1D cart positions x with time
+        increments T [s], cart width d [m].
+
+        To save the animation to a GIF file, set save_ani to True and give a
         filename (default filename is 'animate_cart.gif').
         """
         fig, ax = plt.subplots()
@@ -94,7 +94,7 @@ class DiffDrive:
     Parameters
     ----------
     ell : float
-        The track length of the vehicle [m].    
+        The track length of the vehicle [m].
     """
 
     def __init__(self, ell):
@@ -151,10 +151,10 @@ class DiffDrive:
         """
         Finds points that draw a differential drive vehicle.
 
-        The centre of the wheel axle is (x, y), the vehicle has orientation 
+        The centre of the wheel axle is (x, y), the vehicle has orientation
         theta, and the vehicle's track length is ell.
 
-        Returns X_L, Y_L, X_R, Y_R, X_BD, Y_BD, X_C, Y_C, where L is for the 
+        Returns X_L, Y_L, X_R, Y_R, X_BD, Y_BD, X_C, Y_C, where L is for the
         left wheel, R for the right wheel, B for the body, and C for the caster.
         """
         # Left and right wheels
@@ -184,10 +184,10 @@ class DiffDrive:
     def animate(self, x, T, ell=1.0, save_ani=False, filename="animate_diffdrive.gif"):
         """Create an animation of a differential drive vehicle.
 
-        Returns animation object for array of vehicle positions x with time 
-        increments T [s], track ell [m].  
-        
-        To save the animation to a GIF file, set save_ani to True and provide a 
+        Returns animation object for array of vehicle positions x with time
+        increments T [s], track ell [m].
+
+        To save the animation to a GIF file, set save_ani to True and provide a
         filename (default 'animate_diffdrive.gif').
         """
         fig, ax = plt.subplots()
@@ -247,6 +247,78 @@ class DiffDrive:
         # Return the figure object
         return ani
 
+    def animate_trajectory(
+        self, x, xd, T, ell=1.0, save_ani=False, filename="animate_diffdrive.gif"
+    ):
+        """Create an animation of a differential drive vehicle.
+
+        Returns animation object for array of vehicle positions x with time
+        increments T [s], track ell [m].
+
+        To save the animation to a GIF file, set save_ani to True and provide a
+        filename (default 'animate_diffdrive.gif').
+        """
+        fig, ax = plt.subplots()
+        plt.xlabel(r"$x$ [m]")
+        plt.ylabel(r"$y$ [m]")
+        plt.axis("equal")
+        (desired,) = ax.plot([], [], "--C1")
+        (line,) = ax.plot([], [], "C0")
+        (leftwheel,) = ax.fill([], [], color="k")
+        (rightwheel,) = ax.fill([], [], color="k")
+        (body,) = ax.fill([], [], color="C0", alpha=0.5)
+        (castor,) = ax.fill([], [], color="k")
+        time_text = ax.text(0.05, 0.9, "", transform=ax.transAxes)
+
+        def init():
+            """Function that initializes the animation."""
+            desired.set_data([], [])
+            line.set_data([], [])
+            leftwheel.set_xy(np.empty([5, 2]))
+            rightwheel.set_xy(np.empty([5, 2]))
+            body.set_xy(np.empty([36, 2]))
+            castor.set_xy(np.empty([36, 2]))
+            time_text.set_text("")
+            return desired, line, leftwheel, rightwheel, body, castor, time_text
+
+        def movie(k):
+            """Function called at each step of the animation."""
+            # Draw the desired trajectory
+            desired.set_data(xd[0, 0 : k + 1], xd[1, 0 : k + 1])
+            # Draw the path followed by the vehicle
+            line.set_data(x[0, 0 : k + 1], x[1, 0 : k + 1])
+            # Draw the differential drive vehicle
+            X_L, Y_L, X_R, Y_R, X_B, Y_B, X_C, Y_C = self.draw(
+                x[0, k], x[1, k], x[2, k], ell
+            )
+            leftwheel.set_xy(np.transpose([X_L, Y_L]))
+            rightwheel.set_xy(np.transpose([X_R, Y_R]))
+            body.set_xy(np.transpose([X_B, Y_B]))
+            castor.set_xy(np.transpose([X_C, Y_C]))
+            # Add the simulation time
+            time_text.set_text(r"$t$ = %.1f s" % (k * T))
+            # Dynamically set the axis limits
+            ax.set_xlim(x[0, k] - 10 * ell, x[0, k] + 10 * ell)
+            ax.set_ylim(x[1, k] - 10 * ell, x[1, k] + 10 * ell)
+            ax.figure.canvas.draw()
+            # Return the objects to animate
+            return desired, line, leftwheel, rightwheel, body, castor, time_text
+
+        # Create the animation
+        ani = animation.FuncAnimation(
+            fig,
+            movie,
+            np.arange(1, len(x[0, :]), max(1, int(1 / T / 10))),
+            init_func=init,
+            interval=T * 1000,
+            blit=True,
+            repeat=False,
+        )
+        if save_ani == True:
+            ani.save(filename, fps=min(1 / T, 10))
+        # Return the figure object
+        return ani
+
 
 class Tricycle:
     """Tricycle or planar bicycle vehicle class.
@@ -254,7 +326,7 @@ class Tricycle:
     Parameters
     ----------
     ell_W : float
-        The wheelbase of the vehicle [m].  
+        The wheelbase of the vehicle [m].
     ell_T : float
         The vehicle's track length [m].
     """
@@ -291,11 +363,11 @@ class Tricycle:
     def draw(self, x, y, theta, phi, ell_W, ell_T):
         """Finds points that draw a tricycle vehicle.
 
-        The centre of the rear wheel axle is (x, y), the body has orientation 
+        The centre of the rear wheel axle is (x, y), the body has orientation
         theta, steering angle phi, wheelbase ell_W and track length ell_T.
 
         Returns X_L, Y_L, X_R, Y_R, X_F, Y_F, X_B, Y_B, where L is for the left
-        wheel, R is for the right wheel, F is for the single front wheel, and 
+        wheel, R is for the right wheel, F is for the single front wheel, and
         BD is for the vehicle's body.
         """
         # Left and right back wheels
@@ -343,10 +415,10 @@ class Tricycle:
     ):
         """Create an animation of a tricycle vehicle.
 
-        Returns animation object for array of vehicle positions x with time 
-        increments T [s], wheelbase ell_W [m], and track ell_T [m].  
-        
-        To save the animation to a GIF file, set save_ani to True and give a 
+        Returns animation object for array of vehicle positions x with time
+        increments T [s], wheelbase ell_W [m], and track ell_T [m].
+
+        To save the animation to a GIF file, set save_ani to True and give a
         filename (default 'animate_tricycle.gif').
         """
         fig, ax = plt.subplots()
@@ -413,7 +485,7 @@ class Ackermann:
     Parameters
     ----------
     ell_W : float
-        The wheelbase of the vehicle [m].  
+        The wheelbase of the vehicle [m].
     ell_T : float
         The vehicle's track length [m].
     """
@@ -449,7 +521,7 @@ class Ackermann:
 
     def ackermann(self, x, ell_W, ell_T):
         """Computes the Ackermann steering angles.
-        
+
         Parameters
         ----------
         x : ndarray of length 4
@@ -470,14 +542,14 @@ class Ackermann:
         return ackermann_angles
 
     def draw(self, x, y, theta, phi_L, phi_R, ell_W, ell_T):
-        """ Finds points that draw an Ackermann steered (car-like) vehicle.
+        """Finds points that draw an Ackermann steered (car-like) vehicle.
 
         The centre of the rear wheel axle is (x, y), the body has orientation
-        theta, effective steering angle phi, wheelbase ell_W and track length 
+        theta, effective steering angle phi, wheelbase ell_W and track length
         ell_T.
 
-        Returns X_BL, Y_BL, X_BR, Y_BR, X_FL, Y_FL, X_FR, Y_FR, X_BD, Y_BD, 
-        where L denotes left, R denotes right, B denotes back, F denotes front, 
+        Returns X_BL, Y_BL, X_BR, Y_BR, X_FL, Y_FL, X_FR, Y_FR, X_BD, Y_BD,
+        where L denotes left, R denotes right, B denotes back, F denotes front,
         and BD denotes the vehicle's body.
         """
         # Left and right back wheels
@@ -534,10 +606,10 @@ class Ackermann:
     ):
         """Create an animation of an Ackermann steered (car-like) vehicle.
 
-        Returns animation object for array of vehicle positions x with time 
-        increments T [s], wheelbase ell_W [m], and track ell_T [m].  
-        
-        To save the animation to a GIF file, set save_ani to True and give a 
+        Returns animation object for array of vehicle positions x with time
+        increments T [s], wheelbase ell_W [m], and track ell_T [m].
+
+        To save the animation to a GIF file, set save_ani to True and give a
         filename (default 'animate_ackermann.gif').
         """
         fig, ax = plt.subplots()

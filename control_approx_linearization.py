@@ -142,7 +142,9 @@ plt.savefig("../agv-book/figs/ch4/control_approx_linearization_fig2.pdf")
 # %% MAKE AN ANIMATION
 
 # Create and save the animation
-ani = vehicle.animate(x, T, ELL, True, "../agv-book/gifs/ch4/control_approx_linearization.gif")
+ani = vehicle.animate_trajectory(
+    x, xd, T, ELL, True, "../agv-book/gifs/ch4/control_approx_linearization.gif"
+)
 
 # %%
 
