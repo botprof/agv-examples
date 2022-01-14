@@ -44,7 +44,8 @@ vehicle = models.Ackermann(ELL_W, ELL_T)
 
 # Run the simulation
 for k in range(1, N):
-    x[:, k] = integration.rk_four(vehicle.f, x[:, k - 1], u[:, k - 1], T, ELL_W)
+    x[:, k] = integration.rk_four(
+        vehicle.f, x[:, k - 1], u[:, k - 1], T, ELL_W)
     phi_L[k] = np.arctan(
         2 * ELL_W * np.tan(x[3, k]) / (2 * ELL_W - ELL_T * np.tan(x[3, k]))
     )
@@ -60,6 +61,7 @@ for k in range(1, N):
 plt.rc("text", usetex=True)
 plt.rc("text.latex", preamble=r"\usepackage{cmbright,amsmath,bm}")
 plt.rc("savefig", format="pdf")
+plt.rc("savefig", bbox="tight")
 
 # Plot the states as a function of time
 fig1 = plt.figure(1)
@@ -101,7 +103,7 @@ plt.fill(X_BL, Y_BL, "k")
 plt.fill(X_BR, Y_BR, "k")
 plt.fill(X_FR, Y_FR, "k")
 plt.fill(X_FL, Y_FL, "k")
-plt.fill(X_BD, Y_BD, "C0", alpha=0.5, label="Start")
+plt.fill(X_BD, Y_BD, "C2", alpha=0.5, label="Start")
 X_BL, Y_BL, X_BR, Y_BR, X_FL, Y_FL, X_FR, Y_FR, X_BD, Y_BD = vehicle.draw(
     x[0, N - 1], x[1, N - 1], x[2, N - 1], phi_L[N - 1], phi_R[N - 1], ELL_W, ELL_T
 )
@@ -109,7 +111,7 @@ plt.fill(X_BL, Y_BL, "k")
 plt.fill(X_BR, Y_BR, "k")
 plt.fill(X_FR, Y_FR, "k")
 plt.fill(X_FL, Y_FL, "k")
-plt.fill(X_BD, Y_BD, "C1", alpha=0.5, label="End")
+plt.fill(X_BD, Y_BD, "C3", alpha=0.5, label="End")
 plt.xlabel(r"$x$ [m]")
 plt.ylabel(r"$y$ [m]")
 plt.legend()

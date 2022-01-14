@@ -13,7 +13,7 @@ from mobotpy import integration
 from scipy import signal
 
 # Set the simulation time [s] and the sample period [s]
-SIM_TIME = 30.0
+SIM_TIME = 20.0
 T = 0.04
 
 # Create an array of time values [s]
@@ -88,6 +88,7 @@ for k in range(1, N):
 plt.rc("text", usetex=True)
 plt.rc("text.latex", preamble=r"\usepackage{cmbright,amsmath,bm}")
 plt.rc("savefig", format="pdf")
+plt.rc("savefig", bbox="tight")
 
 # Plot the states as a function of time
 fig1 = plt.figure(1)
@@ -109,7 +110,6 @@ plt.plot(t, xd[2, :] * 180.0 / np.pi, "C1--")
 plt.plot(t, x[2, :] * 180.0 / np.pi, "C0")
 plt.grid(color="0.95")
 plt.ylabel(r"$\theta$ [deg]")
-plt.setp(ax1c, xticklabels=[])
 plt.xlabel(r"$t$ [s]")
 
 # Save the plot
@@ -117,21 +117,22 @@ plt.savefig("../agv-book/figs/ch4/control_approx_linearization_fig1.pdf")
 
 # Plot the position of the vehicle in the plane
 fig2 = plt.figure(2)
-plt.plot(xd[0, :], xd[1, :], "C1--")
-plt.plot(x[0, :], x[1, :], "C0")
+plt.plot(xd[0, :], xd[1, :], "C1--", label="Desired")
+plt.plot(x[0, :], x[1, :], "C0", label="Actual")
 plt.axis("equal")
-X_L, Y_L, X_R, Y_R, X_B, Y_B, X_C, Y_C = vehicle.draw(x[0, 0], x[1, 0], x[2, 0], ELL)
+X_L, Y_L, X_R, Y_R, X_B, Y_B, X_C, Y_C = vehicle.draw(
+    x[0, 0], x[1, 0], x[2, 0], ELL)
 plt.fill(X_L, Y_L, "k")
 plt.fill(X_R, Y_R, "k")
 plt.fill(X_C, Y_C, "k")
-plt.fill(X_B, Y_B, "C0", alpha=0.5, label="Start")
+plt.fill(X_B, Y_B, "C2", alpha=0.5, label="Start")
 X_L, Y_L, X_R, Y_R, X_B, Y_B, X_C, Y_C = vehicle.draw(
     x[0, N - 1], x[1, N - 1], x[2, N - 1], ELL
 )
 plt.fill(X_L, Y_L, "k")
 plt.fill(X_R, Y_R, "k")
 plt.fill(X_C, Y_C, "k")
-plt.fill(X_B, Y_B, "C1", alpha=0.5, label="End")
+plt.fill(X_B, Y_B, "C3", alpha=0.5, label="End")
 plt.xlabel(r"$x$ [m]")
 plt.ylabel(r"$y$ [m]")
 plt.legend()

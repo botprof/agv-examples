@@ -82,6 +82,7 @@ for k in range(1, N):
 plt.rc("text", usetex=True)
 plt.rc("text.latex", preamble=r"\usepackage{cmbright,amsmath,bm}")
 plt.rc("savefig", format="pdf")
+plt.rc("savefig", bbox="tight")
 
 # Plot the states as a function of time
 fig1 = plt.figure(1)
@@ -119,18 +120,19 @@ vehicle = models.DiffDrive(ELL)
 fig2 = plt.figure(2)
 plt.plot(x[0, :], x[1, :], "C0")
 plt.axis("equal")
-X_L, Y_L, X_R, Y_R, X_B, Y_B, X_C, Y_C = vehicle.draw(x[0, 0], x[1, 0], x[2, 0], ELL)
+X_L, Y_L, X_R, Y_R, X_B, Y_B, X_C, Y_C = vehicle.draw(
+    x[0, 0], x[1, 0], x[2, 0], ELL)
 plt.fill(X_L, Y_L, "k")
 plt.fill(X_R, Y_R, "k")
 plt.fill(X_C, Y_C, "k")
-plt.fill(X_B, Y_B, "C0", alpha=0.5, label="Start")
+plt.fill(X_B, Y_B, "C2", alpha=0.5, label="Start")
 X_L, Y_L, X_R, Y_R, X_B, Y_B, X_C, Y_C = vehicle.draw(
     x[0, N - 1], x[1, N - 1], x[2, N - 1], ELL
 )
 plt.fill(X_L, Y_L, "k")
 plt.fill(X_R, Y_R, "k")
 plt.fill(X_C, Y_C, "k")
-plt.fill(X_B, Y_B, "C1", alpha=0.5, label="End")
+plt.fill(X_B, Y_B, "C3", alpha=0.5, label="End")
 plt.xlabel(r"$x$ [m]")
 plt.ylabel(r"$y$ [m]")
 plt.legend()
@@ -141,7 +143,8 @@ plt.savefig("../agv-book/figs/ch3/diffdrive_kinematic_fig2.pdf")
 # %% MAKE AN ANIMATION
 
 # Create and save the animation
-ani = vehicle.animate(x, T, ELL, True, "../agv-book/gifs/ch3/diffdrive_kinematic.gif")
+ani = vehicle.animate(
+    x, T, ELL, True, "../agv-book/gifs/ch3/diffdrive_kinematic.gif")
 
 # %%
 

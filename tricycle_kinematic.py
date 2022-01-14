@@ -53,7 +53,8 @@ u[1, 0] = 0
 
 # Run the simulation
 for k in range(1, N):
-    x[:, k] = integration.rk_four(tricycle_f, x[:, k - 1], u[:, k - 1], T, ELL_W)
+    x[:, k] = integration.rk_four(
+        tricycle_f, x[:, k - 1], u[:, k - 1], T, ELL_W)
     u[0, k] = 5.0
     u[1, k] = 0.25 * np.sin(2.0 * t[k])
 
@@ -63,6 +64,7 @@ for k in range(1, N):
 plt.rc("text", usetex=True)
 plt.rc("text.latex", preamble=r"\usepackage{cmbright,amsmath,bm}")
 plt.rc("savefig", format="pdf")
+plt.rc("savefig", bbox="tight")
 
 # Plot the states as a function of time
 fig1 = plt.figure(1)
@@ -114,14 +116,14 @@ X_L, Y_L, X_R, Y_R, X_F, Y_F, X_B, Y_B = vehicle.draw(
 plt.fill(X_L, Y_L, "k")
 plt.fill(X_R, Y_R, "k")
 plt.fill(X_F, Y_F, "k")
-plt.fill(X_B, Y_B, "C0", alpha=0.5, label="Start")
+plt.fill(X_B, Y_B, "C2", alpha=0.5, label="Start")
 X_L, Y_L, X_R, Y_R, X_F, Y_F, X_B, Y_B = vehicle.draw(
     x[0, N - 1], x[1, N - 1], x[2, N - 1], x[3, N - 1], ELL_W, ELL_T
 )
 plt.fill(X_L, Y_L, "k")
 plt.fill(X_R, Y_R, "k")
 plt.fill(X_F, Y_F, "k")
-plt.fill(X_B, Y_B, "C1", alpha=0.5, label="End")
+plt.fill(X_B, Y_B, "C3", alpha=0.5, label="End")
 plt.xlabel(r"$x$ [m]")
 plt.ylabel(r"$y$ [m]")
 plt.legend()

@@ -56,6 +56,7 @@ for k in range(1, N):
 plt.rc("text", usetex=True)
 plt.rc("text.latex", preamble=r"\usepackage{cmbright,amsmath}")
 plt.rc("savefig", format="pdf")
+plt.rc("savefig", bbox="tight")
 
 # Plot the states (x) and input (u) vs time (t)
 fig1 = plt.figure(1)
@@ -87,7 +88,8 @@ LENGTH = 1.0
 vehicle = models.Cart(LENGTH)
 
 # Create and save the animation
-ani = vehicle.animate(x[0, :], T, LENGTH, True, "../agv-book/gifs/ch2/oneD_dynamic.gif")
+ani = vehicle.animate(x[0, :], T, LENGTH, True,
+                      "../agv-book/gifs/ch2/oneD_dynamic.gif")
 
 # %%
 

@@ -67,7 +67,8 @@ x_hat[0, 0] = 0.0
 # Run the simulation for time step k
 for k in range(1, N):
     y = x[0, k - 1]
-    x_hat[:, k] = observer(x_hat[:, k - 1], u[k - 1], y, F, G, H, LT.gain_matrix.T)
+    x_hat[:, k] = observer(x_hat[:, k - 1], u[k - 1],
+                           y, F, G, H, LT.gain_matrix.T)
     x[:, k] = vehicle(x[:, k - 1], u[k - 1], F, G)
     u[k] = 2.0 * np.sin(k * T)
 
@@ -77,6 +78,7 @@ for k in range(1, N):
 plt.rc("text", usetex=True)
 plt.rc("text.latex", preamble=r"\usepackage{cmbright,amsmath}")
 plt.rc("savefig", format="pdf")
+plt.rc("savefig", bbox="tight")
 
 # Plot the states (x) and input (u) vs time (t)
 fig1 = plt.figure(1)
