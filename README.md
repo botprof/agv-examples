@@ -18,7 +18,7 @@ Module Filename | Description
 
 This section provides a list of the examples in this repository.
 
-### Introductory Linear System Examples
+### Introductory Linear Systems Examples
 
 These examples provide a review of basic concepts from control systems engineering in preparation for more advanced methods.
 
