@@ -26,17 +26,17 @@ N = np.size(t)
 R = 10
 
 # Angular rate [rad/s] at which to traverse the circle
-GAMMA = 0.1
+OMEGA = 0.1
 
 # Precompute the desired trajectory
-xd = np.zeros((3, N))
-ud = np.zeros((2, N))
+x_d = np.zeros((3, N))
+u_d = np.zeros((2, N))
 for k in range(0, N):
-    xd[0, k] = R * np.sin(GAMMA * t[k])
-    xd[1, k] = R * (1 - np.cos(GAMMA * t[k]))
-    xd[2, k] = GAMMA * t[k]
-    ud[0, k] = R * GAMMA
-    ud[1, k] = GAMMA
+    x_d[0, k] = R * np.sin(OMEGA * t[k])
+    x_d[1, k] = R * (1 - np.cos(OMEGA * t[k]))
+    x_d[2, k] = OMEGA * t[k]
+    u_d[0, k] = R * OMEGA
+    u_d[1, k] = OMEGA
 
 # %% VEHICLE SETUP
 
@@ -56,7 +56,7 @@ x_init[2] = 0.0
 
 # Setup some arrays
 x = np.zeros((3, N))
-u = np.zeros(2)
+u = np.zeros((2, N))
 x[:, 0] = x_init
 
 for k in range(1, N):
@@ -64,23 +64,23 @@ for k in range(1, N):
     # Compute the approximate linearization
     A = np.array(
         [
-            (0, 0, -ud[0, k] * np.sin(xd[2, k])),
-            (0, 0, ud[0, k] * np.cos(xd[2, k])),
+            (0, 0, -u_d[0, k] * np.sin(x_d[2, k])),
+            (0, 0, u_d[0, k] * np.cos(x_d[2, k])),
             (0, 0, 0),
         ]
     )
-    B = np.array([(np.cos(xd[2, k]), 0), (np.sin(xd[2, k]), 0), (0, 1)])
+    B = np.array([(np.cos(x_d[2, k]), 0), (np.sin(x_d[2, k]), 0), (0, 1)])
 
     # Compute the gain matrix to place poles of (A-BK) at p
     p = np.array([-1.0, -2.0, -0.5])
     K = signal.place_poles(A, B, p)
 
     # Compute the control signals
-    u_unicycle = K.gain_matrix @ (xd[:, k] - x[:, k - 1]) + ud[:, k]
-    u = vehicle.uni2diff(u_unicycle, ELL)
+    u_unicycle = K.gain_matrix @ (x_d[:, k] - x[:, k - 1]) + u_d[:, k]
+    u[:, k] = vehicle.uni2diff(u_unicycle, ELL)
 
     # Simulate the vehicle motion
-    x[:, k] = integration.rk_four(vehicle.f, x[:, k - 1], u, T, ELL)
+    x[:, k] = integration.rk_four(vehicle.f, x[:, k - 1], u[:, k - 1], T, ELL)
 
 # %% MAKE PLOTS
 
@@ -92,32 +92,40 @@ plt.rc("savefig", bbox="tight")
 
 # Plot the states as a function of time
 fig1 = plt.figure(1)
-ax1a = plt.subplot(311)
-plt.plot(t, xd[0, :], "C1--")
+fig1.set_figheight(6.4)
+ax1a = plt.subplot(411)
+plt.plot(t, x_d[0, :], "C1--")
 plt.plot(t, x[0, :], "C0")
 plt.grid(color="0.95")
 plt.ylabel(r"$x$ [m]")
 plt.setp(ax1a, xticklabels=[])
 plt.legend(["Desired", "Actual"])
-ax1b = plt.subplot(312)
-plt.plot(t, xd[1, :], "C1--")
+ax1b = plt.subplot(412)
+plt.plot(t, x_d[1, :], "C1--")
 plt.plot(t, x[1, :], "C0")
 plt.grid(color="0.95")
 plt.ylabel(r"$y$ [m]")
 plt.setp(ax1b, xticklabels=[])
-ax1c = plt.subplot(313)
-plt.plot(t, xd[2, :] * 180.0 / np.pi, "C1--")
+ax1c = plt.subplot(413)
+plt.plot(t, x_d[2, :] * 180.0 / np.pi, "C1--")
 plt.plot(t, x[2, :] * 180.0 / np.pi, "C0")
 plt.grid(color="0.95")
 plt.ylabel(r"$\theta$ [deg]")
+plt.setp(ax1b, xticklabels=[])
+ax1d = plt.subplot(414)
+plt.step(t, u[0, :], "C2", where="post", label="$v_L$")
+plt.step(t, u[1, :], "C3", where="post", label="$v_R$")
+plt.grid(color="0.95")
+plt.ylabel(r"$\bm{u}$ [m/s]")
 plt.xlabel(r"$t$ [s]")
+plt.legend()
 
 # Save the plot
 plt.savefig("../agv-book/figs/ch4/control_approx_linearization_fig1.pdf")
 
 # Plot the position of the vehicle in the plane
 fig2 = plt.figure(2)
-plt.plot(xd[0, :], xd[1, :], "C1--", label="Desired")
+plt.plot(x_d[0, :], x_d[1, :], "C1--", label="Desired")
 plt.plot(x[0, :], x[1, :], "C0", label="Actual")
 plt.axis("equal")
 X_L, Y_L, X_R, Y_R, X_B, Y_B, X_C, Y_C = vehicle.draw(
@@ -144,7 +152,7 @@ plt.savefig("../agv-book/figs/ch4/control_approx_linearization_fig2.pdf")
 
 # Create and save the animation
 ani = vehicle.animate_trajectory(
-    x, xd, T, ELL, True, "../agv-book/gifs/ch4/control_approx_linearization.gif"
+    x, x_d, T, ELL, True, "../agv-book/gifs/ch4/control_approx_linearization.gif"
 )
 
 # %%
