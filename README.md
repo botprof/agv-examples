@@ -64,17 +64,17 @@ Filename | Description
  
 ## Cite this Work
 
-You may wish to cite this work in your publications.
+You may wish to cite this work in your publications.  Use the appropriate [release version vX.X.X](https://github.com/botprof/agv-examples/releases) in your reference.
 
-> Joshua A. Marshall, Autonomous Ground Vehicle Navigation and Control Simulation Examples in Python, 2021, URL: [https://github.com/botprof/agv-examples](https://github.com/botprof/agv-examples).
+> Joshua A. Marshall, Autonomous Ground Vehicle Navigation and Control Simulation Examples in Python, vX.X.X, 2022, URL: [https://github.com/botprof/agv-examples](https://github.com/botprof/agv-examples).
 
 You might also use the BibTeX entry below.
 
 ```latex
 @misc{Marshall2021,
   author = {Marshall, Joshua A.},
-  title = {Autonomous Ground Vehicle Navigation and Control Simulation Examples in Python},
-  year = {2021},
+  title = {Autonomous Ground Vehicle Navigation and Control Simulation Examples in Python, vX.X.X},
+  year = {2022},
   howpublished = {\url{https://github.com/botprof/agv-examples}}
 }
 ```
