@@ -7,12 +7,14 @@ This is a repository of introductory autonomous ground vehicle (i.e., wheeled mo
 ## Requirements
 
 The examples in this repository were created for use with [Python](https://www.python.org) 3.9.X or later.  The following packages are required in some or all of the examples in this repository:
-* [NumPy](https://numpy.org)  
+* [NumPy](https://numpy.org) 1.22.X or later  
 ```pip install numpy``` or ```conda install numpy```
-* [SciPy](https://scipy.org)  
+* [SciPy](https://scipy.org) 1.7.X or later  
 ```pip install scipy``` or ```conda install scipy```
-* [Matplotlib](https://matplotlib.org)  
+* [Matplotlib](https://matplotlib.org) 3.5.X or later   
 ``` pip install matplotlib``` or ```conda install matplotlib```
+
+The plotting routines also use [LaTeX](https://www.latex-project.org) for maths.  If you don't want to install LaTeX then you will have to comment out and edit those parts in the plotting routines.  However, using LaTeX is encouraged.
 
 ## MoBotPy Package
 
