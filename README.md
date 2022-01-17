@@ -2,7 +2,17 @@
 
 __THIS PROJECT IS CURRENTLY A WORK IN PROGRESS AND THUS THIS REPOSITORY IS INCOMPLETE__
 
-This is a repository of introductory autonomous ground vehicle (i.e., wheeled mobile robot) simulation examples in [Python](https://www.python.org).  The purpose of these examples is to provide easy-to-follow code that is illustrative of a number of fundamental mobile robot modelling, control, and navigation (localization, mapping) concepts.  Motion planning problems lie beyond the scope of this example set.  The focus here is on ground vehicles, although the presented techniques are also applicable more broadly.  This code was initially developed to supplement topics covered in the course [ELEC 845 Autonomous Vehicle Control & Navigation](https://offroad.engineering.queensu.ca/courses/elec-845/) in the [Department of Electrical & Computer Engineering](http://www.ece.queensu.ca) at [Queen's University](http://www.queensu.ca).
+This is a repository of introductory autonomous ground vehicle (i.e., wheeled mobile robot) simulation examples in Python.  The purpose of these examples is to provide easy-to-follow code that is illustrative of a number of fundamental mobile robot modelling, control, and navigation (localization, mapping) concepts.  Motion planning problems lie beyond the scope of this example set.  The focus here is on ground vehicles, although the presented techniques are also applicable more broadly.  This code was initially developed to supplement topics covered in the course [ELEC 845 Autonomous Vehicle Control & Navigation](https://offroad.engineering.queensu.ca/courses/elec-845/) in the [Department of Electrical & Computer Engineering](http://www.ece.queensu.ca) at [Queen's University](http://www.queensu.ca).
+
+## Requirements
+
+The examples in this repository were created for use with [Python](https://www.python.org) 3.9.X or later.  The following packages are required in some or all of the examples in this repository:
+* [NumPy](https://numpy.org)  
+```pip install numpy``` or ```conda install numpy```
+* [SciPy](https://scipy.org)  
+```pip install scipy``` or ```conda install scipy```
+* [Matplotlib](https://matplotlib.org)  
+``` pip install matplotlib``` or ```conda install matplotlib```
 
 ## MoBotPy Package
 
