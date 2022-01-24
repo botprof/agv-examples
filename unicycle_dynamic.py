@@ -4,8 +4,10 @@ Author: Joshua A. Marshall <joshua.marshall@queensu.ca>
 GitHub: https://github.com/botprof/agv-examples
 """
 
-# %% SIMULATION SETUP
+# %%
+# SIMULATION SETUP
 
+from IPython.display import display
 import numpy as np
 import matplotlib.pyplot as plt
 from mobotpy import integration
@@ -24,9 +26,10 @@ M = 1.0  # kg
 I = 1.0  # kg m^2
 
 # Set the maximum lateral tire force [N]
-lambda_max = 0.1
+LAMBDA_MAX = 0.1
 
-# %% FUNCTION DEFINITIONS
+# %%
+# FUNCTION DEFINITIONS
 
 
 def unicycle_f_dyn(x, u, params):
@@ -60,14 +63,14 @@ def unicycle_f_dyn(x, u, params):
     return f_dyn
 
 
-def lateral_force(x, lambda_max, params):
+def lateral_force(x, LAMBDA_MAX, params):
     """Computes the lateral tire force for a single wheel.
 
     Parameters
     ----------
     x : ndarray of length 6
         The vehicle's state (x, y, theta, v_x, v_y, v_2).
-    lambda_max : float
+    LAMBDA_MAX : float
         Maximum lateral tire force [N] the tire will support.
     params : ndarray of length 3
         The mass [kg], moment of inertia [kg m^2] (m, I).
@@ -86,9 +89,9 @@ def lateral_force(x, lambda_max, params):
     lambda_f = M * x[5] * (x[3] * np.cos(x[2]) + x[4] * np.sin(x[2]))
 
     # Check if the required lateral force is bigger than the tire can handle
-    if np.abs(lambda_f) > lambda_max:
+    if np.abs(lambda_f) > LAMBDA_MAX:
         # Wheel slips
-        lambda_f = lambda_max * np.sign(lambda_f)
+        lambda_f = LAMBDA_MAX * np.sign(lambda_f)
         old_vx = x[3]
         old_vy = x[4]
     else:
@@ -103,8 +106,8 @@ def lateral_force(x, lambda_max, params):
     return lambda_f, old_x
 
 
-# %% RUN SIMULATION
-
+# %%
+# RUN SIMULATION
 
 # Initialize arrays that will be populated with our inputs and states
 x = np.zeros((6, N))
@@ -140,7 +143,7 @@ for k in range(1, N):
 
     # Compute the lateral force applied to the vehicle's wheel
     lambda_f[0, k - 1], x[:, k - 1] = lateral_force(
-        x[:, k - 1], lambda_max, np.array([M, I])
+        x[:, k - 1], LAMBDA_MAX, np.array([M, I])
     )
 
     # Update the motion of the vehicle
@@ -152,7 +155,8 @@ for k in range(1, N):
         np.array([M, I, lambda_f[0, k - 1]]),
     )
 
-# %% MAKE PLOTS
+# %%
+# MAKE PLOTS
 
 # Change some plot settings (optional)
 plt.rc("text", usetex=True)
@@ -226,13 +230,20 @@ plt.legend()
 # Save the plot
 plt.savefig("../agv-book/figs/ch3/unicycle_dynamic_fig3.pdf")
 
-# %% MAKE AN ANIMATION
+# Show all the plots to the screen
+plt.show()
+
+# %%
+# MAKE AN ANIMATION
 
 # Create and save the animation
 ani = vehicle.animate(
     x, T, ELL, True, "../agv-book/gifs/ch3/unicycle_dynamic.gif")
 
-# %%
-
-# Show the plots
+# Show the movie to the screen
 plt.show()
+
+# # Show animation in HTML output if you are using IPython or Jupyter notebooks
+# plt.rc('animation', html='jshtml')
+# display(ani)
+# plt.close()

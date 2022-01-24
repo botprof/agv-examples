@@ -4,7 +4,8 @@ Author: Joshua A. Marshall <joshua.marshall@queensu.ca>
 GitHub: https://github.com/botprof/agv-examples
 """
 
-# %% SIMULATION SETUP
+# %%
+# SIMULATION SETUP
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -23,7 +24,8 @@ N = np.size(t)
 ELL_W = 2.50
 ELL_T = 1.75
 
-# %% MODEL DEFINTION
+# %%
+# MODEL DEFINTION
 
 
 def tricycle_f(x, u, ELL_W):
@@ -36,7 +38,8 @@ def tricycle_f(x, u, ELL_W):
     return f
 
 
-# %% RUN SIMULATION
+# %%
+# RUN SIMULATION
 
 
 # Initialize arrays that will be populated with our inputs and states
@@ -58,7 +61,8 @@ for k in range(1, N):
     u[0, k] = 5.0
     u[1, k] = 0.25 * np.sin(2.0 * t[k])
 
-# %% MAKE SOME PLOTS
+# %%
+# MAKE SOME PLOTS
 
 # Change some plot settings (optional)
 plt.rc("text", usetex=True)
@@ -131,14 +135,21 @@ plt.legend()
 # Save the plot
 plt.savefig("../agv-book/figs/ch3/tricycle_kinematic_fig2.pdf")
 
-# %%  MAKE AN ANIMATION
+# Show all the plots to the screen
+plt.show()
+
+# %%
+# MAKE AN ANIMATION
 
 # Create and save the animation
 ani = vehicle.animate(
     x, T, ELL_W, ELL_T, True, "../agv-book/gifs/ch3/tricycle_kinematic.gif"
 )
 
-# %%
-
-# Show all the plots to the screen
+# Show the movie to the screen
 plt.show()
+
+# # Show animation in HTML output if you are using IPython or Jupyter notebooks
+# plt.rc('animation', html='jshtml')
+# display(ani)
+# plt.close()
