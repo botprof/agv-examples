@@ -48,6 +48,10 @@ plt.rc("text.latex", preamble=r"\usepackage{cmbright,amsmath}")
 plt.rc("savefig", format="pdf")
 plt.rc("savefig", bbox="tight")
 
+# Change these to the locations where you wish to store outputs
+pdf_path = "../agv-book/figs/ch2/"
+gif_path = "../agv-book/gifs/ch2/"
+
 # Plot the state (x) and input (u) vs time (t)
 fig1 = plt.figure(1)
 ax1a = plt.subplot(211)
@@ -62,7 +66,7 @@ plt.ylabel(r"$u$ [m/s]")
 plt.xlabel(r"$t$ [s]")
 
 # Save the plot
-plt.savefig("../agv-book/figs/ch2/oneD_kinematic_fig1.pdf")
+plt.savefig(pdf_path + "oneD_kinematic_fig1.pdf")
 
 # %% MAKE AN ANIMATION
 
@@ -74,7 +78,7 @@ vehicle = models.Cart(LENGTH)
 
 # Create and save the animation
 ani = vehicle.animate(x, T, LENGTH, True,
-                      "../agv-book/gifs/ch2/oneD_kinematic.gif")
+                      gif_path + "oneD_kinematic.gif")
 
 # %% DISPLAY PLOTS
 
