@@ -61,6 +61,7 @@ Filename | Description
 Filename | Description
 -------- | -----------
 [control_approx_linearization.py](control_approx_linearization.py) | Trajectory tracking example using control by approximate linearization.
+[dynamic_extension_tracking.py](dynamic_extension_tracking.py) | Trajectory tracking example using feedback linearization with dynamic extension.
  
 ## Cite this Work
 

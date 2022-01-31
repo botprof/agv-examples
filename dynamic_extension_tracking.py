@@ -1,5 +1,5 @@
 """
-Example control_approx_linearization.py
+Example dynamic_extension_tracking.py
 Author: Joshua A. Marshall <joshua.marshall@queensu.ca>
 GitHub: https://github.com/botprof/agv-examples
 """
@@ -14,7 +14,7 @@ from mobotpy import integration
 from scipy import signal
 
 # Set the simulation time [s] and the sample period [s]
-SIM_TIME = 20.0
+SIM_TIME = 16.0
 T = 0.04
 
 # Create an array of time values [s]
@@ -33,12 +33,20 @@ OMEGA = 0.1
 # Precompute the desired trajectory
 x_d = np.zeros((3, N))
 u_d = np.zeros((2, N))
+z_d = np.zeros((4, N))
 for k in range(0, N):
     x_d[0, k] = R * np.sin(OMEGA * t[k])
     x_d[1, k] = R * (1 - np.cos(OMEGA * t[k]))
     x_d[2, k] = OMEGA * t[k]
     u_d[0, k] = R * OMEGA
     u_d[1, k] = OMEGA
+
+# Precompute the extended system reference trajectory
+for k in range(0, N):
+    z_d[0, k] = x_d[0, k]
+    z_d[1, k] = x_d[1, k]
+    z_d[2, k] = u_d[0, k] * np.cos(x_d[2, k])
+    z_d[3, k] = u_d[0, k] * np.sin(x_d[2, k])
 
 # %%
 # VEHICLE SETUP
@@ -60,31 +68,56 @@ x_init[2] = 0.0
 
 # Setup some arrays
 x = np.zeros((3, N))
+z = np.zeros((4, N))
 u = np.zeros((2, N))
 x[:, 0] = x_init
 
+# Set the initial speed [m/s] to be non-zero to avoid singularity
+w = np.zeros(2)
+u_unicycle = np.zeros(2)
+u_unicycle[0] = u_d[0, 0]
+
+# Initial extended state
+z[0, 0] = x_init[0]
+z[1, 0] = x_init[1]
+z[2, 0] = u_d[0, 0] * np.cos(x_init[2])
+z[3, 0] = u_d[0, 0] * np.sin(x_init[2])
+
+# Defined feedback linearized state matrices
+A = np.array([[0, 0, 1, 0], [0, 0, 0, 1], [0, 0, 0, 0], [0, 0, 0, 0]])
+B = np.array([[0, 0], [0, 0], [1, 0], [0, 1]])
+
+# Choose pole locations for closed-loop linear system
+p = np.array([-1.0, -2.0, -2.5, -1.5])
+K = signal.place_poles(A, B, p)
+
 for k in range(1, N):
 
-    # Compute the approximate linearization
-    A = np.array(
+    # Compute the extended linear system input control signals
+    eta = K.gain_matrix @ (z_d[:, k - 1] - z[:, k - 1])
+
+    # Compute the new (unicycle) vehicle inputs
+    B_inv = np.array(
         [
-            [0, 0, -u_d[0, k] * np.sin(x_d[2, k])],
-            [0, 0, u_d[0, k] * np.cos(x_d[2, k])],
-            [0, 0, 0],
+            [np.cos(x[2, k - 1]), np.sin(x[2, k - 1])],
+            [-np.sin(x[2, k - 1]) / u_unicycle[0], np.cos(x[2, k - 1]) / u_unicycle[0]],
         ]
     )
-    B = np.array([[np.cos(x_d[2, k]), 0], [np.sin(x_d[2, k]), 0], [0, 1]])
+    w = B_inv @ eta
+    u_unicycle[0] = u_unicycle[0] + T * w[0]
+    u_unicycle[1] = w[1]
 
-    # Compute the gain matrix to place poles of (A-BK) at p
-    p = np.array([-1.0, -2.0, -0.5])
-    K = signal.place_poles(A, B, p)
-
-    # Compute the controls (v, omega) and convert to wheel speeds (v_L, v_R)
-    u_unicycle = -K.gain_matrix @ (x[:, k - 1] - x_d[:, k]) + u_d[:, k]
+    # Convert unicycle inputs to differential drive wheel speeds
     u[:, k] = vehicle.uni2diff(u_unicycle, ELL)
 
-    # Simulate the differential drive vehicle motion
+    # Simulate the vehicle motion
     x[:, k] = integration.rk_four(vehicle.f, x[:, k - 1], u[:, k - 1], T, ELL)
+
+    # Update the extended system states
+    z[0, k] = x[0, k]
+    z[1, k] = x[1, k]
+    z[2, k] = u_unicycle[0] * np.cos(x[2, k])
+    z[3, k] = u_unicycle[0] * np.sin(x[2, k])
 
 # %%
 # MAKE PLOTS
@@ -126,7 +159,7 @@ plt.xlabel(r"$t$ [s]")
 plt.legend()
 
 # Save the plot
-plt.savefig("../agv-book/figs/ch4/control_approx_linearization_fig1.pdf")
+plt.savefig("../agv-book/figs/ch4/dynamic_extension_tracking_fig1.pdf")
 
 # Plot the position of the vehicle in the plane
 fig2 = plt.figure(2)
@@ -150,7 +183,7 @@ plt.ylabel(r"$y$ [m]")
 plt.legend()
 
 # Save the plot
-plt.savefig("../agv-book/figs/ch4/control_approx_linearization_fig2.pdf")
+plt.savefig("../agv-book/figs/ch4/dynamic_extension_tracking_fig2.pdf")
 
 # Show all the plots to the screen
 plt.show()
@@ -160,7 +193,7 @@ plt.show()
 
 # Create and save the animation
 ani = vehicle.animate_trajectory(
-    x, x_d, T, ELL, True, "../agv-book/gifs/ch4/control_approx_linearization.gif"
+    x, x_d, T, ELL, True, "../agv-book/gifs/ch4/dynamic_extension_tracking.gif"
 )
 
 # Show the movie to the screen
