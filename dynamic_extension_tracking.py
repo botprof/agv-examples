@@ -14,7 +14,7 @@ from mobotpy import integration
 from scipy import signal
 
 # Set the simulation time [s] and the sample period [s]
-SIM_TIME = 16.0
+SIM_TIME = 15.0
 T = 0.04
 
 # Create an array of time values [s]
