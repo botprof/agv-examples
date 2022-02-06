@@ -21,11 +21,11 @@ N = np.size(t)
 # %% FUNCTION DEFINITIONS
 
 # Set the mass of the vehicle [kg]
-m = 10.0
+M = 10.0
 
 # Define the vehicle model matrices
 F = np.array([[1, T], [0, 1]])
-G = np.array([[T ** 2 / (2 * m)], [T / m]])
+G = np.array([[T ** 2 / (2 * M)], [T / M]])
 
 
 def vehicle(x, u, F, G):
@@ -88,8 +88,7 @@ LENGTH = 1.0
 vehicle = models.Cart(LENGTH)
 
 # Create and save the animation
-ani = vehicle.animate(x[0, :], T, LENGTH, True,
-                      "../agv-book/gifs/ch2/oneD_dynamic.gif")
+ani = vehicle.animate(x[0, :], T, LENGTH, True, "../agv-book/gifs/ch2/oneD_dynamic.gif")
 
 # %%
 
