@@ -62,6 +62,7 @@ Filename | Description
 -------- | -----------
 [control_approx_linearization.py](control_approx_linearization.py) | Trajectory tracking using control by approximate linearization.
 [dynamic_extension_tracking.py](dynamic_extension_tracking.py) | Trajectory tracking using feedback linearization with dynamic extension.
+[MPC_linear_tracking.py](MPC_linear_tracking.py) | Trajectory tracking for a 1D dynamic vehicle using unconstrained MPC.
  
 ## Cite this Work
 
