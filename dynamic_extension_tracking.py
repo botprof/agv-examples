@@ -33,8 +33,8 @@ OMEGA = 0.1
 # Precompute the desired trajectory
 x_d = np.zeros((3, N))
 u_d = np.zeros((2, N))
-z_d = np.zeros((4, N))
-dz_d = np.zeros((2, N))
+xi_d = np.zeros((4, N))
+ddz_d = np.zeros((2, N))
 for k in range(0, N):
     x_d[0, k] = R * np.sin(OMEGA * t[k])
     x_d[1, k] = R * (1 - np.cos(OMEGA * t[k]))
@@ -44,15 +44,15 @@ for k in range(0, N):
 
 # Precompute the extended system reference trajectory
 for k in range(0, N):
-    z_d[0, k] = x_d[0, k]
-    z_d[1, k] = x_d[1, k]
-    z_d[2, k] = u_d[0, k] * np.cos(x_d[2, k])
-    z_d[3, k] = u_d[0, k] * np.sin(x_d[2, k])
+    xi_d[0, k] = x_d[0, k]
+    xi_d[1, k] = x_d[1, k]
+    xi_d[2, k] = u_d[0, k] * np.cos(x_d[2, k])
+    xi_d[3, k] = u_d[0, k] * np.sin(x_d[2, k])
 
 # Precompute the extended system reference acceleration
 for k in range(0, N):
-    dz_d[0, k] = -u_d[0, k] * u_d[1, k] * np.sin(x_d[2, k])
-    dz_d[1, k] = u_d[0, k] * u_d[1, k] * np.cos(x_d[2, k])
+    ddz_d[0, k] = -u_d[0, k] * u_d[1, k] * np.sin(x_d[2, k])
+    ddz_d[1, k] = u_d[0, k] * u_d[1, k] * np.cos(x_d[2, k])
 
 # %%
 # VEHICLE SETUP
@@ -74,7 +74,7 @@ x_init[2] = 0.0
 
 # Setup some arrays
 x = np.zeros((3, N))
-z = np.zeros((4, N))
+xi = np.zeros((4, N))
 u = np.zeros((2, N))
 x[:, 0] = x_init
 
@@ -84,10 +84,10 @@ u_unicycle = np.zeros(2)
 u_unicycle[0] = u_d[0, 0]
 
 # Initial extended state
-z[0, 0] = x_init[0]
-z[1, 0] = x_init[1]
-z[2, 0] = u_d[0, 0] * np.cos(x_init[2])
-z[3, 0] = u_d[0, 0] * np.sin(x_init[2])
+xi[0, 0] = x_init[0]
+xi[1, 0] = x_init[1]
+xi[2, 0] = u_d[0, 0] * np.cos(x_init[2])
+xi[3, 0] = u_d[0, 0] * np.sin(x_init[2])
 
 # Defined feedback linearized state matrices
 A = np.array([[0, 0, 1, 0], [0, 0, 0, 1], [0, 0, 0, 0], [0, 0, 0, 0]])
@@ -100,7 +100,7 @@ K = signal.place_poles(A, B, p)
 for k in range(1, N):
 
     # Compute the extended linear system input control signals
-    eta = K.gain_matrix @ (z_d[:, k - 1] - z[:, k - 1]) + dz_d[:, k - 1]
+    eta = K.gain_matrix @ (xi_d[:, k - 1] - xi[:, k - 1]) + ddz_d[:, k - 1]
 
     # Compute the new (unicycle) vehicle inputs
     B_inv = np.array(
@@ -120,10 +120,10 @@ for k in range(1, N):
     x[:, k] = integration.rk_four(vehicle.f, x[:, k - 1], u[:, k - 1], T, ELL)
 
     # Update the extended system states
-    z[0, k] = x[0, k]
-    z[1, k] = x[1, k]
-    z[2, k] = u_unicycle[0] * np.cos(x[2, k])
-    z[3, k] = u_unicycle[0] * np.sin(x[2, k])
+    xi[0, k] = x[0, k]
+    xi[1, k] = x[1, k]
+    xi[2, k] = u_unicycle[0] * np.cos(x[2, k])
+    xi[3, k] = u_unicycle[0] * np.sin(x[2, k])
 
 # %%
 # MAKE PLOTS
