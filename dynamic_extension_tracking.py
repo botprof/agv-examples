@@ -34,6 +34,7 @@ OMEGA = 0.1
 x_d = np.zeros((3, N))
 u_d = np.zeros((2, N))
 z_d = np.zeros((4, N))
+dz_d = np.zeros((2, N))
 for k in range(0, N):
     x_d[0, k] = R * np.sin(OMEGA * t[k])
     x_d[1, k] = R * (1 - np.cos(OMEGA * t[k]))
@@ -47,6 +48,11 @@ for k in range(0, N):
     z_d[1, k] = x_d[1, k]
     z_d[2, k] = u_d[0, k] * np.cos(x_d[2, k])
     z_d[3, k] = u_d[0, k] * np.sin(x_d[2, k])
+
+# Precompute the extended system reference acceleration
+for k in range(0, N):
+    dz_d[0, k] = -u_d[0, k] * u_d[1, k] * np.sin(x_d[2, k])
+    dz_d[1, k] = u_d[0, k] * u_d[1, k] * np.cos(x_d[2, k])
 
 # %%
 # VEHICLE SETUP
@@ -94,7 +100,7 @@ K = signal.place_poles(A, B, p)
 for k in range(1, N):
 
     # Compute the extended linear system input control signals
-    eta = K.gain_matrix @ (z_d[:, k - 1] - z[:, k - 1])
+    eta = K.gain_matrix @ (z_d[:, k - 1] - z[:, k - 1]) + dz_d[:, k - 1]
 
     # Compute the new (unicycle) vehicle inputs
     B_inv = np.array(
