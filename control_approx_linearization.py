@@ -68,19 +68,19 @@ for k in range(1, N):
     # Compute the approximate linearization
     A = np.array(
         [
-            [0, 0, -u_d[0, k] * np.sin(x_d[2, k])],
-            [0, 0, u_d[0, k] * np.cos(x_d[2, k])],
+            [0, 0, -u_d[0, k - 1] * np.sin(x_d[2, k - 1])],
+            [0, 0, u_d[0, k - 1] * np.cos(x_d[2, k - 1])],
             [0, 0, 0],
         ]
     )
-    B = np.array([[np.cos(x_d[2, k]), 0], [np.sin(x_d[2, k]), 0], [0, 1]])
+    B = np.array([[np.cos(x_d[2, k - 1]), 0], [np.sin(x_d[2, k - 1]), 0], [0, 1]])
 
     # Compute the gain matrix to place poles of (A-BK) at p
     p = np.array([-1.0, -2.0, -0.5])
     K = signal.place_poles(A, B, p)
 
     # Compute the controls (v, omega) and convert to wheel speeds (v_L, v_R)
-    u_unicycle = -K.gain_matrix @ (x[:, k - 1] - x_d[:, k]) + u_d[:, k]
+    u_unicycle = -K.gain_matrix @ (x[:, k - 1] - x_d[:, k - 1]) + u_d[:, k - 1]
     u[:, k] = vehicle.uni2diff(u_unicycle, ELL)
 
     # Simulate the differential drive vehicle motion
