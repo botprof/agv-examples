@@ -9,7 +9,7 @@ GitHub: https://github.com/botprof/agv-examples
 from scipy import signal
 import numpy as np
 import matplotlib.pyplot as plt
-from mobotpy import models
+from mobotpy.models import Cart
 
 # %% PARAMETERS
 
@@ -105,11 +105,11 @@ plt.savefig("../agv-book/figs/ch2/oneD_discrete_control_fig1.pdf")
 LENGTH = 1.0
 
 # Let's use the Cart class to create an animation
-vehicle = models.Cart(LENGTH)
+vehicle = Cart(LENGTH)
 
 # Create and save the animation
 ani = vehicle.animate(
-    x[0, :], T, LENGTH, True, "../agv-book/gifs/ch2/oneD_discrete_control.gif"
+    x[0, :], T, True, "../agv-book/gifs/ch2/oneD_discrete_control.gif"
 )
 
 # %%

@@ -9,7 +9,7 @@ GitHub: https://github.com/botprof/agv-examples
 from scipy import signal
 import numpy as np
 import matplotlib.pyplot as plt
-from mobotpy import models
+from mobotpy.models import Cart
 
 # Set some variables that describe the desired behaviour
 ZETA = 1.1
@@ -84,8 +84,7 @@ x_hat[0, 0] = 0.0
 # Run the simulation
 for k in range(1, N):
     y = x[0, k - 1]
-    x_hat[:, k] = observer(x_hat[:, k - 1], u[k - 1],
-                           y, F, G, H, LT.gain_matrix.T)
+    x_hat[:, k] = observer(x_hat[:, k - 1], u[k - 1], y, F, G, H, LT.gain_matrix.T)
     x[:, k] = vehicle(x[:, k - 1], u[k - 1], F, G)
     u[k] = controller(x_hat[:, k], K.gain_matrix)
 
@@ -127,11 +126,11 @@ plt.savefig("../agv-book/figs/ch2/oneD_combined_control_fig1.pdf")
 LENGTH = 1.0
 
 # Let's use the Cart class to create an animation
-vehicle = models.Cart(LENGTH)
+vehicle = Cart(LENGTH)
 
 # Create and save the animation
 ani = vehicle.animate(
-    x[0, :], T, LENGTH, True, "../agv-book/gifs/ch2/oneD_combined_control.gif"
+    x[0, :], T, True, "../agv-book/gifs/ch2/oneD_combined_control.gif"
 )
 
 # %%

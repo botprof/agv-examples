@@ -21,9 +21,9 @@ class Cart:
 
     def __init__(self, length):
         """Constructor method."""
-        self.length = length
+        self.d = length
 
-    def draw(self, x, d):
+    def draw(self, x):
         """Finds the points to draw simple rectangular cart.
 
         The cart has position x and length d.  The resulting cart has a height
@@ -31,11 +31,17 @@ class Cart:
         """
         X = np.array(5)
         Y = np.array(5)
-        X = [x - d / 2, x - d / 2, x + d / 2, x + d / 2, x - d / 2]
-        Y = [-d / 4, d / 4, d / 4, -d / 4, -d / 4]
+        X = [
+            x - self.d / 2,
+            x - self.d / 2,
+            x + self.d / 2,
+            x + self.d / 2,
+            x - self.d / 2,
+        ]
+        Y = [-self.d / 4, self.d / 4, self.d / 4, -self.d / 4, -self.d / 4]
         return X, Y
 
-    def animate(self, x, T, d=1.0, save_ani=False, filename="animate_cart.gif"):
+    def animate(self, x, T, save_ani=False, filename="animate_cart.gif"):
         """Create an animation of a simple 1D cart.
 
         Returns animation object for array of 1D cart positions x with time
@@ -45,9 +51,9 @@ class Cart:
         filename (default filename is 'animate_cart.gif').
         """
         fig, ax = plt.subplots()
-        plt.plot([np.min(x) - d, np.max(x) + d], [0, 0], "k--")
+        plt.plot([np.min(x) - self.d, np.max(x) + self.d], [0, 0], "k--")
         plt.xlabel(r"$x$ [m]")
-        ax.set_xlim([np.min(x) - d, np.max(x) + d])
+        ax.set_xlim([np.min(x) - self.d, np.max(x) + self.d])
         plt.yticks([])
         plt.axis("equal")
         (polygon,) = ax.fill([], [], "C0", alpha=0.5)
@@ -64,7 +70,7 @@ class Cart:
         # Function to draw cart
 
         def movie(k):
-            X, Y = self.draw(x[k], d)
+            X, Y = self.draw(x[k])
             a = [X, Y]
             polygon.set_xy(np.transpose(a))
             line.set_data(x[k], 0)

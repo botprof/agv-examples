@@ -8,7 +8,7 @@ GitHub: https://github.com/botprof/agv-examples
 
 import matplotlib.pyplot as plt
 import numpy as np
-from mobotpy import models
+from mobotpy.models import Cart
 
 # Set the simulation time [s] and the sample period [s]
 SIM_TIME = 30.0
@@ -74,11 +74,10 @@ plt.savefig(pdf_path + "oneD_kinematic_fig1.pdf")
 LENGTH = 1.0
 
 # Let's use the Cart class to create an animation
-vehicle = models.Cart(LENGTH)
+vehicle = Cart(LENGTH)
 
 # Create and save the animation
-ani = vehicle.animate(x, T, LENGTH, True,
-                      gif_path + "oneD_kinematic.gif")
+ani = vehicle.animate(x, T, True, gif_path + "oneD_kinematic.gif")
 
 # %% DISPLAY PLOTS
 
