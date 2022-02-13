@@ -529,8 +529,12 @@ class Ackermann:
         ackermann_angles : ndarray of length 2
             The left and right wheel angles (phi_L, phi_R).
         """
-        phi_L = np.arctan(2 * self.ell_W * np.tan(x[3]) / (2 * self.ell_W - self.ell_T * np.tan(x[3])))
-        phi_R = np.arctan(2 * self.ell_W * np.tan(x[3]) / (2 * self.ell_W + self.ell_T * np.tan(x[3])))
+        phi_L = np.arctan(
+            2 * self.ell_W * np.tan(x[3]) / (2 * self.ell_W - self.ell_T * np.tan(x[3]))
+        )
+        phi_R = np.arctan(
+            2 * self.ell_W * np.tan(x[3]) / (2 * self.ell_W + self.ell_T * np.tan(x[3]))
+        )
         ackermann_angles = np.array([phi_L, phi_R])
         return ackermann_angles
 
