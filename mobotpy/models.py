@@ -176,8 +176,7 @@ class DiffDrive:
         X_BD, Y_BD = graphics.draw_circle(x, y, ell)
         # Caster
         X_C, Y_C = graphics.draw_circle(
-            x + 0.5 * ell * np.cos(theta), y + 0.5 *
-            ell * np.sin(theta), 0.125 * ell
+            x + 0.5 * ell * np.cos(theta), y + 0.5 * ell * np.sin(theta), 0.125 * ell
         )
         # Return the arrays of points
         return X_L, Y_L, X_R, Y_R, X_BD, Y_BD, X_C, Y_C
@@ -215,7 +214,7 @@ class DiffDrive:
         def movie(k):
             """Function called at each step of the animation."""
             # Draw the path followed by the vehicle
-            line.set_data(x[0, 0: k + 1], x[1, 0: k + 1])
+            line.set_data(x[0, 0 : k + 1], x[1, 0 : k + 1])
             # Draw the differential drive vehicle
             X_L, Y_L, X_R, Y_R, X_B, Y_B, X_C, Y_C = self.draw(
                 x[0, k], x[1, k], x[2, k], ell
@@ -285,9 +284,9 @@ class DiffDrive:
         def movie(k):
             """Function called at each step of the animation."""
             # Draw the desired trajectory
-            desired.set_data(xd[0, 0: k + 1], xd[1, 0: k + 1])
+            desired.set_data(xd[0, 0 : k + 1], xd[1, 0 : k + 1])
             # Draw the path followed by the vehicle
-            line.set_data(x[0, 0: k + 1], x[1, 0: k + 1])
+            line.set_data(x[0, 0 : k + 1], x[1, 0 : k + 1])
             # Draw the differential drive vehicle
             X_L, Y_L, X_R, Y_R, X_B, Y_B, X_C, Y_C = self.draw(
                 x[0, k], x[1, k], x[2, k], ell
@@ -446,7 +445,7 @@ class Tricycle:
         def movie(k):
             """The function called at each step of the animation."""
             # Draw the path followed by the vehicle
-            line.set_data(x[0, 0: k + 1], x[1, 0: k + 1])
+            line.set_data(x[0, 0 : k + 1], x[1, 0 : k + 1])
             # Draw the tricycle vehicle
             X_L, Y_L, X_R, Y_R, X_F, Y_F, X_B, Y_B = self.draw(
                 x[0, k], x[1, k], x[2, k], x[3, k], ell_W, ell_T
@@ -537,10 +536,8 @@ class Ackermann:
         ackermann_angles : ndarray of length 2
             The left and right wheel angles (phi_L, phi_R).
         """
-        phi_L = np.arctan(
-            2 * ell_W * np.tan(x[3]) / (2 * ell_W - ell_T * np.tan(x[3])))
-        phi_R = np.arctan(
-            2 * ell_W * np.tan(x[3]) / (2 * ell_W + ell_T * np.tan(x[3])))
+        phi_L = np.arctan(2 * ell_W * np.tan(x[3]) / (2 * ell_W - ell_T * np.tan(x[3])))
+        phi_R = np.arctan(2 * ell_W * np.tan(x[3]) / (2 * ell_W + ell_T * np.tan(x[3])))
         ackermann_angles = np.array([phi_L, phi_R])
         return ackermann_angles
 
@@ -641,7 +638,7 @@ class Ackermann:
         def movie(k):
             """The function called at each step of the animation."""
             # Draw the path followed by the vehicle
-            line.set_data(x[0, 0: k + 1], x[1, 0: k + 1])
+            line.set_data(x[0, 0 : k + 1], x[1, 0 : k + 1])
             # Draw the Ackermann steered drive vehicle
             X_BL, Y_BL, X_BR, Y_BR, X_FL, Y_FL, X_FR, Y_FR, X_BD, Y_BD = self.draw(
                 x[0, k], x[1, k], x[2, k], phi_L[k], phi_R[k], ell_W, ell_T

@@ -9,8 +9,8 @@ def rk_four(f, x, u, T, params):
     """
     Perform fourth-order Runge-Kutta numerical integration.
 
-    The function to integrate is f(x, u, params), where the state varables are 
-    collected in the variable x, we assume a constant input vector u over time 
+    The function to integrate is f(x, u, params), where the state varables are
+    collected in the variable x, we assume a constant input vector u over time
     interval T, and params is an array of the system's parameters.
     """
     k_1 = f(x, u, params)
@@ -25,8 +25,8 @@ def euler_int(f, x, u, T, params):
     """
     Perform Euler (trapezoidal) numerical integration.
 
-    The function to integrate is f(x, u, params), where the state varables are 
-    collected in the variable x, we assume a constant input vector u over time 
+    The function to integrate is f(x, u, params), where the state varables are
+    collected in the variable x, we assume a constant input vector u over time
     interval T, and params is an array of the system's parameters.
     """
     x_new = x + T * f(x, u, params)

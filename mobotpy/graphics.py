@@ -32,8 +32,7 @@ def draw_rectangle(x, y, length, width, angle):
     l = 0.5 * length
     w = 0.5 * width
     V = np.array([[-l, -l, l, l, -l], [-w, w, w, -w, -w]])
-    R = np.array([[np.cos(angle), np.sin(-angle)],
-                 [np.sin(angle), np.cos(angle)]])
+    R = np.array([[np.cos(angle), np.sin(-angle)], [np.sin(angle), np.cos(angle)]])
     V = R @ V
     X = V[0, :] + x
     Y = V[1, :] + y
