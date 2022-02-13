@@ -9,8 +9,8 @@ GitHub: https://github.com/botprof/agv-examples
 
 import numpy as np
 import matplotlib.pyplot as plt
-from mobotpy import models
-from mobotpy import integration
+from mobotpy.models import Tricycle
+from mobotpy.integration import rk_four
 
 # Set the simulation time [s] and the sample period [s]
 SIM_TIME = 15.0
@@ -28,7 +28,7 @@ ELL_T = 1.75
 # MODEL DEFINTION
 
 
-def tricycle_f(x, u, ELL_W):
+def tricycle_f(x, u):
     """Tricycle vehicle kinematic model."""
     f = np.zeros(4)
     f[0] = u[0] * np.cos(x[2])
@@ -56,8 +56,7 @@ u[1, 0] = 0
 
 # Run the simulation
 for k in range(1, N):
-    x[:, k] = integration.rk_four(
-        tricycle_f, x[:, k - 1], u[:, k - 1], T, ELL_W)
+    x[:, k] = rk_four(tricycle_f, x[:, k - 1], u[:, k - 1], T)
     u[0, k] = 5.0
     u[1, k] = 0.25 * np.sin(2.0 * t[k])
 
@@ -108,21 +107,21 @@ plt.xlabel(r"$t$ [s]")
 plt.savefig("../agv-book/figs/ch3/tricycle_kinematic_fig1.pdf")
 
 # Let's now use the class Tricycle for plotting
-vehicle = models.Tricycle(ELL_W, ELL_T)
+vehicle = Tricycle(ELL_W, ELL_T)
 
 # Plot the position of the vehicle in the plane
 fig2 = plt.figure(2)
 plt.plot(x[0, :], x[1, :])
 plt.axis("equal")
 X_L, Y_L, X_R, Y_R, X_F, Y_F, X_B, Y_B = vehicle.draw(
-    x[0, 0], x[1, 0], x[2, 0], x[3, 0], ELL_W, ELL_T
+    x[0, 0], x[1, 0], x[2, 0], x[3, 0]
 )
 plt.fill(X_L, Y_L, "k")
 plt.fill(X_R, Y_R, "k")
 plt.fill(X_F, Y_F, "k")
 plt.fill(X_B, Y_B, "C2", alpha=0.5, label="Start")
 X_L, Y_L, X_R, Y_R, X_F, Y_F, X_B, Y_B = vehicle.draw(
-    x[0, N - 1], x[1, N - 1], x[2, N - 1], x[3, N - 1], ELL_W, ELL_T
+    x[0, N - 1], x[1, N - 1], x[2, N - 1], x[3, N - 1]
 )
 plt.fill(X_L, Y_L, "k")
 plt.fill(X_R, Y_R, "k")
@@ -142,9 +141,7 @@ plt.show()
 # MAKE AN ANIMATION
 
 # Create and save the animation
-ani = vehicle.animate(
-    x, T, ELL_W, ELL_T, True, "../agv-book/gifs/ch3/tricycle_kinematic.gif"
-)
+ani = vehicle.animate(x, T, True, "../agv-book/gifs/ch3/tricycle_kinematic.gif")
 
 # Show the movie to the screen
 plt.show()

@@ -107,7 +107,7 @@ class DiffDrive:
         """Constructor method."""
         self.ell = ell
 
-    def f(self, x, u, ell):
+    def f(self, x, u):
         """Differential drive kinematic vehicle kinematic model.
 
         Parameters
@@ -116,8 +116,6 @@ class DiffDrive:
             The vehicle's state (x, y, theta).
         u : ndarray of length 2
             The left and right wheel speeds (v_L, v_R).
-        ell : float
-            The vehicle's track length [m].
 
         Returns
         -------
@@ -127,10 +125,10 @@ class DiffDrive:
         f = np.zeros(3)
         f[0] = 0.5 * (u[0] + u[1]) * np.cos(x[2])
         f[1] = 0.5 * (u[0] + u[1]) * np.sin(x[2])
-        f[2] = 1.0 / ell * (u[1] - u[0])
+        f[2] = 1.0 / self.ell * (u[1] - u[0])
         return f
 
-    def uni2diff(self, u_in, ell):
+    def uni2diff(self, u_in):
         """
         Convert speed and anular rate inputs to differential drive wheel speeds.
 
@@ -138,8 +136,6 @@ class DiffDrive:
         ----------
         u_in : ndarray of length 2
             The speed and turning rate of the vehicle (v, omega).
-        ell : float
-            The vehicle's track length [m].
 
         Returns
         -------
@@ -148,12 +144,12 @@ class DiffDrive:
         """
         v = u_in[0]
         omega = u_in[1]
-        v_L = v - ell / 2 * omega
-        v_R = v + ell / 2 * omega
+        v_L = v - self.ell / 2 * omega
+        v_R = v + self.ell / 2 * omega
         u_out = np.array([v_L, v_R])
         return u_out
 
-    def draw(self, x, y, theta, ell):
+    def draw(self, x, y, theta):
         """
         Finds points that draw a differential drive vehicle.
 
@@ -165,29 +161,31 @@ class DiffDrive:
         """
         # Left and right wheels
         X_L, Y_L = graphics.draw_rectangle(
-            x - 0.5 * ell * np.sin(theta),
-            y + 0.5 * ell * np.cos(theta),
-            0.5 * ell,
-            0.25 * ell,
+            x - 0.5 * self.ell * np.sin(theta),
+            y + 0.5 * self.ell * np.cos(theta),
+            0.5 * self.ell,
+            0.25 * self.ell,
             theta,
         )
         X_R, Y_R = graphics.draw_rectangle(
-            x + 0.5 * ell * np.sin(theta),
-            y - 0.5 * ell * np.cos(theta),
-            0.5 * ell,
-            0.25 * ell,
+            x + 0.5 * self.ell * np.sin(theta),
+            y - 0.5 * self.ell * np.cos(theta),
+            0.5 * self.ell,
+            0.25 * self.ell,
             theta,
         )
         # Body
-        X_BD, Y_BD = graphics.draw_circle(x, y, ell)
+        X_BD, Y_BD = graphics.draw_circle(x, y, self.ell)
         # Caster
         X_C, Y_C = graphics.draw_circle(
-            x + 0.5 * ell * np.cos(theta), y + 0.5 * ell * np.sin(theta), 0.125 * ell
+            x + 0.5 * self.ell * np.cos(theta),
+            y + 0.5 * self.ell * np.sin(theta),
+            0.125 * self.ell,
         )
         # Return the arrays of points
         return X_L, Y_L, X_R, Y_R, X_BD, Y_BD, X_C, Y_C
 
-    def animate(self, x, T, ell=1.0, save_ani=False, filename="animate_diffdrive.gif"):
+    def animate(self, x, T, save_ani=False, filename="animate_diffdrive.gif"):
         """Create an animation of a differential drive vehicle.
 
         Returns animation object for array of vehicle positions x with time
@@ -223,7 +221,7 @@ class DiffDrive:
             line.set_data(x[0, 0 : k + 1], x[1, 0 : k + 1])
             # Draw the differential drive vehicle
             X_L, Y_L, X_R, Y_R, X_B, Y_B, X_C, Y_C = self.draw(
-                x[0, k], x[1, k], x[2, k], ell
+                x[0, k], x[1, k], x[2, k]
             )
             leftwheel.set_xy(np.transpose([X_L, Y_L]))
             rightwheel.set_xy(np.transpose([X_R, Y_R]))
@@ -232,8 +230,8 @@ class DiffDrive:
             # Add the simulation time
             time_text.set_text(r"$t$ = %.1f s" % (k * T))
             # Dynamically set the axis limits
-            ax.set_xlim(x[0, k] - 10 * ell, x[0, k] + 10 * ell)
-            ax.set_ylim(x[1, k] - 10 * ell, x[1, k] + 10 * ell)
+            ax.set_xlim(x[0, k] - 10 * self.ell, x[0, k] + 10 * self.ell)
+            ax.set_ylim(x[1, k] - 10 * self.ell, x[1, k] + 10 * self.ell)
             ax.figure.canvas.draw()
             # Return the objects to animate
             return line, leftwheel, rightwheel, body, castor, time_text
@@ -254,7 +252,7 @@ class DiffDrive:
         return ani
 
     def animate_trajectory(
-        self, x, xd, T, ell=1.0, save_ani=False, filename="animate_diffdrive.gif"
+        self, x, xd, T, save_ani=False, filename="animate_diffdrive.gif"
     ):
         """Create an animation of a differential drive vehicle.
 
@@ -295,7 +293,7 @@ class DiffDrive:
             line.set_data(x[0, 0 : k + 1], x[1, 0 : k + 1])
             # Draw the differential drive vehicle
             X_L, Y_L, X_R, Y_R, X_B, Y_B, X_C, Y_C = self.draw(
-                x[0, k], x[1, k], x[2, k], ell
+                x[0, k], x[1, k], x[2, k]
             )
             leftwheel.set_xy(np.transpose([X_L, Y_L]))
             rightwheel.set_xy(np.transpose([X_R, Y_R]))
@@ -304,8 +302,8 @@ class DiffDrive:
             # Add the simulation time
             time_text.set_text(r"$t$ = %.1f s" % (k * T))
             # Dynamically set the axis limits
-            ax.set_xlim(x[0, k] - 10 * ell, x[0, k] + 10 * ell)
-            ax.set_ylim(x[1, k] - 10 * ell, x[1, k] + 10 * ell)
+            ax.set_xlim(x[0, k] - 10 * self.ell, x[0, k] + 10 * self.ell)
+            ax.set_ylim(x[1, k] - 10 * self.ell, x[1, k] + 10 * self.ell)
             ax.figure.canvas.draw()
             # Return the objects to animate
             return desired, line, leftwheel, rightwheel, body, castor, time_text
@@ -342,7 +340,7 @@ class Tricycle:
         self.ell_W = ell_W
         self.ell_T = ell_T
 
-    def f(self, x, u, ell_W):
+    def f(self, x, u):
         """Tricycle or planar bicycle vehicle kinematic model.
 
         Parameters
@@ -350,9 +348,6 @@ class Tricycle:
         x : ndarray of length 4
             The vehicle's state (x, y, theta, phi).
         u : ndarray of length 2
-            The vehicle's speed and steering angle rate.
-        ell_W : float
-            The vehicle's wheelbase [m].
 
         Returns
         -------
@@ -362,11 +357,11 @@ class Tricycle:
         f = np.zeros(4)
         f[0] = u[0] * np.cos(x[2])
         f[1] = u[0] * np.sin(x[2])
-        f[2] = u[0] * 1.0 / ell_W * np.tan(x[3])
+        f[2] = u[0] * 1.0 / self.ell_W * np.tan(x[3])
         f[3] = u[1]
         return f
 
-    def draw(self, x, y, theta, phi, ell_W, ell_T):
+    def draw(self, x, y, theta, phi):
         """Finds points that draw a tricycle vehicle.
 
         The centre of the rear wheel axle is (x, y), the body has orientation
@@ -378,33 +373,33 @@ class Tricycle:
         """
         # Left and right back wheels
         X_L, Y_L = graphics.draw_rectangle(
-            x - 0.5 * ell_T * np.sin(theta),
-            y + 0.5 * ell_T * np.cos(theta),
-            0.5 * ell_T,
-            0.25 * ell_T,
+            x - 0.5 * self.ell_T * np.sin(theta),
+            y + 0.5 * self.ell_T * np.cos(theta),
+            0.5 * self.ell_T,
+            0.25 * self.ell_T,
             theta,
         )
         X_R, Y_R = graphics.draw_rectangle(
-            x + 0.5 * ell_T * np.sin(theta),
-            y - 0.5 * ell_T * np.cos(theta),
-            0.5 * ell_T,
-            0.25 * ell_T,
+            x + 0.5 * self.ell_T * np.sin(theta),
+            y - 0.5 * self.ell_T * np.cos(theta),
+            0.5 * self.ell_T,
+            0.25 * self.ell_T,
             theta,
         )
         # Front wheel
         X_F, Y_F = graphics.draw_rectangle(
-            x + ell_W * np.cos(theta),
-            y + ell_W * np.sin(theta),
-            0.5 * ell_T,
-            0.25 * ell_T,
+            x + self.ell_W * np.cos(theta),
+            y + self.ell_W * np.sin(theta),
+            0.5 * self.ell_T,
+            0.25 * self.ell_T,
             theta + phi,
         )
         # Body
         X_BD, Y_BD = graphics.draw_rectangle(
-            x + ell_W / 2.0 * np.cos(theta),
-            y + ell_W / 2.0 * np.sin(theta),
-            2.0 * ell_W,
-            2.0 * ell_T,
+            x + self.ell_W / 2.0 * np.cos(theta),
+            y + self.ell_W / 2.0 * np.sin(theta),
+            2.0 * self.ell_W,
+            2.0 * self.ell_T,
             theta,
         )
         # Return the arrays of points
@@ -414,8 +409,6 @@ class Tricycle:
         self,
         x,
         T,
-        ell_W=1.0,
-        ell_T=1.0,
         save_ani=False,
         filename="animate_tricycle.gif",
     ):
@@ -454,7 +447,7 @@ class Tricycle:
             line.set_data(x[0, 0 : k + 1], x[1, 0 : k + 1])
             # Draw the tricycle vehicle
             X_L, Y_L, X_R, Y_R, X_F, Y_F, X_B, Y_B = self.draw(
-                x[0, k], x[1, k], x[2, k], x[3, k], ell_W, ell_T
+                x[0, k], x[1, k], x[2, k], x[3, k]
             )
             leftwheel.set_xy(np.transpose([X_L, Y_L]))
             rightwheel.set_xy(np.transpose([X_R, Y_R]))
@@ -463,8 +456,8 @@ class Tricycle:
             # Add the simulation time
             time_text.set_text(r"$t$ = %.1f s" % (k * T))
             # Dynamically set the axis limits
-            ax.set_xlim(x[0, k] - 10 * ell_W, x[0, k] + 10 * ell_W)
-            ax.set_ylim(x[1, k] - 10 * ell_W, x[1, k] + 10 * ell_W)
+            ax.set_xlim(x[0, k] - 10 * self.ell_W, x[0, k] + 10 * self.ell_W)
+            ax.set_ylim(x[1, k] - 10 * self.ell_W, x[1, k] + 10 * self.ell_W)
             ax.figure.canvas.draw()
             # Return the objects to animate
             return line, leftwheel, rightwheel, frontwheel, body, time_text
@@ -501,7 +494,7 @@ class Ackermann:
         self.ell_W = ell_W
         self.ell_T = ell_T
 
-    def f(self, x, u, ell_W):
+    def f(self, x, u):
         """Ackermann steered vehicle kinematic model.
 
         Parameters
@@ -510,8 +503,6 @@ class Ackermann:
             The vehicle's state (x, y, theta, phi).
         u : ndarray of length 2
             The vehicle's speed and steering angle rate.
-        ell_W : float
-            The vehicle's wheelbase [m].
 
         Returns
         -------
@@ -521,33 +512,29 @@ class Ackermann:
         f = np.zeros(4)
         f[0] = u[0] * np.cos(x[2])
         f[1] = u[0] * np.sin(x[2])
-        f[2] = u[0] * 1.0 / ell_W * np.tan(x[3])
+        f[2] = u[0] * 1.0 / self.ell_W * np.tan(x[3])
         f[3] = u[1]
         return f
 
-    def ackermann(self, x, ell_W, ell_T):
+    def ackermann(self, x):
         """Computes the Ackermann steering angles.
 
         Parameters
         ----------
         x : ndarray of length 4
             The vehicle's state (x, y, theta, phi).
-        ell_W : float
-            The vehicle's wheelbase [m].
-        ell_T :float
-            The vehicle's track length [m].
 
         Returns
         -------
         ackermann_angles : ndarray of length 2
             The left and right wheel angles (phi_L, phi_R).
         """
-        phi_L = np.arctan(2 * ell_W * np.tan(x[3]) / (2 * ell_W - ell_T * np.tan(x[3])))
-        phi_R = np.arctan(2 * ell_W * np.tan(x[3]) / (2 * ell_W + ell_T * np.tan(x[3])))
+        phi_L = np.arctan(2 * self.ell_W * np.tan(x[3]) / (2 * self.ell_W - self.ell_T * np.tan(x[3])))
+        phi_R = np.arctan(2 * self.ell_W * np.tan(x[3]) / (2 * self.ell_W + self.ell_T * np.tan(x[3])))
         ackermann_angles = np.array([phi_L, phi_R])
         return ackermann_angles
 
-    def draw(self, x, y, theta, phi_L, phi_R, ell_W, ell_T):
+    def draw(self, x, y, theta, phi_L, phi_R):
         """Finds points that draw an Ackermann steered (car-like) vehicle.
 
         The centre of the rear wheel axle is (x, y), the body has orientation
@@ -560,40 +547,40 @@ class Ackermann:
         """
         # Left and right back wheels
         X_BL, Y_BL = graphics.draw_rectangle(
-            x - 0.5 * ell_T * np.sin(theta),
-            y + 0.5 * ell_T * np.cos(theta),
-            0.5 * ell_T,
-            0.25 * ell_T,
+            x - 0.5 * self.ell_T * np.sin(theta),
+            y + 0.5 * self.ell_T * np.cos(theta),
+            0.5 * self.ell_T,
+            0.25 * self.ell_T,
             theta,
         )
         X_BR, Y_BR = graphics.draw_rectangle(
-            x + 0.5 * ell_T * np.sin(theta),
-            y - 0.5 * ell_T * np.cos(theta),
-            0.5 * ell_T,
-            0.25 * ell_T,
+            x + 0.5 * self.ell_T * np.sin(theta),
+            y - 0.5 * self.ell_T * np.cos(theta),
+            0.5 * self.ell_T,
+            0.25 * self.ell_T,
             theta,
         )
         # Left and right front wheels
         X_FL, Y_FL = graphics.draw_rectangle(
-            x + ell_W * np.cos(theta) - ell_T / 2 * np.sin(theta),
-            y + ell_W * np.sin(theta) + ell_T / 2 * np.cos(theta),
-            0.5 * ell_T,
-            0.25 * ell_T,
+            x + self.ell_W * np.cos(theta) - self.ell_T / 2 * np.sin(theta),
+            y + self.ell_W * np.sin(theta) + self.ell_T / 2 * np.cos(theta),
+            0.5 * self.ell_T,
+            0.25 * self.ell_T,
             theta + phi_L,
         )
         X_FR, Y_FR = graphics.draw_rectangle(
-            x + ell_W * np.cos(theta) + ell_T / 2 * np.sin(theta),
-            y + ell_W * np.sin(theta) - ell_T / 2 * np.cos(theta),
-            0.5 * ell_T,
-            0.25 * ell_T,
+            x + self.ell_W * np.cos(theta) + self.ell_T / 2 * np.sin(theta),
+            y + self.ell_W * np.sin(theta) - self.ell_T / 2 * np.cos(theta),
+            0.5 * self.ell_T,
+            0.25 * self.ell_T,
             theta + phi_R,
         )
         # Body
         X_BD, Y_BD = graphics.draw_rectangle(
-            x + ell_W / 2.0 * np.cos(theta),
-            y + ell_W / 2.0 * np.sin(theta),
-            2.0 * ell_W,
-            2.0 * ell_T,
+            x + self.ell_W / 2.0 * np.cos(theta),
+            y + self.ell_W / 2.0 * np.sin(theta),
+            2.0 * self.ell_W,
+            2.0 * self.ell_T,
             theta,
         )
         # Return the arrays of points
@@ -605,8 +592,6 @@ class Ackermann:
         T,
         phi_L,
         phi_R,
-        ell_W=1.0,
-        ell_T=1.0,
         save_ani=False,
         filename="animate_ackermann.gif",
     ):
@@ -647,7 +632,7 @@ class Ackermann:
             line.set_data(x[0, 0 : k + 1], x[1, 0 : k + 1])
             # Draw the Ackermann steered drive vehicle
             X_BL, Y_BL, X_BR, Y_BR, X_FL, Y_FL, X_FR, Y_FR, X_BD, Y_BD = self.draw(
-                x[0, k], x[1, k], x[2, k], phi_L[k], phi_R[k], ell_W, ell_T
+                x[0, k], x[1, k], x[2, k], phi_L[k], phi_R[k]
             )
             BLwheel.set_xy(np.transpose([X_BL, Y_BL]))
             BRwheel.set_xy(np.transpose([X_BR, Y_BR]))
@@ -657,8 +642,8 @@ class Ackermann:
             # Add the simulation time
             time_text.set_text(r"$t$ = %.1f s" % (k * T))
             # Dynamically set the axis limits
-            ax.set_xlim(x[0, k] - 10 * ell_W, x[0, k] + 10 * ell_W)
-            ax.set_ylim(x[1, k] - 10 * ell_W, x[1, k] + 10 * ell_W)
+            ax.set_xlim(x[0, k] - 10 * self.ell_W, x[0, k] + 10 * self.ell_W)
+            ax.set_ylim(x[1, k] - 10 * self.ell_W, x[1, k] + 10 * self.ell_W)
             ax.figure.canvas.draw()
             # Return the objects to animate
             return line, BLwheel, BRwheel, FLwheel, FRwheel, body, time_text

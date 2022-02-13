@@ -114,10 +114,10 @@ for k in range(1, N):
     u_unicycle[1] = w[1]
 
     # Convert unicycle inputs to differential drive wheel speeds
-    u[:, k] = vehicle.uni2diff(u_unicycle, ELL)
+    u[:, k] = vehicle.uni2diff(u_unicycle)
 
     # Simulate the vehicle motion
-    x[:, k] = rk_four(vehicle.f, x[:, k - 1], u[:, k - 1], T, ELL)
+    x[:, k] = rk_four(vehicle.f, x[:, k - 1], u[:, k - 1], T)
 
     # Update the extended system states
     xi[0, k] = x[0, k]
@@ -172,13 +172,13 @@ fig2 = plt.figure(2)
 plt.plot(x_d[0, :], x_d[1, :], "C1--", label="Desired")
 plt.plot(x[0, :], x[1, :], "C0", label="Actual")
 plt.axis("equal")
-X_L, Y_L, X_R, Y_R, X_B, Y_B, X_C, Y_C = vehicle.draw(x[0, 0], x[1, 0], x[2, 0], ELL)
+X_L, Y_L, X_R, Y_R, X_B, Y_B, X_C, Y_C = vehicle.draw(x[0, 0], x[1, 0], x[2, 0])
 plt.fill(X_L, Y_L, "k")
 plt.fill(X_R, Y_R, "k")
 plt.fill(X_C, Y_C, "k")
 plt.fill(X_B, Y_B, "C2", alpha=0.5, label="Start")
 X_L, Y_L, X_R, Y_R, X_B, Y_B, X_C, Y_C = vehicle.draw(
-    x[0, N - 1], x[1, N - 1], x[2, N - 1], ELL
+    x[0, N - 1], x[1, N - 1], x[2, N - 1]
 )
 plt.fill(X_L, Y_L, "k")
 plt.fill(X_R, Y_R, "k")
@@ -199,7 +199,7 @@ plt.show()
 
 # Create and save the animation
 ani = vehicle.animate_trajectory(
-    x, x_d, T, ELL, True, "../agv-book/gifs/ch4/dynamic_extension_tracking.gif"
+    x, x_d, T, True, "../agv-book/gifs/ch4/dynamic_extension_tracking.gif"
 )
 
 # Show the movie to the screen

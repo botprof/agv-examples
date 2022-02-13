@@ -9,8 +9,8 @@ GitHub: https://github.com/botprof/agv-examples
 
 import numpy as np
 import matplotlib.pyplot as plt
-from mobotpy import models
-from mobotpy import integration
+from mobotpy.models import DiffDrive
+from mobotpy.integration import rk_four
 from scipy import signal
 
 # Set the simulation time [s] and the sample period [s]
@@ -47,7 +47,7 @@ for k in range(0, N):
 ELL = 1.0
 
 # Create a vehicle object of type DiffDrive
-vehicle = models.DiffDrive(ELL)
+vehicle = DiffDrive(ELL)
 
 # %%
 # SIMULATE THE CLOSED-LOOP SYSTEM
@@ -81,10 +81,10 @@ for k in range(1, N):
 
     # Compute the controls (v, omega) and convert to wheel speeds (v_L, v_R)
     u_unicycle = -K.gain_matrix @ (x[:, k - 1] - x_d[:, k - 1]) + u_d[:, k - 1]
-    u[:, k] = vehicle.uni2diff(u_unicycle, ELL)
+    u[:, k] = vehicle.uni2diff(u_unicycle)
 
     # Simulate the differential drive vehicle motion
-    x[:, k] = integration.rk_four(vehicle.f, x[:, k - 1], u[:, k - 1], T, ELL)
+    x[:, k] = rk_four(vehicle.f, x[:, k - 1], u[:, k - 1], T)
 
 # %%
 # MAKE PLOTS
@@ -133,13 +133,13 @@ fig2 = plt.figure(2)
 plt.plot(x_d[0, :], x_d[1, :], "C1--", label="Desired")
 plt.plot(x[0, :], x[1, :], "C0", label="Actual")
 plt.axis("equal")
-X_L, Y_L, X_R, Y_R, X_B, Y_B, X_C, Y_C = vehicle.draw(x[0, 0], x[1, 0], x[2, 0], ELL)
+X_L, Y_L, X_R, Y_R, X_B, Y_B, X_C, Y_C = vehicle.draw(x[0, 0], x[1, 0], x[2, 0])
 plt.fill(X_L, Y_L, "k")
 plt.fill(X_R, Y_R, "k")
 plt.fill(X_C, Y_C, "k")
 plt.fill(X_B, Y_B, "C2", alpha=0.5, label="Start")
 X_L, Y_L, X_R, Y_R, X_B, Y_B, X_C, Y_C = vehicle.draw(
-    x[0, N - 1], x[1, N - 1], x[2, N - 1], ELL
+    x[0, N - 1], x[1, N - 1], x[2, N - 1]
 )
 plt.fill(X_L, Y_L, "k")
 plt.fill(X_R, Y_R, "k")
@@ -160,7 +160,7 @@ plt.show()
 
 # Create and save the animation
 ani = vehicle.animate_trajectory(
-    x, x_d, T, ELL, True, "../agv-book/gifs/ch4/control_approx_linearization.gif"
+    x, x_d, T, True, "../agv-book/gifs/ch4/control_approx_linearization.gif"
 )
 
 # Show the movie to the screen

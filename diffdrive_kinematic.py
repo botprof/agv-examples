@@ -9,7 +9,7 @@ GitHub: https://github.com/botprof/agv-examples
 
 import numpy as np
 import matplotlib.pyplot as plt
-from mobotpy import models
+from mobotpy.models import DiffDrive
 
 # Set the simulation time [s] and the sample period [s]
 SIM_TIME = 30.0
@@ -19,35 +19,38 @@ T = 0.04
 t = np.arange(0.0, SIM_TIME, T)
 N = np.size(t)
 
+# Set the track of the vehicle [m]
+ELL = 0.35
+
 # %%
 # FUNCTION DEFINITIONS
 
 
-def rk_four(f, x, u, T, P):
+def rk_four(f, x, u, T):
     """Fourth-order Runge-Kutta numerical integration."""
-    k_1 = f(x, u, P)
-    k_2 = f(x + T * k_1 / 2.0, u, P)
-    k_3 = f(x + T * k_2 / 2.0, u, P)
-    k_4 = f(x + T * k_3, u, P)
+    k_1 = f(x, u)
+    k_2 = f(x + T * k_1 / 2.0, u)
+    k_3 = f(x + T * k_2 / 2.0, u)
+    k_4 = f(x + T * k_3, u)
     x_new = x + T / 6.0 * (k_1 + 2.0 * k_2 + 2.0 * k_3 + k_4)
     return x_new
 
 
-def diffdrive_f(x, u, ell):
+def diffdrive_f(x, u):
     """Differential drive kinematic vehicle model."""
     f = np.zeros(3)
     f[0] = 0.5 * (u[0] + u[1]) * np.cos(x[2])
     f[1] = 0.5 * (u[0] + u[1]) * np.sin(x[2])
-    f[2] = 1.0 / ell * (u[1] - u[0])
+    f[2] = 1.0 / ELL * (u[1] - u[0])
     return f
 
 
-def uni2diff(u, ell):
+def uni2diff(u):
     """Convert speed and angular rate to wheel speeds."""
     v = u[0]
     omega = u[1]
-    v_L = v - ell / 2 * omega
-    v_R = v + ell / 2 * omega
+    v_L = v - ELL / 2 * omega
+    v_R = v + ELL / 2 * omega
     return np.array([v_L, v_R])
 
 
@@ -65,19 +68,16 @@ def openloop(t):
 x = np.zeros((3, N))
 u = np.zeros((2, N))
 
-# Set the track of the vehicle [m]
-ELL = 0.35
-
 # Set the initial pose [m, m, rad], velocities [m/s, m/s]
 x[0, 0] = 0.0
 x[1, 0] = 0.0
 x[2, 0] = np.pi / 2.0
-u[:, 0] = uni2diff(openloop(t[0]), ELL)
+u[:, 0] = uni2diff(openloop(t[0]))
 
 # Run the simulation
 for k in range(1, N):
-    x[:, k] = rk_four(diffdrive_f, x[:, k - 1], u[:, k - 1], T, ELL)
-    u[:, k] = uni2diff(openloop(t[k]), ELL)
+    x[:, k] = rk_four(diffdrive_f, x[:, k - 1], u[:, k - 1], T)
+    u[:, k] = uni2diff(openloop(t[k]))
 
 # %%
 # MAKE PLOTS
@@ -118,20 +118,19 @@ plt.legend()
 plt.savefig("../agv-book/figs/ch3/diffdrive_kinematic_fig1.pdf")
 
 # Let's now use the class DiffDrive for plotting
-vehicle = models.DiffDrive(ELL)
+vehicle = DiffDrive(ELL)
 
 # Plot the position of the vehicle in the plane
 fig2 = plt.figure(2)
 plt.plot(x[0, :], x[1, :], "C0")
 plt.axis("equal")
-X_L, Y_L, X_R, Y_R, X_B, Y_B, X_C, Y_C = vehicle.draw(
-    x[0, 0], x[1, 0], x[2, 0], ELL)
+X_L, Y_L, X_R, Y_R, X_B, Y_B, X_C, Y_C = vehicle.draw(x[0, 0], x[1, 0], x[2, 0])
 plt.fill(X_L, Y_L, "k")
 plt.fill(X_R, Y_R, "k")
 plt.fill(X_C, Y_C, "k")
 plt.fill(X_B, Y_B, "C2", alpha=0.5, label="Start")
 X_L, Y_L, X_R, Y_R, X_B, Y_B, X_C, Y_C = vehicle.draw(
-    x[0, N - 1], x[1, N - 1], x[2, N - 1], ELL
+    x[0, N - 1], x[1, N - 1], x[2, N - 1]
 )
 plt.fill(X_L, Y_L, "k")
 plt.fill(X_R, Y_R, "k")
@@ -151,8 +150,7 @@ plt.show()
 # MAKE AN ANIMATION
 
 # Create and save the animation
-ani = vehicle.animate(
-    x, T, ELL, True, "../agv-book/gifs/ch3/diffdrive_kinematic.gif")
+ani = vehicle.animate(x, T, True, "../agv-book/gifs/ch3/diffdrive_kinematic.gif")
 
 # Show the movie to the screen
 plt.show()

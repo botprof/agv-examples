@@ -5,7 +5,7 @@ GitHub: https://github.com/botprof/agv-examples
 """
 
 
-def rk_four(f, x, u, T, params):
+def rk_four(f, x, u, T):
     """
     Perform fourth-order Runge-Kutta numerical integration.
 
@@ -13,15 +13,15 @@ def rk_four(f, x, u, T, params):
     collected in the variable x, we assume a constant input vector u over time
     interval T, and params is an array of the system's parameters.
     """
-    k_1 = f(x, u, params)
-    k_2 = f(x + T * k_1 / 2.0, u, params)
-    k_3 = f(x + T * k_2 / 2.0, u, params)
-    k_4 = f(x + T * k_3, u, params)
+    k_1 = f(x, u)
+    k_2 = f(x + T * k_1 / 2.0, u)
+    k_3 = f(x + T * k_2 / 2.0, u)
+    k_4 = f(x + T * k_3, u)
     x_new = x + T / 6.0 * (k_1 + 2.0 * k_2 + 2.0 * k_3 + k_4)
     return x_new
 
 
-def euler_int(f, x, u, T, params):
+def euler_int(f, x, u, T):
     """
     Perform Euler (trapezoidal) numerical integration.
 
@@ -29,5 +29,5 @@ def euler_int(f, x, u, T, params):
     collected in the variable x, we assume a constant input vector u over time
     interval T, and params is an array of the system's parameters.
     """
-    x_new = x + T * f(x, u, params)
+    x_new = x + T * f(x, u)
     return x_new

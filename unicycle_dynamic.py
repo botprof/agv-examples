@@ -10,8 +10,8 @@ GitHub: https://github.com/botprof/agv-examples
 from IPython.display import display
 import numpy as np
 import matplotlib.pyplot as plt
-from mobotpy import integration
-from mobotpy import models
+from mobotpy.integration import rk_four
+from mobotpy.models import DiffDrive
 
 # Set the simulation time [s] and the sample period [s]
 SIM_TIME = 60.0
@@ -32,48 +32,38 @@ LAMBDA_MAX = 0.1
 # FUNCTION DEFINITIONS
 
 
-def unicycle_f_dyn(x, u, params):
+def unicycle_f_dyn(x, u):
     """Unicycle dynamic vehicle model.
 
     Parameters
     ----------
     x : ndarray of length 6
         The vehicle's state (x, y, theta, v_x, v_y, v_2).
-    u : ndarray of length 2
-        Force and torque applied to the wheel (f, tau).
-    params : ndarray of length 3
-        The mass [kg], moment of inertia [kg m^2] (m, I), and lateral tire 
-        force lambda_f [N].
+    u : ndarray of length 3
+        Force and torque applied to the wheel (f, tau, lambda_f).
 
     Returns
     -------
     f_dyn : ndarray of length 6
         The rate of change of the vehicle states.
     """
-    M = params[0]
-    I = params[1]
-    lambda_f = params[2]
     f_dyn = np.zeros(6)
     f_dyn[0] = x[3]
     f_dyn[1] = x[4]
     f_dyn[2] = x[5]
-    f_dyn[3] = 1.0 / M * (u[0] * np.cos(x[2]) - lambda_f * np.sin(x[2]))
-    f_dyn[4] = 1.0 / M * (u[0] * np.sin(x[2]) + lambda_f * np.cos(x[2]))
+    f_dyn[3] = 1.0 / M * (u[0] * np.cos(x[2]) - u[2] * np.sin(x[2]))
+    f_dyn[4] = 1.0 / M * (u[0] * np.sin(x[2]) + u[2] * np.cos(x[2]))
     f_dyn[5] = 1.0 / I * u[1]
     return f_dyn
 
 
-def lateral_force(x, LAMBDA_MAX, params):
+def lateral_force(x):
     """Computes the lateral tire force for a single wheel.
 
     Parameters
     ----------
     x : ndarray of length 6
         The vehicle's state (x, y, theta, v_x, v_y, v_2).
-    LAMBDA_MAX : float
-        Maximum lateral tire force [N] the tire will support.
-    params : ndarray of length 3
-        The mass [kg], moment of inertia [kg m^2] (m, I).
 
     Returns
     -------
@@ -82,8 +72,6 @@ def lateral_force(x, LAMBDA_MAX, params):
     old_x : ndarray of length 6
         The vehicle's state with or without slip.
     """
-    M = params[0]
-    I = params[1]
 
     # Compute lateral force
     lambda_f = M * x[5] * (x[3] * np.cos(x[2]) + x[4] * np.sin(x[2]))
@@ -111,8 +99,7 @@ def lateral_force(x, LAMBDA_MAX, params):
 
 # Initialize arrays that will be populated with our inputs and states
 x = np.zeros((6, N))
-u = np.zeros((2, N))
-lambda_f = np.zeros((1, N))
+u = np.zeros((3, N))
 
 # Set the initial conditions
 x_init = np.zeros(6)
@@ -142,18 +129,10 @@ for k in range(1, N):
         u[1, k - 1] = 0.0
 
     # Compute the lateral force applied to the vehicle's wheel
-    lambda_f[0, k - 1], x[:, k - 1] = lateral_force(
-        x[:, k - 1], LAMBDA_MAX, np.array([M, I])
-    )
+    u[2, k - 1], x[:, k - 1] = lateral_force(x[:, k - 1])
 
     # Update the motion of the vehicle
-    x[:, k] = integration.rk_four(
-        unicycle_f_dyn,
-        x[:, k - 1],
-        u[:, k - 1],
-        T,
-        np.array([M, I, lambda_f[0, k - 1]]),
-    )
+    x[:, k] = rk_four(unicycle_f_dyn, x[:, k - 1], u[:, k - 1], T)
 
 # %%
 # MAKE PLOTS
@@ -187,7 +166,7 @@ plt.savefig("../agv-book/figs/ch3/unicycle_dynamic_fig1.pdf")
 
 # Plot the lateral tire force
 fig2 = plt.figure(2)
-plt.plot(t[0: N - 1], lambda_f[0, 0: N - 1], "C0")
+plt.plot(t[0 : N - 1], u[2, 0 : N - 1], "C0")
 plt.xlabel(r"$t$ [s]")
 plt.ylabel(r"$\lambda$ [N]")
 plt.grid(color="0.95")
@@ -204,20 +183,19 @@ because the differential drive vehicle has the same nonholonomic constraints.
 ELL = 1.0
 
 # Let's now use the class DiffDrive for plotting
-vehicle = models.DiffDrive(ELL)
+vehicle = DiffDrive(ELL)
 
 # Plot the position of the vehicle in the plane
 fig3 = plt.figure(3)
 plt.plot(x[0, :], x[1, :], "C0")
 plt.axis("equal")
-X_L, Y_L, X_R, Y_R, X_B, Y_B, X_C, Y_C = vehicle.draw(
-    x[0, 0], x[1, 0], x[2, 0], ELL)
+X_L, Y_L, X_R, Y_R, X_B, Y_B, X_C, Y_C = vehicle.draw(x[0, 0], x[1, 0], x[2, 0])
 plt.fill(X_L, Y_L, "k")
 plt.fill(X_R, Y_R, "k")
 plt.fill(X_C, Y_C, "k")
 plt.fill(X_B, Y_B, "C2", alpha=0.5, label="Start")
 X_L, Y_L, X_R, Y_R, X_B, Y_B, X_C, Y_C = vehicle.draw(
-    x[0, N - 1], x[1, N - 1], x[2, N - 1], ELL
+    x[0, N - 1], x[1, N - 1], x[2, N - 1]
 )
 plt.fill(X_L, Y_L, "k")
 plt.fill(X_R, Y_R, "k")
@@ -237,8 +215,7 @@ plt.show()
 # MAKE AN ANIMATION
 
 # Create and save the animation
-ani = vehicle.animate(
-    x, T, ELL, True, "../agv-book/gifs/ch3/unicycle_dynamic.gif")
+ani = vehicle.animate(x, T, True, "../agv-book/gifs/ch3/unicycle_dynamic.gif")
 
 # Show the movie to the screen
 plt.show()
