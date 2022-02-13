@@ -9,8 +9,8 @@ GitHub: https://github.com/botprof/agv-examples
 
 import numpy as np
 import matplotlib.pyplot as plt
-from mobotpy import models
-from mobotpy import integration
+from mobotpy.models import DiffDrive
+from mobotpy.integration import rk_four
 from scipy import signal
 
 # Set the simulation time [s] and the sample period [s]
@@ -61,7 +61,7 @@ for k in range(0, N):
 ELL = 1.0
 
 # Create a vehicle object of type DiffDrive
-vehicle = models.DiffDrive(ELL)
+vehicle = DiffDrive(ELL)
 
 # %%
 # SIMULATE THE CLOSED-LOOP SYSTEM
@@ -117,7 +117,7 @@ for k in range(1, N):
     u[:, k] = vehicle.uni2diff(u_unicycle, ELL)
 
     # Simulate the vehicle motion
-    x[:, k] = integration.rk_four(vehicle.f, x[:, k - 1], u[:, k - 1], T, ELL)
+    x[:, k] = rk_four(vehicle.f, x[:, k - 1], u[:, k - 1], T, ELL)
 
     # Update the extended system states
     xi[0, k] = x[0, k]
