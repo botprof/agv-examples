@@ -25,16 +25,16 @@ N = np.size(t)
 # VEHICLE MODELS
 
 # Vehicle mass [kg]
-M = 1.0
+m = 1.0
 
 # Discrete time vehicle model
 F = np.array([[1, T], [0, 1]])
-G = np.array([[0], [T / M]])
+G = np.array([[0], [T / m]])
 n = G.shape[0]
 
 # Continuous time vehicle model (for full-state feedback)
 A = np.array([[0, 1], [0, 0]])
-B = np.array([[0], [1 / M]])
+B = np.array([[0], [1 / m]])
 
 # %%
 # UNCONSTRAINED MPC CONTROLLER DESIGN
