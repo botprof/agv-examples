@@ -65,6 +65,9 @@ x[:, 0] = x_init
 
 for k in range(1, N):
 
+    # Simulate the differential drive vehicle motion
+    x[:, k] = rk_four(vehicle.f, x[:, k - 1], u[:, k - 1], T)
+
     # Compute the approximate linearization
     A = np.array(
         [
@@ -82,9 +85,6 @@ for k in range(1, N):
     # Compute the controls (v, omega) and convert to wheel speeds (v_L, v_R)
     u_unicycle = -K.gain_matrix @ (x[:, k - 1] - x_d[:, k - 1]) + u_d[:, k - 1]
     u[:, k] = vehicle.uni2diff(u_unicycle)
-
-    # Simulate the differential drive vehicle motion
-    x[:, k] = rk_four(vehicle.f, x[:, k - 1], u[:, k - 1], T)
 
 # %%
 # MAKE PLOTS

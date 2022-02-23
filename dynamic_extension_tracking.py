@@ -99,6 +99,15 @@ K = signal.place_poles(A, B, p)
 
 for k in range(1, N):
 
+    # Simulate the vehicle motion
+    x[:, k] = rk_four(vehicle.f, x[:, k - 1], u[:, k - 1], T)
+
+    # Update the extended system states
+    xi[0, k] = x[0, k]
+    xi[1, k] = x[1, k]
+    xi[2, k] = u_unicycle[0] * np.cos(x[2, k])
+    xi[3, k] = u_unicycle[0] * np.sin(x[2, k])
+
     # Compute the extended linear system input control signals
     eta = K.gain_matrix @ (xi_d[:, k - 1] - xi[:, k - 1]) + ddz_d[:, k - 1]
 
@@ -115,15 +124,6 @@ for k in range(1, N):
 
     # Convert unicycle inputs to differential drive wheel speeds
     u[:, k] = vehicle.uni2diff(u_unicycle)
-
-    # Simulate the vehicle motion
-    x[:, k] = rk_four(vehicle.f, x[:, k - 1], u[:, k - 1], T)
-
-    # Update the extended system states
-    xi[0, k] = x[0, k]
-    xi[1, k] = x[1, k]
-    xi[2, k] = u_unicycle[0] * np.cos(x[2, k])
-    xi[3, k] = u_unicycle[0] * np.sin(x[2, k])
 
 # %%
 # MAKE PLOTS
