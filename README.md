@@ -63,6 +63,12 @@ Filename | Description
 [control_approx_linearization.py](control_approx_linearization.py) | Trajectory tracking for a differential drive vehicle using control by approximate linearization.
 [dynamic_extension_tracking.py](dynamic_extension_tracking.py) | Trajectory tracking for a differential drive vehicle using feedback linearization with dynamic extension.
 [MPC_linear_tracking.py](MPC_linear_tracking.py) | Trajectory tracking for a 1D dynamic vehicle using unconstrained model predictive control (MPC).
+
+### Vehicle Navigation Examples
+
+Filename | Description
+-------- | -----------
+[diffdrive_GPS_EKF.py](diffdrive_GPS_EKF.py) | Simple EKF implementation for a differential drive vehicle with wheel encoders, an angular rate gyro, and GPS.
  
 ## Cite this Work
 

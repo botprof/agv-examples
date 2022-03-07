@@ -8,6 +8,8 @@ import numpy as np
 from mobotpy import graphics
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+from scipy.stats import chi2
+from matplotlib import patches
 
 
 class Cart:
@@ -254,10 +256,11 @@ class DiffDrive:
     def animate_trajectory(
         self, x, xd, T, save_ani=False, filename="animate_diffdrive.gif"
     ):
-        """Create an animation of a differential drive vehicle.
+        """Create an animation of a differential drive vehicle with plots of
+        actual and desired trajectories.
 
-        Returns animation object for array of vehicle positions x with time
-        increments T [s], track ell [m].
+        Returns animation object for array of vehicle positions and desired
+        positions x with time increments T [s], track ell [m].
 
         To save the animation to a GIF file, set save_ani to True and provide a
         filename (default 'animate_diffdrive.gif').
@@ -307,6 +310,101 @@ class DiffDrive:
             ax.figure.canvas.draw()
             # Return the objects to animate
             return desired, line, leftwheel, rightwheel, body, castor, time_text
+
+        # Create the animation
+        ani = animation.FuncAnimation(
+            fig,
+            movie,
+            np.arange(1, len(x[0, :]), max(1, int(1 / T / 10))),
+            init_func=init,
+            interval=T * 1000,
+            blit=True,
+            repeat=False,
+        )
+        if save_ani == True:
+            ani.save(filename, fps=min(1 / T, 10))
+        # Return the figure object
+        return ani
+
+    def animate_estimation(
+        self,
+        x,
+        x_hat,
+        P_hat,
+        alpha,
+        T,
+        save_ani=False,
+        filename="animate_diffdrive.gif",
+    ):
+        """Create an animation of a differential drive vehicle with plots of
+        estimation uncertainty.
+
+        Returns animation object for array of vehicle positions x with time
+        increments T [s], track ell [m].
+
+        To save the animation to a GIF file, set save_ani to True and provide a
+        filename (default 'animate_diffdrive.gif').
+        """
+        fig, ax = plt.subplots()
+        plt.xlabel(r"$x$ [m]")
+        plt.ylabel(r"$y$ [m]")
+        plt.axis("equal")
+        (estimated,) = ax.plot([], [], "--C1")
+        (line,) = ax.plot([], [], "C0")
+        (leftwheel,) = ax.fill([], [], color="k")
+        (rightwheel,) = ax.fill([], [], color="k")
+        (body,) = ax.fill([], [], color="C0", alpha=0.5)
+        (castor,) = ax.fill([], [], color="k")
+        time_text = ax.text(0.05, 0.9, "", transform=ax.transAxes)
+        s2 = chi2.isf(alpha, 2)
+
+        def init():
+            """Function that initializes the animation."""
+            estimated.set_data([], [])
+            line.set_data([], [])
+            leftwheel.set_xy(np.empty([5, 2]))
+            rightwheel.set_xy(np.empty([5, 2]))
+            body.set_xy(np.empty([36, 2]))
+            castor.set_xy(np.empty([36, 2]))
+            time_text.set_text("")
+            return estimated, line, leftwheel, rightwheel, body, castor, time_text
+
+        def movie(k):
+            """Function called at each step of the animation."""
+            # Draw the desired trajectory
+            estimated.set_data(x_hat[0, 0 : k + 1], x_hat[1, 0 : k + 1])
+            # Draw the path followed by the vehicle
+            line.set_data(x[0, 0 : k + 1], x[1, 0 : k + 1])
+            # Draw the differential drive vehicle
+            X_L, Y_L, X_R, Y_R, X_B, Y_B, X_C, Y_C = self.draw(
+                x[0, k], x[1, k], x[2, k]
+            )
+            leftwheel.set_xy(np.transpose([X_L, Y_L]))
+            rightwheel.set_xy(np.transpose([X_R, Y_R]))
+            body.set_xy(np.transpose([X_B, Y_B]))
+            castor.set_xy(np.transpose([X_C, Y_C]))
+            # Compute eigenvalues and eigenvectors to find axes for covariance ellipse
+            W, V = np.linalg.eig(P_hat[0:2, 0:2, k])
+            # Find the index of the largest and smallest eigenvalues
+            j_max = np.argmax(W)
+            j_min = np.argmin(W)
+            ell = patches.Ellipse(
+                (x_hat[0, k], x_hat[1, k]),
+                2 * np.sqrt(s2 * W[j_max]),
+                2 * np.sqrt(s2 * W[j_min]),
+                angle=np.arctan2(V[j_max, 1], V[j_max, 0]) * 180 / np.pi,
+                alpha=0.2,
+                color="C1",
+            )
+            ax.add_artist(ell)
+            # Add the simulation time
+            time_text.set_text(r"$t$ = %.1f s" % (k * T))
+            # Dynamically set the axis limits
+            ax.set_xlim(x[0, k] - 10 * self.ell, x[0, k] + 10 * self.ell)
+            ax.set_ylim(x[1, k] - 10 * self.ell, x[1, k] + 10 * self.ell)
+            ax.figure.canvas.draw()
+            # Return the objects to animate
+            return estimated, line, leftwheel, rightwheel, body, castor, time_text
 
         # Create the animation
         ani = animation.FuncAnimation(
