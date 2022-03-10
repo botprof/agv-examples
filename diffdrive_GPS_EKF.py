@@ -115,6 +115,11 @@ y = np.zeros((2, N))
 P_hat = np.zeros((3, 3, N))
 P_hat[:, :, 0] = P_guess
 
+# Compute some inputs to just drive around
+for k in range(1, N):
+    # Compute some inputs to steer the unicycle around
+    u_unicycle = np.array([2.0, np.sin(0.005 * T * k)])
+
 # %%
 # SIMULATE AND PLOT WITHOUT GPS
 
@@ -123,9 +128,6 @@ Q_hat = Q
 R_hat = 1e10 * R
 
 for k in range(1, N):
-
-    # Compute some inputs to steer the unicycle around
-    u_unicycle = np.array([2.0, np.sin(0.1 * T * k)])
 
     # Simulate the differential drive vehicle's motion
     u[:, k] = vehicle.uni2diff(u_unicycle)
@@ -272,9 +274,6 @@ Q_hat = Q
 R_hat = R
 
 for k in range(1, N):
-
-    # Compute some inputs to steer the unicycle around
-    u_unicycle = np.array([2.0, np.sin(0.1 * T * k)])
 
     # Simulate the differential drive vehicle's motion
     u[:, k] = vehicle.uni2diff(u_unicycle)
