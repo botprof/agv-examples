@@ -300,6 +300,7 @@ theta_range = 0.2
 # Plot the estimation error with covariance bounds
 sigma = np.zeros((3, N))
 fig4 = plt.figure(4)
+fig4.set_figheight(6.4)
 ax1 = plt.subplot(311)
 sigma[0, :] = np.sqrt(s1 * P_hat[0, 0, :])
 plt.fill_between(
