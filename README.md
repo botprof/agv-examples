@@ -68,7 +68,7 @@ Filename | Description
 
 Filename | Description
 -------- | -----------
-[diffdrive_GPS_EKF.py](diffdrive_GPS_EKF.py) | Simple EKF implementation for a differential drive vehicle with wheel encoders, an angular rate gyro, and GPS.
+[diffdrive_GNSS_EKF.py](diffdrive_GNSS_EKF.py) | Simple EKF implementation for a differential drive vehicle with wheel encoders, an angular rate gyro, and GNSS.
  
 ## Cite this Work
 

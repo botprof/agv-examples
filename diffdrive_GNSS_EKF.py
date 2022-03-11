@@ -1,5 +1,5 @@
 """
-Example diffdrive_GPS_EKF.py
+Example diffdrive_GNSS_EKF.py
 Author: Joshua A. Marshall <joshua.marshall@queensu.ca>
 GitHub: https://github.com/botprof/agv-examples
 """
@@ -35,7 +35,7 @@ vehicle = DiffDrive(ELL)
 # FUNCTION DEFINITIONS
 
 
-def unicycle_gps_ekf(u_m, y, Q, R, x, P, T):
+def unicycle_GNSS_ekf(u_m, y, Q, R, x, P, T):
 
     # Define some matrices for the a priori step
     G = np.array([[np.cos(x[2]), 0], [np.sin(x[2]), 0], [0, 1]])
@@ -105,7 +105,7 @@ R = np.power(5.0, 2) * np.identity(2)
 x_hat = np.zeros((3, N))
 x_hat[:, 0] = x_guess
 
-# Measured odometry (speed and angular rate) and GPS (x, y) signals
+# Measured odometry (speed and angular rate) and GNSS (x, y) signals
 u_m = np.zeros((2, N))
 y = np.zeros((2, N))
 
@@ -119,9 +119,9 @@ for k in range(1, N):
     u_unicycle = np.array([2.0, np.sin(0.005 * T * k)])
 
 # %%
-# SIMULATE AND PLOT WITHOUT GPS
+# SIMULATE AND PLOT WITHOUT GNSS
 
-# Set the process and measurement noise covariances to ignore GPS
+# Set the process and measurement noise covariances to ignore GNSS
 Q_hat = Q
 R_hat = 1e10 * R
 
@@ -137,12 +137,12 @@ for k in range(1, N):
     # Simulate the angular rate gyroscope measurement
     u_m[1, k] = u_unicycle[1] + np.power(Q[1, 1], 0.5) * np.random.randn(1)
 
-    # Simulate the GPS measurement
+    # Simulate the GNSS measurement
     y[0, k] = x[0, k] + np.power(R[0, 0], 0.5) * np.random.randn(1)
     y[1, k] = x[1, k] + np.power(R[1, 1], 0.5) * np.random.randn(1)
 
     # Run the EKF estimator
-    x_hat[:, k], P_hat[:, :, k] = unicycle_gps_ekf(
+    x_hat[:, k], P_hat[:, :, k] = unicycle_GNSS_ekf(
         u_m[:, k], y[:, k], Q_hat, R_hat, x_hat[:, k - 1], P_hat[:, :, k - 1], T
     )
 
@@ -152,7 +152,7 @@ plt.rc("text.latex", preamble=r"\usepackage{cmbright,amsmath,bm}")
 plt.rc("savefig", format="pdf")
 plt.rc("savefig", bbox="tight")
 
-# Plot results without GPS
+# Plot results without GNSS
 fig1 = plt.figure(1)
 ax1 = plt.subplot(311)
 plt.setp(ax1, xticklabels=[])
@@ -175,7 +175,7 @@ plt.ylabel(r"$x_3$ [rad]")
 plt.grid(color="0.95")
 
 # Save the plot
-plt.savefig("../agv-book/figs/ch5/diffdrive_GPS_EKF_fig1.pdf")
+plt.savefig("../agv-book/figs/ch5/diffdrive_GNSS_EKF_fig1.pdf")
 
 # Find the scaling factor for plotting 99% covariance bounds
 alpha = 0.01
@@ -230,37 +230,37 @@ plt.xlabel(r"$t$ [s]")
 plt.grid(color="0.95")
 
 # Save the plot
-plt.savefig("../agv-book/figs/ch5/diffdrive_GPS_EKF_fig2.pdf")
+plt.savefig("../agv-book/figs/ch5/diffdrive_GNSS_EKF_fig2.pdf")
 
 # Show the plots to the screen
 plt.show()
 
 # %%
-# PLOT THE NOISY GPS DATA
+# PLOT THE NOISY GNSS DATA
 
 fig3 = plt.figure(3)
 ax1 = plt.subplot(211)
-plt.plot(t, y[0, :], "C1", label="GPS")
+plt.plot(t, y[0, :], "C1", label="G")
 plt.plot(t, x[0, :], "C0", label="Actual")
 plt.ylabel(r"$x_1$ [m]")
 plt.grid(color="0.95")
 plt.setp(ax1, xticklabels=[])
 plt.legend()
 ax2 = plt.subplot(212)
-plt.plot(t, y[1, :], "C1", label="GPS")
+plt.plot(t, y[1, :], "C1", label="GNSS measurement")
 plt.plot(t, x[1, :], "C0", label="Actual")
 plt.ylabel(r"$x_2$ [m]")
 plt.xlabel(r"$t$ [s]")
 plt.grid(color="0.95")
 
 # Save the plot
-plt.savefig("../agv-book/figs/ch5/diffdrive_GPS_EKF_fig3.pdf")
+plt.savefig("../agv-book/figs/ch5/diffdrive_GNSS_EKF_fig3.pdf")
 
 # Show the plots to the screen
 plt.show()
 
 # %%
-# SIMULATE AND PLOT WITH GPS + ODOMETRY FUSION
+# SIMULATE AND PLOT WITH GNSS + ODOMETRY FUSION
 
 # Find the scaling factor for plotting covariance bounds
 alpha = 0.01
@@ -283,12 +283,12 @@ for k in range(1, N):
     # Simulate the angular rate gyroscope measurement
     u_m[1, k] = u_unicycle[1] + np.power(Q[1, 1], 0.5) * np.random.randn(1)
 
-    # Simulate the GPS measurement
+    # Simulate the GNSS measurement
     y[0, k] = x[0, k] + np.power(R[0, 0], 0.5) * np.random.randn(1)
     y[1, k] = x[1, k] + np.power(R[1, 1], 0.5) * np.random.randn(1)
 
     # Run the EKF estimator
-    x_hat[:, k], P_hat[:, :, k] = unicycle_gps_ekf(
+    x_hat[:, k], P_hat[:, :, k] = unicycle_GNSS_ekf(
         u_m[:, k], y[:, k], Q_hat, R_hat, x_hat[:, k - 1], P_hat[:, :, k - 1], T
     )
 
@@ -341,7 +341,7 @@ plt.xlabel(r"$t$ [s]")
 plt.grid(color="0.95")
 
 # Save the plot
-plt.savefig("../agv-book/figs/ch5/diffdrive_GPS_EKF_fig4.pdf")
+plt.savefig("../agv-book/figs/ch5/diffdrive_GNSS_EKF_fig4.pdf")
 
 # Show the plots to the screen
 plt.show()
@@ -351,7 +351,7 @@ plt.show()
 
 # Create and save the animation
 ani = vehicle.animate_estimation(
-    x, x_hat, P_hat, alpha, T, True, "../agv-book/gifs/ch5/diffdrive_GPS_EKF.gif"
+    x, x_hat, P_hat, alpha, T, True, "../agv-book/gifs/ch5/diffdrive_GNSS_EKF.gif"
 )
 
 # Show the movie to the screen
