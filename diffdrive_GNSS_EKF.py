@@ -240,7 +240,7 @@ plt.show()
 
 fig3 = plt.figure(3)
 ax1 = plt.subplot(211)
-plt.plot(t, y[0, :], "C1", label="G")
+plt.plot(t, y[0, :], "C1", label="GNSS measurement")
 plt.plot(t, x[0, :], "C0", label="Actual")
 plt.ylabel(r"$x_1$ [m]")
 plt.grid(color="0.95")
