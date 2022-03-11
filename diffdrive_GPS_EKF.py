@@ -11,9 +11,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mobotpy.models import DiffDrive
 from mobotpy.integration import rk_four
-from scipy import signal
 from scipy.stats import chi2
-from numpy.linalg import matrix_power
 from numpy.linalg import inv
 
 # Set the simulation time [s] and the sample period [s]
@@ -62,7 +60,7 @@ def unicycle_gps_ekf(u_m, y, Q, R, x, P, T):
     K = (
         P_new
         @ np.transpose(H)
-        @ np.linalg.inv(H @ P_new @ np.transpose(H) + M @ R @ np.transpose(M))
+        @ inv(H @ P_new @ np.transpose(H) + M @ R @ np.transpose(M))
     )
     x_new = x_new + K @ (y - C @ x_new)
     P_new = (np.identity(3) - K @ H) @ P_new
