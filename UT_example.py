@@ -154,8 +154,8 @@ x_sig[:, 3] = np.array([1, np.pi / 2 - np.sqrt(2 * (15 * np.pi / 180) ** 2)])
 # Pass the sigma points through the nonlinearity
 y_sig = np.zeros((2, 4))
 for k in range(0, 4):
-    y_sig[0, k] = x_sig[0, k] * np.cos(x_sig[1, k])
-    y_sig[1, k] = x_sig[0, k] * np.sin(x_sig[1, k])
+    y_sig[:, k] = h(x_sig[:, k])
+
 
 # Approximate the mean and covariance of the output using the UT
 y_UT_bar = np.zeros(2)
