@@ -142,7 +142,8 @@ plt.savefig("../agv-book/figs/ch5/UT_example_fig2.pdf")
 # Show the plot to the screen
 plt.show()
 
-# %% COMPUTE THE OUTPUT STATISTICS BY THE UT
+# %% 
+# COMPUTE THE OUTPUT STATISTICS BY THE UT
 
 # Set up the input sigma points
 x_sig = np.zeros((2, 4))
