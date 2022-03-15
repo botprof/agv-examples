@@ -156,7 +156,6 @@ y_sig = np.zeros((2, 4))
 for k in range(0, 4):
     y_sig[:, k] = h(x_sig[:, k])
 
-
 # Approximate the mean and covariance of the output using the UT
 y_UT_bar = np.zeros(2)
 for k in range(0, 4):
