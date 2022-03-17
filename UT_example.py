@@ -47,16 +47,9 @@ def h(x):
 for i in range(0, N):
     y[:, i] = h(x[:, i])
 
-# Compute the output statistics by brute force
-y_bar = np.zeros(2)
-y_bar[0] = np.mean(y[0, :])
-y_bar[1] = np.mean(y[1, :])
-y_std = np.zeros(2)
-y_std[0] = np.std(y[0, :])
-y_std[1] = np.std(y[1, :])
-P_y = np.zeros((2, 2))
-for k in range(0, N):
-    P_y = P_y + 1.0 / N * ((y[:, k] - y_bar) * np.transpose(y[:, k] - y_bar))
+# Compute the output statistics by brute force (using NumPy functions)
+y_bar = np.mean(y, axis=1)
+P_y = np.cov(y, ddof=0)
 
 # Change some plot settings (optional)
 plt.rc("text", usetex=True)
@@ -66,7 +59,7 @@ plt.rc("savefig", bbox="tight")
 
 # Plot the output
 fig1, ax1 = plt.subplots()
-plt.plot(y[0, :], y[1, :], "+")
+plt.plot(y[0, :], y[1, :], "C0+", alpha=0.2)
 plt.xlabel(r"$y_1$")
 plt.ylabel(r"$y_2$")
 plt.grid(color="0.95")
@@ -110,7 +103,7 @@ ell_actual = patches.Ellipse(
     2 * np.sqrt(s2 * P_y[1, 1]),
     angle=0,
     alpha=0.2,
-    color="C1",
+    color="C0",
 )
 ax2.add_artist(ell_actual)
 
@@ -121,13 +114,13 @@ ell_linear = patches.Ellipse(
     2 * np.sqrt(s2) * 0.02,
     angle=0,
     alpha=0.2,
-    color="C0",
+    color="C1",
 )
 ax2.add_artist(ell_linear)
 
 # Plot location of means
-plt.plot(y_bar[0], y_bar[1], "C1+")
-plt.plot(0, 1, "C0+")
+plt.plot(y_bar[0], y_bar[1], "C0+")
+plt.plot(0, 1, "C1+")
 
 # Set the axis limits based on the actual covariance
 ax2.set_xlim(y_bar[0] - np.sqrt(s2 * P_y[0, 0]), y_bar[0] + np.sqrt(s2 * P_y[0, 0]))
@@ -142,7 +135,7 @@ plt.savefig("../agv-book/figs/ch5/UT_example_fig2.pdf")
 # Show the plot to the screen
 plt.show()
 
-# %% 
+# %%
 # COMPUTE THE OUTPUT STATISTICS BY THE UT
 
 # Set up the input sigma points
@@ -158,14 +151,8 @@ for k in range(0, 4):
     y_sig[:, k] = h(x_sig[:, k])
 
 # Approximate the mean and covariance of the output using the UT
-y_UT_bar = np.zeros(2)
-for k in range(0, 4):
-    y_UT_bar = y_UT_bar + 1 / 4 * y_sig[:, k]
-P_UT = np.zeros((2, 2))
-for k in range(0, 4):
-    P_UT = P_UT + 1 / 4 * (y_sig[:, k] - y_UT_bar) * np.transpose(
-        y_sig[:, k] - y_UT_bar
-    )
+y_UT_bar = np.mean(y_sig, axis=1)
+P_UT = np.cov(y_sig, ddof=0)
 
 # Create the plot and axes
 fig3, ax3 = plt.subplots()
@@ -179,7 +166,7 @@ ell_actual = patches.Ellipse(
     2 * np.sqrt(s2 * P_y[1, 1]),
     angle=0,
     alpha=0.2,
-    color="C1",
+    color="C0",
 )
 ax3.add_artist(ell_actual)
 
@@ -190,7 +177,7 @@ ell_linear = patches.Ellipse(
     2 * np.sqrt(s2) * 0.02,
     angle=0,
     alpha=0.2,
-    color="C0",
+    color="C1",
 )
 ax3.add_artist(ell_linear)
 
@@ -201,13 +188,13 @@ ell_UT = patches.Ellipse(
     2 * np.sqrt(s2 * P_UT[1, 1]),
     angle=0,
     alpha=0.2,
-    color="C3",
+    color="C2",
 )
 ax3.add_artist(ell_UT)
 
 # Plot location of means
-plt.plot(y_bar[0], y_bar[1], "C1+")
-plt.plot(0, 1, "C0+")
+plt.plot(y_bar[0], y_bar[1], "C0+")
+plt.plot(0, 1, "C1+")
 plt.plot(y_UT_bar[0], y_UT_bar[1], "C2+")
 
 # Set the axis limits based on the actual covariance
