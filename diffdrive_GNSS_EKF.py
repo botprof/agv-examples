@@ -191,7 +191,7 @@ plt.fill_between(
     t,
     -sigma[0, :],
     sigma[0, :],
-    color="C1",
+    color="C0",
     alpha=0.2,
     label=str(100 * (1 - alpha)) + " \% Confidence",
 )
@@ -206,7 +206,7 @@ plt.fill_between(
     t,
     -sigma[1, :],
     sigma[1, :],
-    color="C1",
+    color="C0",
     alpha=0.2,
     label=str(100 * (1 - alpha)) + " \% Confidence",
 )
@@ -220,7 +220,7 @@ plt.fill_between(
     t,
     -sigma[2, :],
     sigma[2, :],
-    color="C1",
+    color="C0",
     alpha=0.2,
     label=str(100 * (1 - alpha)) + " \% Confidence",
 )
@@ -306,7 +306,7 @@ plt.fill_between(
     t,
     -sigma[0, :],
     sigma[0, :],
-    color="C1",
+    color="C0",
     alpha=0.2,
     label=str(100 * (1 - alpha)) + " \% Confidence",
 )
@@ -318,7 +318,7 @@ plt.grid(color="0.95")
 plt.legend()
 ax2 = plt.subplot(312)
 sigma[1, :] = np.sqrt(s1 * P_hat[1, 1, :])
-plt.fill_between(t, -sigma[1, :], sigma[1, :], color="C1", alpha=0.2)
+plt.fill_between(t, -sigma[1, :], sigma[1, :], color="C0", alpha=0.2)
 plt.plot(t, x[1, :] - x_hat[1, :], "C0")
 plt.ylabel(r"$e_2$ [m]")
 plt.setp(ax2, xticklabels=[])
@@ -330,7 +330,7 @@ plt.fill_between(
     t,
     -sigma[2, :],
     sigma[2, :],
-    color="C1",
+    color="C0",
     alpha=0.2,
     label=str(100 * (1 - alpha)) + " \% Confidence",
 )
