@@ -21,13 +21,13 @@ y = np.zeros((2, N))
 
 # Set the mean and covariance values for the inputs
 r_bar = 1.0
-theta = np.pi / 2.0
+theta_bar = np.pi / 2.0
 sigma_r = 0.02
 sigma_theta = 15.0
 
 # Generate random inputs for ground truth
 x[0, :] = r_bar + sigma_r * np.random.randn(1, N)
-x[1, :] = theta + sigma_theta * np.pi / 180.0 * np.random.randn(1, N)
+x[1, :] = theta_bar + sigma_theta * np.pi / 180.0 * np.random.randn(1, N)
 
 # %%
 # FUNCTION DEFINITIONS
@@ -38,6 +38,40 @@ def h(x):
     y[0] = x[0] * np.cos(x[1])
     y[1] = x[0] * np.sin(x[1])
     return y
+
+
+# Function that implements the unscented transformation
+def UT(f, x, P_x, kappa):
+    """Unscented transform of statistics."""
+
+    # Get the dimension of the random variable
+    n = np.shape(x)[0]
+
+    # Create array for sigma points
+    x_sig = np.zeros((n, 2 * n + 1))
+
+    # Find matrix square root
+    nP_sig = np.linalg.cholesky((n + kappa) * P_x)
+
+    # Generate the sigma points
+    x_sig[:, 0] = x
+    for i in range(0, n):
+        x_sig[:, i + 1] = x + nP_sig[:, i]
+        x_sig[:, n + i + 1] = x - nP_sig[:, i]
+
+    # Pass sigma points through the system model
+    y_sig = np.zeros((n, 2 * n + 1))
+    for i in range(0, 2 * n + 1):
+        y_sig[:, i] = f(x_sig[:, i])
+
+    # Compute the weighted mean and covariance from the transformed sigma points
+    w = 0.5 * kappa / (n + kappa) * np.ones(2 * n + 1)
+    w[0] = 2 * w[0]
+    y = np.average(y_sig, axis=1, weights=w)
+    P_y = np.cov(y_sig, ddof=0, aweights=w)
+
+    # Return the output mean an covariance
+    return y, P_y
 
 
 # %%
@@ -138,21 +172,14 @@ plt.show()
 # %%
 # COMPUTE THE OUTPUT STATISTICS BY THE UT
 
-# Set up the input sigma points
-x_sig = np.zeros((2, 4))
-x_sig[:, 0] = np.array([1 + np.sqrt(2 * 0.02 ** 2), np.pi / 2])
-x_sig[:, 1] = np.array([1, np.pi / 2 + np.sqrt(2 * (15 * np.pi / 180) ** 2)])
-x_sig[:, 2] = np.array([1 - np.sqrt(2 * 0.02 ** 2), np.pi / 2])
-x_sig[:, 3] = np.array([1, np.pi / 2 - np.sqrt(2 * (15 * np.pi / 180) ** 2)])
+KAPPA = 3 - np.shape(x)[0]
 
-# Pass the sigma points through the nonlinearity
-y_sig = np.zeros((2, 4))
-for k in range(0, 4):
-    y_sig[:, k] = h(x_sig[:, k])
-
-# Approximate the mean and covariance of the output using the UT
-y_UT_bar = np.mean(y_sig, axis=1)
-P_UT = np.cov(y_sig, ddof=0)
+y_u, P_u = UT(
+    h,
+    np.array([r_bar, theta_bar]),
+    np.diag([sigma_r ** 2, (sigma_theta * np.pi / 180.0) ** 2]),
+    KAPPA,
+)
 
 # Create the plot and axes
 fig3, ax3 = plt.subplots()
@@ -183,9 +210,9 @@ ax3.add_artist(ell_linear)
 
 # Create a covariance ellipse for the unscented transform of statistics
 ell_UT = patches.Ellipse(
-    (y_UT_bar[0], y_UT_bar[1]),
-    2 * np.sqrt(s2 * P_UT[0, 0]),
-    2 * np.sqrt(s2 * P_UT[1, 1]),
+    (y_u[0], y_u[1]),
+    2 * np.sqrt(s2 * P_u[0, 0]),
+    2 * np.sqrt(s2 * P_u[1, 1]),
     angle=0,
     alpha=0.2,
     color="C2",
@@ -195,7 +222,7 @@ ax3.add_artist(ell_UT)
 # Plot location of means
 plt.plot(y_bar[0], y_bar[1], "C0+")
 plt.plot(0, 1, "C1+")
-plt.plot(y_UT_bar[0], y_UT_bar[1], "C2+")
+plt.plot(y_u[0], y_u[1], "C2+")
 
 # Set the axis limits based on the actual covariance
 ax3.set_xlim(y_bar[0] - np.sqrt(s2 * P_y[0, 0]), y_bar[0] + np.sqrt(s2 * P_y[0, 0]))

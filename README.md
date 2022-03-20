@@ -1,4 +1,4 @@
-# Autonomous Ground Vehicle Navigation and Control Simulation Examples in Python
+# Autonomous Ground Vehicle Navigation & Control Simulation Examples in Python
 
 __THIS PROJECT IS CURRENTLY A WORK IN PROGRESS AND THUS THIS REPOSITORY IS INCOMPLETE__
 
@@ -69,7 +69,7 @@ Filename | Description
 Filename | Description
 -------- | -----------
 [diffdrive_GNSS_EKF.py](diffdrive_GNSS_EKF.py) | Simple EKF implementation for a differential drive vehicle with wheel encoders, an angular rate gyro, and GNSS.
-[UT_example.py](UT_example.py) | Introductory problem illustrating the unscented transform (UT) of statistics after [Julier and Uhlmann (2014)](https://doi.org/10.1109/JPROC.2003.823141).
+[UT_example.py](UT_example.py) | Introductory problem illustrating a basic unscented transform (UT) of statistics for Gaussian inputs, after [Julier and Uhlmann (2014)](https://doi.org/10.1109/JPROC.2003.823141).
  
 ## Cite this Work
 
