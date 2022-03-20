@@ -64,7 +64,7 @@ def UT(f, x, P_x, kappa):
     for i in range(0, 2 * n + 1):
         y_sig[:, i] = f(x_sig[:, i])
 
-    # Compute the weighted mean and covariance from the transformed sigma points
+    # Compute weighted mean and covariance from the transformed sigma points
     w = 0.5 * kappa / (n + kappa) * np.ones(2 * n + 1)
     w[0] = 2 * w[0]
     y = np.average(y_sig, axis=1, weights=w)
