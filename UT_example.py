@@ -70,6 +70,9 @@ def UT(f, x, P_x, kappa):
     y = np.average(y_sig, axis=1, weights=w)
     P_y = np.cov(y_sig, ddof=0, aweights=w)
 
+    # Help to keep the covariance matrix symmetrical
+    P_y = (P_y + np.transpose(P_y)) / 2
+
     # Return the output mean an covariance
     return y, P_y
 
