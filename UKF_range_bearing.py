@@ -33,7 +33,8 @@ ELL = 1.0
 # Create a vehicle object of type DiffDrive
 vehicle = DiffDrive(ELL)
 
-# %% BUILD A MAP OF FEATURES IN THE VEHICLE'S ENVIRONMENT
+# %% 
+# BUILD A MAP OF FEATURES IN THE VEHICLE'S ENVIRONMENT
 
 # Number of features
 M = 150
@@ -331,3 +332,5 @@ plt.legend()
 
 # Show the plot to the screen
 plt.show()
+
+# %%
