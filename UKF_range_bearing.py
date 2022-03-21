@@ -192,7 +192,6 @@ def UKF(x, P, v_m, y_m, a, f_map, Q, R, kappa):
         w_x = 0.5 / (n_x + kappa) * np.ones(2 * n_x + 1)
         w_x[0] = 2 * kappa * w_x[0]
         y_hat = np.average(y_hat_sig, axis=1, weights=w_x)
-
         P_y = np.zeros((2 * m_k, 2 * m_k))
         P_xy = np.zeros((n_x, 2 * m_k))
         for i in range(0, 2 * n_x + 1):
