@@ -81,11 +81,11 @@ def RandB_sensor(x, f_map, R):
     # Compute the range and bearing to all features within range
     if np.shape(a)[0] > 0:
         # Specify the size of the output
-        m = np.shape(a)[0]
-        y = np.zeros(2 * m)
+        m_k = np.shape(a)[0]
+        y = np.zeros(2 * m_k)
 
         # Compute the range and bearing to all features (including sensor noise)
-        for i in range(0, m):
+        for i in range(0, m_k):
             # Range measurement [m]
             y[2 * i] = np.sqrt(
                 (f_map[0, int(a[i])] - x[0]) ** 2 + (f_map[1, int(a[i])] - x[1]) ** 2
@@ -153,10 +153,10 @@ def UKF(x, P, v_m, y_m, a, f_map, Q, R, kappa):
     P_hat = P_xi[0:n_x, 0:n_x]
 
     # Find the number of observed features
-    m = np.shape(a)[0]
+    m_k = np.shape(a)[0]
 
     # Compute the a posteriori estimate if there are visible features
-    if m > 0:
+    if m_k > 0:
 
         # Compute a new set of sigma points using the latest x_hat and P_hat
         x_sig = np.zeros((n_x, 2 * n_x + 1))
@@ -166,10 +166,10 @@ def UKF(x, P, v_m, y_m, a, f_map, Q, R, kappa):
             x_sig[:, n_x + i + 1] = x_hat - P_sig[:, i]
 
         # Find the expected measurement corresponding to each sigma point
-        y_hat_sig = np.zeros((2 * m, 2 * n_x + 1))
+        y_hat_sig = np.zeros((2 * m_k, 2 * n_x + 1))
         for j in range(0, 2 * n_x + 1):
             # Compute the expected measurements
-            for i in range(0, m):
+            for i in range(0, m_k):
                 y_hat_sig[2 * i, j] = np.sqrt(
                     (f_map[0, int(a[i])] - x_sig[0, j]) ** 2
                     + (f_map[1, int(a[i])] - x_sig[1, j]) ** 2
@@ -192,18 +192,18 @@ def UKF(x, P, v_m, y_m, a, f_map, Q, R, kappa):
         w_x[0] = 2 * kappa * w_x[0]
         y_hat = np.average(y_hat_sig, axis=1, weights=w_x)
 
-        P_y = np.zeros((2 * m, 2 * m))
-        P_xy = np.zeros((n_x, 2 * m))
+        P_y = np.zeros((2 * m_k, 2 * m_k))
+        P_xy = np.zeros((n_x, 2 * m_k))
         for i in range(0, 2 * n_x + 1):
             y_diff = y_hat_sig[:, i] - y_hat
             x_diff = x_sig[:, i] - x_hat
-            P_y = P_y + w_x[i] * (y_diff.reshape((2 * m, 1))) @ np.transpose(
-                y_diff.reshape((2 * m, 1))
+            P_y = P_y + w_x[i] * (y_diff.reshape((2 * m_k, 1))) @ np.transpose(
+                y_diff.reshape((2 * m_k, 1))
             )
             P_xy = P_xy + w_x[i] * (x_diff.reshape((n_x, 1))) @ np.transpose(
-                y_diff.reshape((2 * m, 1))
+                y_diff.reshape((2 * m_k, 1))
             )
-        P_y = P_y + np.kron(np.identity(m), R)
+        P_y = P_y + np.kron(np.identity(m_k), R)
 
         # Help to keep the covariance matrix symmetrical
         P_y = (P_y + np.transpose(P_y)) / 2
