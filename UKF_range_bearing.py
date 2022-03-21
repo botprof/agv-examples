@@ -210,7 +210,7 @@ def UKF(x, P, v_m, y_m, a, f_map, Q, R, kappa):
         P_y = (P_y + np.transpose(P_y)) / 2
 
         # Update the estimate
-        K = P_xy @ np.linalg.inv(P_y)
+        K = P_xy @ inv(P_y)
         x_hat = x_hat + K @ (y_m - y_hat)
         P_hat = P_hat - K @ P_y @ np.transpose(K)
 
