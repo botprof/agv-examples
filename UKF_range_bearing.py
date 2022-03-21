@@ -331,5 +331,3 @@ plt.legend()
 
 # Show the plot to the screen
 plt.show()
-
-# %%
