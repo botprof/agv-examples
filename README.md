@@ -69,7 +69,8 @@ Filename | Description
 Filename | Description
 -------- | -----------
 [diffdrive_GNSS_EKF.py](diffdrive_GNSS_EKF.py) | Simple EKF implementation for a differential drive vehicle with wheel encoders, an angular rate gyro, and GNSS.
-[UT_example.py](UT_example.py) | Introductory problem illustrating a basic unscented transform (UT) of statistics for Gaussian inputs, after [Julier and Uhlmann (2014)](https://doi.org/10.1109/JPROC.2003.823141).
+[UT_example.py](UT_example.py) | Introductory problem illustrating a basic unscented transform (UT) of statistics for Gaussian inputs, after [Julier and Uhlmann (2004)](https://doi.org/10.1109/JPROC.2003.823141).
+[UKF_range_bearing.py](UKF_range_bearing.py) | Example implementation of a UKF for vehicle navigation by using odometry together with a range and bearing sensor, similar to the example on p. 290 of the book [Principles of Robot Motion: Theory, Algorithms, and Implementations (2005)](https://mitpress.mit.edu/books/principles-robot-motion).
  
 ## Cite this Work
 
