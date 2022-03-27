@@ -33,7 +33,7 @@ ELL = 1.0
 # Create a vehicle object of type DiffDrive
 vehicle = DiffDrive(ELL)
 
-# %% 
+# %%
 # BUILD A MAP OF FEATURES IN THE VEHICLE'S ENVIRONMENT
 
 # Number of features
@@ -299,6 +299,7 @@ plt.plot(t, x[0, :] - x_hat_UKF[0, :], "C0")
 plt.ylabel(r"$e_1$ [m]")
 plt.setp(ax1, xticklabels=[])
 ax1.set_ylim([-x_range, x_range])
+plt.grid(color="0.95")
 ax2 = plt.subplot(312)
 sigma[1, :] = np.sqrt(s1 * P_hat_UKF[1, 1, :])
 plt.fill_between(t, -sigma[1, :], sigma[1, :], color="C0", alpha=0.2)
@@ -306,6 +307,7 @@ plt.plot(t, x[1, :] - x_hat_UKF[1, :], "C0")
 plt.ylabel(r"$e_2$ [m]")
 plt.setp(ax2, xticklabels=[])
 ax2.set_ylim([-y_range, y_range])
+plt.grid(color="0.95")
 ax3 = plt.subplot(313)
 sigma[2, :] = np.sqrt(s1 * P_hat_UKF[2, 2, :])
 plt.fill_between(t, -sigma[2, :], sigma[2, :], color="C0", alpha=0.2)
@@ -314,6 +316,7 @@ plt.ylabel(r"$e_3$ [rad]")
 plt.setp(ax3, xticklabels=[])
 ax3.set_ylim([-theta_range, theta_range])
 plt.xlabel(r"$t$ [s]")
+plt.grid(color="0.95")
 
 # Plot the actual versus estimated positions on the map
 fig2, ax = plt.subplots()
@@ -327,6 +330,7 @@ ax.set_xlim([np.min(x_hat_UKF[0, :]) - 10, np.max(x_hat_UKF[0, :]) + 10])
 ax.set_ylim([np.min(x_hat_UKF[1, :]) - 10, np.max(x_hat_UKF[1, :]) + 10])
 plt.xlabel(r"$x_1$ [m]")
 plt.ylabel(r"$x_2$ [m]")
+plt.grid(color="0.95")
 plt.legend()
 
 # Show the plot to the screen

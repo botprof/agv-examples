@@ -132,6 +132,7 @@ s2 = chi2.isf(alpha, 2)
 fig2, ax2 = plt.subplots()
 plt.xlabel(r"$y_1$")
 plt.ylabel(r"$y_2$")
+plt.grid(color="0.95")
 
 # Create the 95 % confidence ellipse for the actual statistics
 ell_actual = patches.Ellipse(
@@ -188,6 +189,7 @@ y_u, P_u = UT(
 fig3, ax3 = plt.subplots()
 plt.xlabel(r"$y_1$")
 plt.ylabel(r"$y_2$")
+plt.grid(color="0.95")
 
 # Create a covariance ellipse for the actual statistics
 ell_actual = patches.Ellipse(
