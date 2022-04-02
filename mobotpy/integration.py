@@ -11,7 +11,7 @@ def rk_four(f, x, u, T):
 
     The function to integrate is f(x, u, params), where the state varables are
     collected in the variable x, we assume a constant input vector u over time
-    interval T, and params is an array of the system's parameters.
+    interval T > 0, and params is an array of the system's parameters.
     """
     k_1 = f(x, u)
     k_2 = f(x + T * k_1 / 2.0, u)
@@ -27,7 +27,7 @@ def euler_int(f, x, u, T):
 
     The function to integrate is f(x, u, params), where the state varables are
     collected in the variable x, we assume a constant input vector u over time
-    interval T, and params is an array of the system's parameters.
+    interval T > 0, and params is an array of the system's parameters.
     """
     x_new = x + T * f(x, u)
     return x_new
