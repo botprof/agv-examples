@@ -72,7 +72,7 @@ Filename | Description
 [UT_example.py](UT_example.py) | Introductory problem illustrating a basic unscented transform (UT) of statistics for Gaussian inputs, after [Julier and Uhlmann (2004)](https://doi.org/10.1109/JPROC.2003.823141).
 [UKF_range_bearing.py](UKF_range_bearing.py) | Example implementation of a UKF for vehicle navigation by using odometry together with a range and bearing sensor, similar to the example on p. 290 of the book [Principles of Robot Motion: Theory, Algorithms, and Implementations (2005)](https://mitpress.mit.edu/books/principles-robot-motion).
 [PF_range.py](PF_range.py) | Example implementation of a particle filter (PF) for vehicle navigation by using odometry together with a range sensor.  The example starts by showing particle clusters that grow with only dead reckoning, followed by a range-only sensor example with basic resampling.
-[vanilla_SLAM.py][vanilla_SLAM.py] | Simple 2D SLAM example illustrating the basic notion of including feature measurements as part of the KF state.
+[vanilla_SLAM.py](vanilla_SLAM.py) | Simple 2D SLAM example illustrating the basic notion of including feature measurements as part of the KF state.
  
 ## Cite this Work
 
