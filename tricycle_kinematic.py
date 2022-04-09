@@ -41,7 +41,6 @@ def tricycle_f(x, u):
 # %%
 # RUN SIMULATION
 
-
 # Initialize arrays that will be populated with our inputs and states
 x = np.zeros((4, N))
 u = np.zeros((2, N))
