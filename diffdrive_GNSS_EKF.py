@@ -95,7 +95,7 @@ P_guess = np.diag(np.square([5.0, -5.0, 0.1]))
 # Set the true process and measurement noise covariances
 Q = np.diag(
     [
-        1.0 / (2.0 * np.power(T, 2)) * np.power(0.2 * np.pi / ((2 ** 12) * 3), 2),
+        1.0 / (np.power(T, 2)) * np.power(0.2 * np.pi / ((2 ** 12) * 3), 2),
         np.power(0.001, 2),
     ]
 )
