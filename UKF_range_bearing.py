@@ -140,7 +140,7 @@ def UKF(x, P, v_m, y_m, a, f_map, Q, R, kappa):
             vehicle.f, xi_sig[0:n_x, i], xi_sig[n_x:n_xi, i], T
         )
 
-    # Compute the mean and convariance from the transformed sigma points
+    # Compute the mean and covariance from the transformed sigma points
     w_xi = 0.5 / (n_xi + kappa) * np.ones(2 * n_xi + 1)
     w_xi[0] = 2 * kappa * w_xi[0]
     xi = np.average(xi_sig_hat, axis=1, weights=w_xi)
