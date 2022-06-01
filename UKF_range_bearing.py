@@ -226,7 +226,7 @@ def UKF(x, P, v_m, y_m, a, f_map, Q, R, kappa):
 Q = np.diag([SIGMA_SPEED ** 2, SIGMA_SPEED ** 2])
 R = np.diag([SIGMA_RANGE ** 2, SIGMA_BEARING ** 2])
 
-# Initialize state, intput, and estimator variables
+# Initialize state, input, and estimator variables
 x = np.zeros((3, N))
 v_m = np.zeros((2, N))
 x_hat_UKF = np.zeros((3, N))
