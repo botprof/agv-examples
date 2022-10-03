@@ -25,7 +25,7 @@ ELL_W = 2.50
 ELL_T = 1.75
 
 # %%
-# MODEL DEFINTION
+# MODEL DEFINITION
 
 
 def tricycle_f(x, u):
