@@ -18,7 +18,7 @@ T = 0.4
 t = np.arange(0, SIM_TIME, T)
 N = np.size(t)
 
-# %% FUNCTION DEFNITIONS
+# %% FUNCTION DEFINITIONS
 
 
 def vehicle(x, u, T):
