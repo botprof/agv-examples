@@ -18,7 +18,7 @@ T = 0.1
 t = np.arange(0, SIM_TIME, T)
 N = np.size(t)
 
-# %% VEHICLE MODEL DEFINTION
+# %% VEHICLE MODEL DEFINITION
 
 # Set the mass of the vehicle [kg]
 M = 10.0

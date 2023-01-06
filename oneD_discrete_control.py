@@ -34,7 +34,7 @@ G = np.array([[T ** 2 / (2 * M)], [T / M]])
 # Find gain matrix K that places the poles at lambda_z
 K = signal.place_poles(F, G, lambda_z)
 
-# %% FUNCTION DEFINTIONS
+# %% FUNCTION DEFINITIONS
 
 
 def vehicle(x, u, F, G):

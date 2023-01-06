@@ -39,7 +39,7 @@ K = signal.place_poles(F, G, lambda_zc)
 lambda_zo = np.array([0.5, 0.4])
 LT = signal.place_poles(F.T, H.T, lambda_zo)
 
-# %% FUNCTION DEFINTIONS
+# %% FUNCTION DEFINITIONS
 
 
 def vehicle(x, u, F, G):
