@@ -83,7 +83,7 @@ You may wish to cite this work in your publications.  Use the appropriate [relea
 You might also use the BibTeX entry below.
 
 ```latex
-@misc{Marshall2021,
+@misc{Marshall2023,
   author = {Marshall, Joshua A.},
   title = {Autonomous Ground Vehicle Navigation and Control Simulation Examples in Python, vX.X.X},
   year = {2022},
