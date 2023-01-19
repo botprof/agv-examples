@@ -4,7 +4,8 @@ Author: Joshua A. Marshall <joshua.marshall@queensu.ca>
 GitHub: https://github.com/botprof/agv-examples
 """
 
-# %% SIMULATION SETUP
+# %% 
+# SIMULATION SETUP
 
 from scipy import signal
 import numpy as np
@@ -25,7 +26,8 @@ M = 10.0
 lambda_sc = np.roots([1, 2 * ZETA * OMEGA_N, OMEGA_N ** 2])
 lambda_zc = np.exp(lambda_sc * T)
 
-# %% PARAMETERS
+# %% 
+# PARAMETERS
 
 # Function that models the vehicle and sensor(s) in discrete time
 F = np.array([[1, T], [0, 1]])
@@ -39,7 +41,8 @@ K = signal.place_poles(F, G, lambda_zc)
 lambda_zo = np.array([0.5, 0.4])
 LT = signal.place_poles(F.T, H.T, lambda_zo)
 
-# %% FUNCTION DEFINITIONS
+# %% 
+# FUNCTION DEFINITIONS
 
 
 def vehicle(x, u, F, G):
@@ -60,7 +63,8 @@ def observer(x_hat, u, y, F, G, H, L):
     return x_hat_new
 
 
-# %% RUN SIMULATION
+# %% 
+# RUN SIMULATION
 
 # Create an array of time values [s]
 SIM_TIME = 20.0
@@ -88,7 +92,8 @@ for k in range(1, N):
     x[:, k] = vehicle(x[:, k - 1], u[k - 1], F, G)
     u[k] = controller(x_hat[:, k], K.gain_matrix)
 
-# %% MAKE A PLOT
+# %% 
+# MAKE A PLOT
 
 # Change some plot settings (optional)
 plt.rc("text", usetex=True)
@@ -120,7 +125,8 @@ plt.xlabel(r"$t$ [s]")
 # Save the plot
 plt.savefig("../agv-book/figs/ch2/oneD_combined_control_fig1.pdf")
 
-# %% MAKE AN ANIMATION
+# %% 
+# MAKE AN ANIMATION
 
 # Set the side length of the vehicle [m]
 LENGTH = 1.0

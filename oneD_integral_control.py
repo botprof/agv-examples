@@ -4,14 +4,16 @@ Author: Joshua A. Marshall <joshua.marshall@queensu.ca>
 GitHub: https://github.com/botprof/agv-examples
 """
 
-# %% SIMULATION SETUP
+# %% 
+# SIMULATION SETUP
 
 from scipy import signal
 import numpy as np
 import matplotlib.pyplot as plt
 from mobotpy.models import Cart
 
-# %% PARAMETERS
+# %% 
+# PARAMETERS
 
 # Set some variables that describe the desired behaviour
 ZETA = 1.1
@@ -39,7 +41,8 @@ B = np.vstack((G, 0))
 # Find gain matrix K that places the poles inside the unit disk
 K = signal.place_poles(A, B, lambda_z)
 
-# %% FUNCTION DEFINITIONS
+# %% 
+# FUNCTION DEFINITIONS
 
 
 def vehicle(x, u, F, G):
@@ -60,7 +63,8 @@ def controller(x, xi, K):
     return u
 
 
-# %% RUN SIMULATION
+# %% 
+# RUN SIMULATION
 
 # Create an array of time values [s]
 SIM_TIME = 15.0
@@ -83,7 +87,8 @@ for k in range(1, N):
     xi[k] = integrator(x[:, k - 1], xi[k - 1])
     u[k] = controller(x[:, k], xi[k], K.gain_matrix)
 
-# %% MAKE A PLOT
+# %% 
+# MAKE A PLOT
 
 # Change some plot settings (optional)
 plt.rc("text", usetex=True)
@@ -112,7 +117,8 @@ plt.xlabel(r"$t$ [s]")
 # Save the plot
 plt.savefig("../agv-book/figs/ch2/oneD_integral_control_fig1.pdf")
 
-# %% MAKE AN ANIMATION
+# %% 
+# MAKE AN ANIMATION
 
 # Set the side length of the vehicle [m]
 LENGTH = 1.0

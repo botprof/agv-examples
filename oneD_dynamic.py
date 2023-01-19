@@ -4,7 +4,8 @@ Author: Joshua A. Marshall <joshua.marshall@queensu.ca>
 GitHub: https://github.com/botprof/agv-examples
 """
 
-# %% SIMULATION SETUP
+# %% 
+# SIMULATION SETUP
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -18,7 +19,8 @@ T = 0.04
 t = np.arange(0, SIM_TIME, T)
 N = np.size(t)
 
-# %% FUNCTION DEFINITIONS
+# %% 
+# FUNCTION DEFINITIONS
 
 # Set the mass of the vehicle [kg]
 M = 10.0
@@ -34,7 +36,8 @@ def vehicle(x, u, F, G):
     return x_new
 
 
-# %% RUN SIMULATION
+# %% 
+# RUN SIMULATION
 
 # Initialize arrays that will be populated with our inputs and states
 x = np.zeros((2, N))
@@ -50,7 +53,8 @@ for k in range(1, N):
     x[:, k] = vehicle(x[:, k - 1], u[k - 1], F, G)
     u[k] = np.sin(k * T)
 
-# %% MAKE A PLOT
+# %% 
+# MAKE A PLOT
 
 # Change some plot settings (optional)
 plt.rc("text", usetex=True)
@@ -79,7 +83,8 @@ plt.xlabel(r"$t$ [s]")
 # Save the plot
 plt.savefig("../agv-book/figs/ch2/oneD_dynamic_fig1.pdf")
 
-# %% MAKE AN ANIMATION
+# %% 
+# MAKE AN ANIMATION
 
 # Set the side length of the vehicle [m]
 LENGTH = 1.0
@@ -94,3 +99,8 @@ ani = vehicle.animate(x[0, :], T, True, "../agv-book/gifs/ch2/oneD_dynamic.gif")
 
 # Show all the plots to the screen
 plt.show()
+
+# Show animation in HTML output if you are using IPython or Jupyter notebooks
+# plt.rc('animation', html='jshtml')
+# display(ani)
+# plt.close()

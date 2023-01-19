@@ -4,7 +4,8 @@ Author: Joshua A. Marshall <joshua.marshall@queensu.ca>
 GitHub: https://github.com/botprof/agv-examples
 """
 
-# %% SIMULATION SETUP
+# %% 
+# SIMULATION SETUP
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -18,7 +19,8 @@ T = 0.04
 t = np.arange(0, SIM_TIME, T)
 N = np.size(t)
 
-# %% FUNCTION DEFINITIONS
+# %% 
+# FUNCTION DEFINITIONS
 
 
 def vehicle(x, u, T):
@@ -27,7 +29,8 @@ def vehicle(x, u, T):
     return x_new
 
 
-# %% RUN SIMULATION
+# %% 
+# RUN SIMULATION
 
 # Initialize arrays that will be populated with our inputs and states
 x = np.zeros(N)
@@ -46,7 +49,8 @@ for k in range(1, N):
     x[k] = vehicle(x[k - 1], u[k - 1], T)
     u[k] = k_P * (x_d - x[k])
 
-# %% MAKE A PLOT
+# %% 
+# MAKE A PLOT
 
 # Change some plot settings (optional)
 plt.rc("text", usetex=True)
@@ -70,7 +74,8 @@ plt.xlabel(r"$t$ [s]")
 # Save the plot
 plt.savefig("../agv-book/figs/ch2/oneD_kinematic_control_fig1.pdf")
 
-# %% MAKE AN ANIMATION
+# %% 
+# MAKE AN ANIMATION
 
 # Set the side length of the vehicle [m]
 LENGTH = 1.0
@@ -85,3 +90,8 @@ ani = vehicle.animate(x, T, True, "../agv-book/gifs/ch2/oneD_kinematic_control.g
 
 # Show all the plots to the screen
 plt.show()
+
+# Show animation in HTML output if you are using IPython or Jupyter notebooks
+# plt.rc('animation', html='jshtml')
+# display(ani)
+# plt.close()
