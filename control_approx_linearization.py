@@ -30,7 +30,7 @@ R = 10
 # Angular rate [rad/s] at which to traverse the circle
 OMEGA = 0.1
 
-# Precompute the desired trajectory
+# Pre-compute the desired trajectory
 x_d = np.zeros((3, N))
 u_d = np.zeros((2, N))
 for k in range(0, N):
@@ -55,7 +55,7 @@ vehicle = DiffDrive(ELL)
 # Initial conditions
 x_init = np.zeros(3)
 x_init[0] = 0.0
-x_init[1] = 3.0
+x_init[1] = 5.0
 x_init[2] = 0.0
 
 # Setup some arrays
