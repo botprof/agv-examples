@@ -61,7 +61,7 @@ class Cart:
         (polygon,) = ax.fill([], [], "C0", alpha=0.5)
         (line,) = plt.plot([], [], "ko")
         time_text = ax.text(0.05, 0.9, "", transform=ax.transAxes)
-        # Initialization funcion
+        # Initialization function
 
         def init():
             polygon.set_xy(np.empty([5, 2]))
