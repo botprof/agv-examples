@@ -13,7 +13,7 @@ from scipy.stats import chi2
 from matplotlib import patches
 
 # Set the number of points to simulate for ground truth
-N = 1000000
+N = 100000
 
 # Initialized input and output arrays
 x = np.zeros((2, N))
