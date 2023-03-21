@@ -223,7 +223,7 @@ def diffdrive_pf(x_pf, v, y, a, f_map, Q, R, T):
                     + (f_map[1, int(a[i])] - x_pf_new[1, j]) ** 2
                 )
 
-            # Copute the relative likelihoods
+            # Compute the relative likelihoods
             y_dif = y - y_hat[:, j]
             x_likelihood[j] = (
                 1.0
