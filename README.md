@@ -78,7 +78,7 @@ Filename | Description
 
 You may wish to cite this work in your publications.  Use the appropriate [release version vX.X.X](https://github.com/botprof/agv-examples/releases) in your reference.
 
-> Joshua A. Marshall, Autonomous Ground Vehicle Navigation and Control Simulation Examples in Python, vX.X.X, 2022, URL: [https://github.com/botprof/agv-examples](https://github.com/botprof/agv-examples).
+> Joshua A. Marshall, Autonomous Ground Vehicle Navigation and Control Simulation Examples in Python, vX.X.X, 2023, URL: [https://github.com/botprof/agv-examples](https://github.com/botprof/agv-examples).
 
 You might also use the BibTeX entry below.
 
@@ -86,13 +86,13 @@ You might also use the BibTeX entry below.
 @misc{Marshall2023,
   author = {Marshall, Joshua A.},
   title = {Autonomous Ground Vehicle Navigation and Control Simulation Examples in Python, vX.X.X},
-  year = {2022},
+  year = {2023},
   howpublished = {\url{https://github.com/botprof/agv-examples}}
 }
 ```
 ## Contact the Author
 
-[Joshua A. Marshall](https://www.ece.queensu.ca/people/j-marshall), PhD, PEng  
+[Joshua A. Marshall](https://offroad.engineering.queensu.ca/people/joshua-marshall/), PhD, PEng  
 [Department of Electrical & Computer Engineering](https://www.ece.queensu.ca)  
 [Queen's University](http://www.queensu.ca)  
 Kingston, ON K7L 3N6 Canada  
