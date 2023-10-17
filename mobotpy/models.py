@@ -788,26 +788,28 @@ class LongitudinalUSV:
         The centre of the vessel is (x, y), the vehicle has pitch angle
         theta, and the vehicle's hull length is ell.
 
-        Returns X_L, Y_L, X_R, Y_R, X_BD, Y_BD, X_C, Y_C, where L is for the
-        left wheel, R for the right wheel, B for the body, and C for the caster.
+        Returns X_ ...
         """
+        L_TO_W = 4
+
         # Body
         X_B, Y_B = graphics.draw_rectangle(
-            x, y, 0.5 * self.ell, 0.25 * self.ell, theta,
+            x, y, self.ell, (1/L_TO_W) * self.ell, theta,
         )
 
         # Mast/top of USV
         X_M, Y_M = graphics.draw_triangle(
-            x + 0.5 * self.ell * np.cos(theta),
-            y + 0.5 * self.ell * np.sin(theta),
+            x - (1/(2*L_TO_W)) * self.ell * np.sin(theta),
+            y + (1/(2*L_TO_W)) * self.ell * np.cos(theta),
             self.ell,
             0.5 * self.ell,
-            theta + np.pi / 2,
+            theta - np.pi / 2,
         )
         # Return the arrays of points
         return X_B, Y_B, X_M, Y_M
 
-    def animate(self, x, T, save_ani=False, filename="animate_longitudinalUSV.gif"):
+    def animate(self, x, T, save_ani=False, filename="animate_longitudinalUSV.gif",
+                relative=False):
         """Create an animation of an uncrewed surface vessel (longitudinal model).
 
         Returns animation object for array of vehicle positions x with time
@@ -820,37 +822,45 @@ class LongitudinalUSV:
         plt.xlabel(r"$x$ [m]")
         plt.ylabel(r"$y$ [m]")
         plt.axis("equal")
-        (line,) = ax.plot([], [], "C0")
-        (body,) = ax.fill([], [], color="C0")
-        (mast,) = ax.fill([], [], color="k")
+        (body,) = ax.fill([], [], color="black")
+        (mast,) = ax.fill([], [], color="orange")
+        (wave,) = ax.plot([], [], color="silver")
+        water = ax.fill_between([], [], [], color="deepskyblue", alpha=0.5)
         time_text = ax.text(0.05, 0.9, "", transform=ax.transAxes)
 
         def init():
             """Function that initializes the animation."""
-            line.set_data([], [])
-            body.set_xy(np.empty([36, 2]))
-            mast.set_xy(np.empty([36, 2]))
+            # line.set_data([], [])
+            body.set_xy(np.empty([5, 2]))
+            mast.set_xy(np.empty([4, 2]))
+            wave.set_data([], [])
+            water.set_paths([])
             time_text.set_text("")
-            return line, body, mast, time_text
+            return body, mast, wave, water, time_text
 
         def movie(k):
             """Function called at each step of the animation."""
             # Draw the path followed by the vehicle
-            line.set_data(x[0, 0: k + 1], x[1, 0: k + 1])
+            # line.set_data(x[0, 0: k + 1], x[1, 0: k + 1])
             # Draw the differential drive vehicle
             X_B, Y_B, X_M, Y_M = self.draw(
                 x[0, k], x[1, k], x[2, k]
             )
             body.set_xy(np.transpose([X_B, Y_B]))
-            mast.set_xy(np.transpose([X_C, Y_C]))
+            mast.set_xy(np.transpose([X_M, Y_M]))
             # Add the simulation time
             time_text.set_text(r"$t$ = %.1f s" % (k * T))
             # Dynamically set the axis limits
-            ax.set_xlim(x[0, k] - 10 * self.ell, x[0, k] + 10 * self.ell)
-            ax.set_ylim(x[1, k] - 10 * self.ell, x[1, k] + 10 * self.ell)
+            ax.axis('equal')
+            if relative:
+                ax.set(xlim=(x[0, k] - 10 * self.ell, x[0, k] + 10 * self.ell),
+                       ylim=(x[1, k] - 10 * self.ell, x[1, k] + 10 * self.ell))
+            else:
+                ax.set(xlim=(x[0, 0] - 10 * self.ell, x[0, 0] + 10 * self.ell),
+                       ylim=(x[1, 0] - 10 * self.ell, x[1, 0] + 10 * self.ell))
             ax.figure.canvas.draw()
             # Return the objects to animate
-            return line, body, mast, time_text
+            return body, mast, time_text
 
         # Create the animation
         ani = animation.FuncAnimation(
@@ -858,7 +868,7 @@ class LongitudinalUSV:
             movie,
             np.arange(1, len(x[0, :]), max(1, int(1 / T / 10))),
             init_func=init,
-            interval=T * 1000,
+            interval=T * 1000 * max(1, int(1 / T / 10)),
             blit=True,
             repeat=False,
         )
