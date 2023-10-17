@@ -12,16 +12,16 @@ import matplotlib.pyplot as plt
 from mobotpy.models import LongitudinalUSV
 
 # Set the simulation time [s] and the sample period [s]
-SIM_TIME = 30.0
+SIM_TIME = 5.0
 T = 0.04
 
 # Create an array of time values [s]
 t = np.arange(0, SIM_TIME, T)
 N = np.size(t)
 
+
 # %%
 # FUNCTION DEFINITIONS
-
 # Set the mass of the vehicle [kg]
 m = 50.0
 
@@ -42,8 +42,28 @@ def controller(x, K):
     return u
 
 
+def wave(x, t):
+    # Define the parameters of the sinusoidal array
+    amplitude = 1.0  # [m]
+    phase = np.pi / 2  # [rad]
+
+    time_frequency = 0.2  # [1/s]
+    space_frequency = 0.2  # [1/m]
+
+    # Find height of wave
+    height = amplitude * \
+        np.sin(2*np.pi*(time_frequency*t + space_frequency*x) + phase)
+
+    # Find slope of wave in space
+    slope_x = 2*np.pi*space_frequency*amplitude * \
+        np.cos(2*np.pi*(time_frequency*t + space_frequency*x) + phase)
+    angle_space = np.arctan2(slope_x, 1)
+
+    return height, angle_space
+
 # %%
 # RUN SIMULATION
+
 
 # Initialize arrays that will be populated with our inputs and states
 x = np.zeros((2, N))
@@ -93,6 +113,21 @@ plt.xlabel(r"$t$ [s]")
 # plt.savefig("../agv-book/figs/ch2/oneD_dynamic_control_fig1.pdf")
 
 # %%
+# # TEMPORARY ADDITION OF PITCH FOR ANIMATION
+# # Define the parameters of the sinusoidal array
+# amplitude = np.pi / 4
+# frequency = 0.2
+# phase = 0.0
+# num_samples = x.shape[1]
+
+# # Create the sinusoidal array
+# t = np.linspace(0, SIM_TIME, num_samples)
+# sin_array = amplitude * np.sin(2*np.pi*frequency*t + phase)
+
+x = np.zeros((2, N))
+x[1, :], sin_array = wave(x[0, :], t)
+
+# %%
 # MAKE AN ANIMATION
 
 # Set the side length of the vehicle [m]
@@ -102,7 +137,8 @@ LENGTH = 2.0
 vehicle = LongitudinalUSV(LENGTH)
 
 # Create and save the animation
-# ani = vehicle.animate(x[0, :], T, True, "../agv-book/gifs/ch2/oneD_dynamic_control.gif")
+new_x = np.vstack((x, sin_array))
+ani = vehicle.animate(new_x, T)
 
 # %%
 
@@ -110,6 +146,8 @@ vehicle = LongitudinalUSV(LENGTH)
 plt.show()
 
 # Show animation in HTML output if you are using IPython or Jupyter notebooks
-# plt.rc('animation', html='jshtml')
-# display(ani)
-# plt.close()
+plt.rc('animation', html='jshtml')
+display(ani)
+plt.close()
+
+# %%
