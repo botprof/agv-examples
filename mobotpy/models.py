@@ -220,7 +220,7 @@ class DiffDrive:
         def movie(k):
             """Function called at each step of the animation."""
             # Draw the path followed by the vehicle
-            line.set_data(x[0, 0 : k + 1], x[1, 0 : k + 1])
+            line.set_data(x[0, 0: k + 1], x[1, 0: k + 1])
             # Draw the differential drive vehicle
             X_L, Y_L, X_R, Y_R, X_B, Y_B, X_C, Y_C = self.draw(
                 x[0, k], x[1, k], x[2, k]
@@ -291,9 +291,9 @@ class DiffDrive:
         def movie(k):
             """Function called at each step of the animation."""
             # Draw the desired trajectory
-            desired.set_data(xd[0, 0 : k + 1], xd[1, 0 : k + 1])
+            desired.set_data(xd[0, 0: k + 1], xd[1, 0: k + 1])
             # Draw the path followed by the vehicle
-            line.set_data(x[0, 0 : k + 1], x[1, 0 : k + 1])
+            line.set_data(x[0, 0: k + 1], x[1, 0: k + 1])
             # Draw the differential drive vehicle
             X_L, Y_L, X_R, Y_R, X_B, Y_B, X_C, Y_C = self.draw(
                 x[0, k], x[1, k], x[2, k]
@@ -372,9 +372,9 @@ class DiffDrive:
         def movie(k):
             """Function called at each step of the animation."""
             # Draw the desired trajectory
-            estimated.set_data(x_hat[0, 0 : k + 1], x_hat[1, 0 : k + 1])
+            estimated.set_data(x_hat[0, 0: k + 1], x_hat[1, 0: k + 1])
             # Draw the path followed by the vehicle
-            line.set_data(x[0, 0 : k + 1], x[1, 0 : k + 1])
+            line.set_data(x[0, 0: k + 1], x[1, 0: k + 1])
             # Draw the differential drive vehicle
             X_L, Y_L, X_R, Y_R, X_B, Y_B, X_C, Y_C = self.draw(
                 x[0, k], x[1, k], x[2, k]
@@ -542,7 +542,7 @@ class Tricycle:
         def movie(k):
             """The function called at each step of the animation."""
             # Draw the path followed by the vehicle
-            line.set_data(x[0, 0 : k + 1], x[1, 0 : k + 1])
+            line.set_data(x[0, 0: k + 1], x[1, 0: k + 1])
             # Draw the tricycle vehicle
             X_L, Y_L, X_R, Y_R, X_F, Y_F, X_B, Y_B = self.draw(
                 x[0, k], x[1, k], x[2, k], x[3, k]
@@ -628,10 +628,12 @@ class Ackermann:
             The left and right wheel angles (phi_L, phi_R).
         """
         phi_L = np.arctan(
-            2 * self.ell_W * np.tan(x[3]) / (2 * self.ell_W - self.ell_T * np.tan(x[3]))
+            2 * self.ell_W *
+            np.tan(x[3]) / (2 * self.ell_W - self.ell_T * np.tan(x[3]))
         )
         phi_R = np.arctan(
-            2 * self.ell_W * np.tan(x[3]) / (2 * self.ell_W + self.ell_T * np.tan(x[3]))
+            2 * self.ell_W *
+            np.tan(x[3]) / (2 * self.ell_W + self.ell_T * np.tan(x[3]))
         )
         ackermann_angles = np.array([phi_L, phi_R])
         return ackermann_angles
@@ -731,7 +733,7 @@ class Ackermann:
         def movie(k):
             """The function called at each step of the animation."""
             # Draw the path followed by the vehicle
-            line.set_data(x[0, 0 : k + 1], x[1, 0 : k + 1])
+            line.set_data(x[0, 0: k + 1], x[1, 0: k + 1])
             # Draw the Ackermann steered drive vehicle
             X_BL, Y_BL, X_BR, Y_BR, X_FL, Y_FL, X_FR, Y_FR, X_BD, Y_BD = self.draw(
                 x[0, k], x[1, k], x[2, k], phi_L[k], phi_R[k]
@@ -749,6 +751,106 @@ class Ackermann:
             ax.figure.canvas.draw()
             # Return the objects to animate
             return line, BLwheel, BRwheel, FLwheel, FRwheel, body, time_text
+
+        # Create the animation
+        ani = animation.FuncAnimation(
+            fig,
+            movie,
+            np.arange(1, len(x[0, :]), max(1, int(1 / T / 10))),
+            init_func=init,
+            interval=T * 1000,
+            blit=True,
+            repeat=False,
+        )
+        if save_ani == True:
+            ani.save(filename, fps=min(1 / T, 10))
+        # Return the figure object
+        return ani
+
+
+class LongitudinalUSV:
+    """3 DOF model of a USV (Surge, Heave, Pitch) for Longitudinal Control.
+
+    Parameters
+    ----------
+    ell : float
+        The hull length of the vehicle [m].
+    """
+
+    def __init__(self, ell):
+        """Constructor method."""
+        self.ell = ell
+
+    def draw(self, x, y, theta):
+        """
+        Finds points that draw an uncrewed surface vessel.
+
+        The centre of the vessel is (x, y), the vehicle has pitch angle
+        theta, and the vehicle's hull length is ell.
+
+        Returns X_L, Y_L, X_R, Y_R, X_BD, Y_BD, X_C, Y_C, where L is for the
+        left wheel, R for the right wheel, B for the body, and C for the caster.
+        """
+        # Body
+        X_B, Y_B = graphics.draw_rectangle(
+            x, y, 0.5 * self.ell, 0.25 * self.ell, theta,
+        )
+
+        # Mast/top of USV
+        X_M, Y_M = graphics.draw_triangle(
+            x + 0.5 * self.ell * np.cos(theta),
+            y + 0.5 * self.ell * np.sin(theta),
+            self.ell,
+            0.5 * self.ell,
+            theta + np.pi / 2,
+        )
+        # Return the arrays of points
+        return X_B, Y_B, X_M, Y_M
+
+    def animate(self, x, T, save_ani=False, filename="animate_longitudinalUSV.gif"):
+        """Create an animation of an uncrewed surface vessel (longitudinal model).
+
+        Returns animation object for array of vehicle positions x with time
+        increments T [s], track ell [m].
+
+        To save the animation to a GIF file, set save_ani to True and provide a
+        filename (default 'animate_diffdrive.gif').
+        """
+        fig, ax = plt.subplots()
+        plt.xlabel(r"$x$ [m]")
+        plt.ylabel(r"$y$ [m]")
+        plt.axis("equal")
+        (line,) = ax.plot([], [], "C0")
+        (body,) = ax.fill([], [], color="C0")
+        (mast,) = ax.fill([], [], color="k")
+        time_text = ax.text(0.05, 0.9, "", transform=ax.transAxes)
+
+        def init():
+            """Function that initializes the animation."""
+            line.set_data([], [])
+            body.set_xy(np.empty([36, 2]))
+            mast.set_xy(np.empty([36, 2]))
+            time_text.set_text("")
+            return line, body, mast, time_text
+
+        def movie(k):
+            """Function called at each step of the animation."""
+            # Draw the path followed by the vehicle
+            line.set_data(x[0, 0: k + 1], x[1, 0: k + 1])
+            # Draw the differential drive vehicle
+            X_B, Y_B, X_M, Y_M = self.draw(
+                x[0, k], x[1, k], x[2, k]
+            )
+            body.set_xy(np.transpose([X_B, Y_B]))
+            mast.set_xy(np.transpose([X_C, Y_C]))
+            # Add the simulation time
+            time_text.set_text(r"$t$ = %.1f s" % (k * T))
+            # Dynamically set the axis limits
+            ax.set_xlim(x[0, k] - 10 * self.ell, x[0, k] + 10 * self.ell)
+            ax.set_ylim(x[1, k] - 10 * self.ell, x[1, k] + 10 * self.ell)
+            ax.figure.canvas.draw()
+            # Return the objects to animate
+            return line, body, mast, time_text
 
         # Create the animation
         ani = animation.FuncAnimation(
