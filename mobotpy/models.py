@@ -808,7 +808,9 @@ class LongitudinalUSV:
         # Return the arrays of points
         return X_B, Y_B, X_M, Y_M
 
-    def animate(self, x, T, save_ani=False, filename="animate_longitudinalUSV.gif",
+    def animate(self, x, T,
+                wave_positions=[], wave_data=[],
+                save_ani=False, filename="animate_longitudinalUSV.gif",
                 relative=False):
         """Create an animation of an uncrewed surface vessel (longitudinal model).
 
@@ -824,13 +826,12 @@ class LongitudinalUSV:
         plt.axis("equal")
         (body,) = ax.fill([], [], color="black")
         (mast,) = ax.fill([], [], color="orange")
-        (wave,) = ax.plot([], [], color="silver")
+        (wave,) = ax.plot([], [], color="grey")
         water = ax.fill_between([], [], [], color="deepskyblue", alpha=0.5)
         time_text = ax.text(0.05, 0.9, "", transform=ax.transAxes)
 
         def init():
             """Function that initializes the animation."""
-            # line.set_data([], [])
             body.set_xy(np.empty([5, 2]))
             mast.set_xy(np.empty([4, 2]))
             wave.set_data([], [])
@@ -848,6 +849,11 @@ class LongitudinalUSV:
             )
             body.set_xy(np.transpose([X_B, Y_B]))
             mast.set_xy(np.transpose([X_M, Y_M]))
+
+            if len(wave_data) > 0 and len(wave_positions) > 0:
+                # Draw the wave
+                wave.set_data(wave_positions, wave_data[:, k])
+
             # Add the simulation time
             time_text.set_text(r"$t$ = %.1f s" % (k * T))
             # Dynamically set the axis limits
