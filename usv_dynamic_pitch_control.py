@@ -44,11 +44,13 @@ def controller(x, K):
 
 def wave(x, t):
     # Define the parameters of the sinusoidal array
-    amplitude = 1.0  # [m]
+    amplitude = 3.0  # [m]
     phase = np.pi / 2  # [rad]
 
-    time_frequency = 0.2  # [1/s]
-    space_frequency = 0.2  # [1/m]
+    period = 1  # [s]
+    time_frequency = 1 / period  # [1/s]
+    wavelength = 15  # [m]
+    space_frequency = 1 / wavelength  # [1/m]
 
     # Find height of wave
     height = amplitude * \
@@ -114,18 +116,22 @@ plt.xlabel(r"$t$ [s]")
 
 # %%
 # # TEMPORARY ADDITION OF PITCH FOR ANIMATION
-# # Define the parameters of the sinusoidal array
-# amplitude = np.pi / 4
-# frequency = 0.2
-# phase = 0.0
-# num_samples = x.shape[1]
-
-# # Create the sinusoidal array
-# t = np.linspace(0, SIM_TIME, num_samples)
-# sin_array = amplitude * np.sin(2*np.pi*frequency*t + phase)
 
 x = np.zeros((2, N))
 x[1, :], sin_array = wave(x[0, :], t)
+new_x = np.vstack((x, sin_array))
+
+# %%
+# GET SPACE-TIME WAVE DATA
+
+x_range = np.arange(-20, 20, 0.1)
+N_x = np.size(x_range)
+
+wave_heights = np.zeros((N_x, N))
+
+for i in range(N):
+    wave_heights[:, i], _ = wave(x_range, t[i])
+
 
 # %%
 # MAKE AN ANIMATION
@@ -137,8 +143,8 @@ LENGTH = 2.0
 vehicle = LongitudinalUSV(LENGTH)
 
 # Create and save the animation
-new_x = np.vstack((x, sin_array))
-ani = vehicle.animate(new_x, T)
+ani = vehicle.animate(new_x, T, wave_positions=x_range,
+                      wave_data=wave_heights)
 
 # %%
 
