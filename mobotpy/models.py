@@ -8,6 +8,7 @@ import numpy as np
 from mobotpy import graphics
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+import matplotlib.path as pth
 from scipy.stats import chi2
 from matplotlib import patches
 
@@ -808,6 +809,25 @@ class LongitudinalUSV:
         # Return the arrays of points
         return X_B, Y_B, X_M, Y_M
 
+    def fill_path(self, x, y, y_min):
+        """Make a fill path for the water.
+
+        Inspect a fill_between PATH if you are curious about the format.
+
+        """
+        # Water
+        N = len(x)
+
+        v_x = np.hstack([x[0], x, x[-1], x[::-1], x[0]])
+        v_y = np.hstack([y_min, y, y[-1], [y_min]*N, y_min])
+        vertices = np.vstack([v_x, v_y]).T
+
+        codes = np.array([1]+(2*N+1)*[2]+[79]).astype('uint8')
+
+        path = pth.Path(vertices, codes)
+
+        return vertices, codes
+
     def animate(self, x, T,
                 wave_positions=[], wave_data=[],
                 save_ani=False, filename="animate_longitudinalUSV.gif",
@@ -827,7 +847,10 @@ class LongitudinalUSV:
         (body,) = ax.fill([], [], color="black")
         (mast,) = ax.fill([], [], color="orange")
         (wave,) = ax.plot([], [], color="grey")
-        water = ax.fill_between([], [], [], color="deepskyblue", alpha=0.5)
+        water = ax.fill_between([1, 2], [1, 1], [0, 0],
+                                color="deepskyblue", alpha=0.5)
+        water_path = water.get_paths()[0]
+
         time_text = ax.text(0.05, 0.9, "", transform=ax.transAxes)
 
         def init():
@@ -835,7 +858,7 @@ class LongitudinalUSV:
             body.set_xy(np.empty([5, 2]))
             mast.set_xy(np.empty([4, 2]))
             wave.set_data([], [])
-            water.set_paths([])
+            # water.set_paths([])
             time_text.set_text("")
             return body, mast, wave, water, time_text
 
@@ -853,6 +876,14 @@ class LongitudinalUSV:
             if len(wave_data) > 0 and len(wave_positions) > 0:
                 # Draw the wave
                 wave.set_data(wave_positions, wave_data[:, k])
+
+                # Draw the water
+                vert, codes = self.fill_path(
+                    wave_positions, wave_data[:, k], -10 * self.ell)
+                water_path.vertices = vert
+                water_path.codes = codes
+                # water.set_paths(self.fill_path(
+                #     wave_positions, wave_data[:, k], -10 * self.ell))
 
             # Add the simulation time
             time_text.set_text(r"$t$ = %.1f s" % (k * T))
@@ -872,13 +903,13 @@ class LongitudinalUSV:
         ani = animation.FuncAnimation(
             fig,
             movie,
-            np.arange(1, len(x[0, :]), max(1, int(1 / T / 10))),
+            np.arange(1, len(x[0, :]), max(1, int(1 / T / 20))),
             init_func=init,
-            interval=T * 1000 * max(1, int(1 / T / 10)),
+            interval=T * 1000 * max(1, int(1 / T / 20)),
             blit=True,
             repeat=False,
         )
         if save_ani == True:
-            ani.save(filename, fps=min(1 / T, 10))
+            ani.save(filename, fps=min(1 / T, 5))
         # Return the figure object
         return ani
