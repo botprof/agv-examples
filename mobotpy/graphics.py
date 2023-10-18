@@ -43,7 +43,11 @@ def draw_rectangle(x, y, length, width, angle):
 def draw_triangle(x, y, length, height, angle):
     """Finds points that draw a triangle.
 
-    The triangle has a vertex at (x, y), a length (long dimension), height, and angle [rad].
+    The triangle has a vertex at (x, y), a length (long dimension), 
+    height, and angle [rad].
+
+    Negative height will invert the triangle. 
+    Angles are positive counter-clockwise.
 
     The triangle is drawn as follows:
 
