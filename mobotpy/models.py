@@ -9,6 +9,7 @@ from mobotpy import graphics
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import matplotlib.path as pth
+import matplotlib
 from scipy.stats import chi2
 from matplotlib import patches
 
@@ -840,25 +841,31 @@ class LongitudinalUSV:
         To save the animation to a GIF file, set save_ani to True and provide a
         filename (default 'animate_diffdrive.gif').
         """
+        # Create plot and labels
+        # backend = matplotlib.get_backend()
+        # matplotlib.use('Agg')
         fig, ax = plt.subplots()
+        # matplotlib.use(backend)
+
         plt.xlabel(r"$x$ [m]")
         plt.ylabel(r"$y$ [m]")
         plt.axis("equal")
-        (body,) = ax.fill([], [], color="black")
-        (mast,) = ax.fill([], [], color="orange")
-        (wave,) = ax.plot([], [], color="grey")
-        water = ax.fill_between([1, 2], [1, 1], [0, 0],
-                                color="deepskyblue", alpha=0.5)
+        (wave,) = ax.plot([], [], color="grey", zorder=0)
+        water = ax.fill_between([0, 1], [0, 1], [0, 0],
+                                color="deepskyblue", alpha=0.5, zorder=3.1)
+        (body,) = ax.fill([], [], color="black", zorder=1)
+        (mast,) = ax.fill([], [], color="orange", zorder=1.1)
         water_path = water.get_paths()[0]
 
         time_text = ax.text(0.05, 0.9, "", transform=ax.transAxes)
 
         def init():
             """Function that initializes the animation."""
-            body.set_xy(np.empty([5, 2]))
-            mast.set_xy(np.empty([4, 2]))
             wave.set_data([], [])
             # water.set_paths([])
+            body.set_xy(np.empty([5, 2]))
+            mast.set_xy(np.empty([4, 2]))
+
             time_text.set_text("")
             return body, mast, wave, water, time_text
 
@@ -870,8 +877,8 @@ class LongitudinalUSV:
             X_B, Y_B, X_M, Y_M = self.draw(
                 x[0, k], x[1, k], x[2, k]
             )
-            body.set_xy(np.transpose([X_B, Y_B]))
             mast.set_xy(np.transpose([X_M, Y_M]))
+            body.set_xy(np.transpose([X_B, Y_B]))
 
             if len(wave_data) > 0 and len(wave_positions) > 0:
                 # Draw the wave
