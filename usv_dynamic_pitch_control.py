@@ -13,7 +13,7 @@ from mobotpy.models import LongitudinalUSV
 
 # Set the simulation time [s] and the sample period [s]
 SIM_TIME = 5.0
-T = 0.04
+T = 0.02
 
 # Create an array of time values [s]
 t = np.arange(0, SIM_TIME, T)
@@ -44,12 +44,12 @@ def controller(x, K):
 
 def wave(x, t):
     # Define the parameters of the sinusoidal array
-    amplitude = 3.0  # [m]
+    amplitude = 1.0  # [m]
     phase = np.pi / 2  # [rad]
 
     period = 1  # [s]
     time_frequency = 1 / period  # [1/s]
-    wavelength = 15  # [m]
+    wavelength = 10  # [m]
     space_frequency = 1 / wavelength  # [1/m]
 
     # Find height of wave
@@ -59,9 +59,9 @@ def wave(x, t):
     # Find slope of wave in space
     slope_x = 2*np.pi*space_frequency*amplitude * \
         np.cos(2*np.pi*(time_frequency*t + space_frequency*x) + phase)
-    angle_space = np.arctan2(slope_x, 1)
+    wave_angle = np.arctan2(slope_x, 1)
 
-    return height, angle_space
+    return height, wave_angle
 
 # %%
 # RUN SIMULATION
@@ -111,6 +111,8 @@ plt.grid(color="0.95")
 plt.ylabel(r"$u$ [N]")
 plt.xlabel(r"$t$ [s]")
 
+plt.show()
+
 # Save the plot
 # plt.savefig("../agv-book/figs/ch2/oneD_dynamic_control_fig1.pdf")
 
@@ -143,8 +145,9 @@ LENGTH = 2.0
 vehicle = LongitudinalUSV(LENGTH)
 
 # Create and save the animation
-ani = vehicle.animate(new_x, T, wave_positions=x_range,
-                      wave_data=wave_heights)
+ani = vehicle.animate(new_x, T,
+                      wave_positions=x_range, wave_data=wave_heights,
+                      relative=False)
 
 # %%
 
@@ -153,6 +156,7 @@ plt.show()
 
 # Show animation in HTML output if you are using IPython or Jupyter notebooks
 plt.rc('animation', html='jshtml')
+# plt.rc('animation')
 display(ani)
 plt.close()
 
