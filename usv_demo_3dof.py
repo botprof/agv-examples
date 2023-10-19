@@ -1,7 +1,7 @@
 """
 Example usv_demo_3dof.py
-Original author: Joshua A. Marshall <joshua.marshall@queensu.ca>
-Modified by: Thomas M. C. Sears <thomas.sears@queensu.ca>
+Author: Joshua A. Marshall <joshua.marshall@queensu.ca>
+        Thomas M. C. Sears <thomas.sears@queensu.ca>
 GitHub: https://github.com/botprof/agv-examples
 
 This code demonstrates basic use of the 'models.LongitudinalUSV' class
