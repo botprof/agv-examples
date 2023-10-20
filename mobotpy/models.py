@@ -5,13 +5,17 @@ GitHub: https://github.com/botprof/agv-examples
 """
 
 import numpy as np
-from mobotpy import graphics
+
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import matplotlib.path as pth
-import matplotlib
-from scipy.stats import chi2
+
 from matplotlib import patches
+# import matplotlib
+
+from scipy.stats import chi2
+
+from . import graphics
 
 
 class Cart:
@@ -782,6 +786,9 @@ class LongitudinalUSV:
     def __init__(self, ell):
         """Constructor method."""
         self.ell = ell
+
+    def __str__(self):
+        return f'mobotpy: Longitudinal USV model'
 
     def draw(self, x, y, theta):
         """
