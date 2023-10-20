@@ -2,6 +2,8 @@
 Example usv_dynamic_pitch_control.py
 Author: Thomas M. C. Sears <thomas.sears@queensu.ca>
 GitHub: https://github.com/botprof/agv-examples
+
+The example shows a variety of controllers for a dynamic USV in waves.
 """
 
 # %%
@@ -19,7 +21,6 @@ T = 0.02
 t = np.arange(0, SIM_TIME, T)
 N = np.size(t)
 
-
 # %%
 # FUNCTION DEFINITIONS
 # Set the mass of the vehicle [kg]
@@ -36,10 +37,14 @@ def vehicle(x, u, F, G):
     return x_new
 
 
-def controller(x, K):
-    """Proportional controller."""
+def controller_PID(x, K):
+    """PID controller."""
     u = -K @ x
     return u
+
+
+def controller_NMPC(x, K):
+    return 0
 
 
 def wave(x, t):
@@ -117,7 +122,7 @@ plt.show()
 # plt.savefig("../agv-book/figs/ch2/oneD_dynamic_control_fig1.pdf")
 
 # %%
-# # TEMPORARY ADDITION OF PITCH FOR ANIMATION
+# # TEMPORARY ADDITION OF ARTIFICIAL PITCH FOR ANIMATION
 
 x = np.zeros((2, N))
 x[1, :], sin_array = wave(x[0, :], t)
