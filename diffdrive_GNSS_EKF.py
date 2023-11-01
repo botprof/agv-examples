@@ -132,14 +132,14 @@ for k in range(1, N):
     x[:, k] = rk_four(vehicle.f, x[:, k - 1], u[:, k - 1], T)
 
     # Simulate the vehicle speed estimate
-    u_m[0, k] = u_unicycle[0] + np.power(Q[0, 0], 0.5) * np.random.randn(1)
+    u_m[0, k] = u_unicycle[0] + np.power(Q[0, 0], 0.5) * np.random.randn(1)[0]
 
     # Simulate the angular rate gyroscope measurement
-    u_m[1, k] = u_unicycle[1] + np.power(Q[1, 1], 0.5) * np.random.randn(1)
+    u_m[1, k] = u_unicycle[1] + np.power(Q[1, 1], 0.5) * np.random.randn(1)[0]
 
     # Simulate the GNSS measurement
-    y[0, k] = x[0, k] + np.power(R[0, 0], 0.5) * np.random.randn(1)
-    y[1, k] = x[1, k] + np.power(R[1, 1], 0.5) * np.random.randn(1)
+    y[0, k] = x[0, k] + np.power(R[0, 0], 0.5) * np.random.randn(1)[0]
+    y[1, k] = x[1, k] + np.power(R[1, 1], 0.5) * np.random.randn(1)[0]
 
     # Run the EKF estimator
     x_hat[:, k], P_hat[:, :, k] = unicycle_GNSS_ekf(
@@ -278,14 +278,14 @@ for k in range(1, N):
     x[:, k] = rk_four(vehicle.f, x[:, k - 1], u[:, k - 1], T)
 
     # Simulate the vehicle speed estimate
-    u_m[0, k] = u_unicycle[0] + np.power(Q[0, 0], 0.5) * np.random.randn(1)
+    u_m[0, k] = u_unicycle[0] + np.power(Q[0, 0], 0.5) * np.random.randn(1)[0]
 
     # Simulate the angular rate gyroscope measurement
-    u_m[1, k] = u_unicycle[1] + np.power(Q[1, 1], 0.5) * np.random.randn(1)
+    u_m[1, k] = u_unicycle[1] + np.power(Q[1, 1], 0.5) * np.random.randn(1)[0]
 
     # Simulate the GNSS measurement
-    y[0, k] = x[0, k] + np.power(R[0, 0], 0.5) * np.random.randn(1)
-    y[1, k] = x[1, k] + np.power(R[1, 1], 0.5) * np.random.randn(1)
+    y[0, k] = x[0, k] + np.power(R[0, 0], 0.5) * np.random.randn(1)[0]
+    y[1, k] = x[1, k] + np.power(R[1, 1], 0.5) * np.random.randn(1)[0]
 
     # Run the EKF estimator
     x_hat[:, k], P_hat[:, :, k] = unicycle_GNSS_ekf(
