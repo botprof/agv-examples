@@ -181,7 +181,7 @@ KAPPA = 3 - np.shape(x)[0]
 y_u, P_u = unscented_transform(
     h,
     np.array([R_BAR, THETA_BAR]),
-    np.diag([SIGMA_R ** 2, (SIGMA_THETA * np.pi / 180.0) ** 2]),
+    np.diag([SIGMA_R**2, (SIGMA_THETA * np.pi / 180.0) ** 2]),
     KAPPA,
 )
 
