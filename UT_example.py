@@ -20,14 +20,14 @@ x = np.zeros((2, N))
 y = np.zeros((2, N))
 
 # Set the mean and covariance values for the inputs
-r_bar = 1.0
-theta_bar = np.pi / 2.0
-sigma_r = 0.02
-sigma_theta = 15.0
+R_BAR = 1.0
+THETA_BAR = np.pi / 2.0
+SIGMA_R = 0.02
+SIGMA_THETA = 15.0
 
 # Generate random inputs for ground truth
-x[0, :] = r_bar + sigma_r * np.random.randn(1, N)
-x[1, :] = theta_bar + sigma_theta * np.pi / 180.0 * np.random.randn(1, N)
+x[0, :] = R_BAR + SIGMA_R * np.random.randn(1, N)
+x[1, :] = THETA_BAR + SIGMA_THETA * np.pi / 180.0 * np.random.randn(1, N)
 
 # %%
 # FUNCTION DEFINITIONS
@@ -41,7 +41,7 @@ def h(x):
 
 
 # Function that implements the unscented transformation
-def UT(f, x, P_x, kappa):
+def unscented_transform(f, x, P_x, kappa):
     """Unscented transform of statistics."""
 
     # Get the dimension of the random variable
@@ -100,7 +100,7 @@ plt.plot(y[0, :], y[1, :], "C0+", alpha=0.2)
 plt.xlabel(r"$y_1$")
 plt.ylabel(r"$y_2$")
 plt.grid(color="0.95")
-output_stats = (
+OUTPUT_STATS = (
     r"\begin{align*}"
     + r"N &="
     + str(N)
@@ -113,7 +113,7 @@ output_stats = (
     + r"\\"
     + r"\end{align*}"
 )
-plt.text(0.05, 0.9, output_stats, transform=ax1.transAxes)
+plt.text(0.05, 0.9, OUTPUT_STATS, transform=ax1.transAxes)
 
 # Save the plot
 plt.savefig("../agv-book/figs/ch5/UT_example_fig1.pdf")
@@ -125,8 +125,8 @@ plt.show()
 # COMPUTE THE OUTPUT STATISTICS BY LINEAR APPROXIMATION
 
 # Find the scaling factor for plotting covariance bounds
-alpha = 0.05
-s2 = chi2.isf(alpha, 2)
+ALPHA = 0.05
+s2 = chi2.isf(ALPHA, 2)
 
 # Create the plot and axes
 fig2, ax2 = plt.subplots()
@@ -178,10 +178,10 @@ plt.show()
 
 KAPPA = 3 - np.shape(x)[0]
 
-y_u, P_u = UT(
+y_u, P_u = unscented_transform(
     h,
-    np.array([r_bar, theta_bar]),
-    np.diag([sigma_r ** 2, (sigma_theta * np.pi / 180.0) ** 2]),
+    np.array([R_BAR, THETA_BAR]),
+    np.diag([SIGMA_R ** 2, (SIGMA_THETA * np.pi / 180.0) ** 2]),
     KAPPA,
 )
 
