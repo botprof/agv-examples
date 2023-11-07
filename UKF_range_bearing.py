@@ -11,8 +11,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Circle
 from scipy.stats import chi2
-from numpy.linalg import inv
 from scipy.linalg import block_diag
+from numpy.linalg import inv
 from mobotpy.integration import rk_four
 from mobotpy.models import DiffDrive
 
@@ -88,9 +88,13 @@ def RandB_sensor(x, f_map, R):
         # Compute the range and bearing to all features (including sensor noise)
         for i in range(0, m_k):
             # Range measurement [m]
-            y[2 * i] = np.sqrt(
-                (f_map[0, int(a[i])] - x[0]) ** 2 + (f_map[1, int(a[i])] - x[1]) ** 2
-            ) + np.sqrt(R[0, 0]) * np.random.randn(1)
+            y[2 * i] = (
+                np.sqrt(
+                    (f_map[0, int(a[i])] - x[0]) ** 2
+                    + (f_map[1, int(a[i])] - x[1]) ** 2
+                )
+                + np.sqrt(R[0, 0]) * np.random.randn(1)[0]
+            )
             # Bearing measurement [rad]
             y[2 * i + 1] = (
                 np.unwrap(
@@ -102,9 +106,9 @@ def RandB_sensor(x, f_map, R):
                             - x[2]
                         ]
                     )
-                )
+                )[0]
                 - np.pi
-                + np.sqrt(R[1, 1]) * np.random.randn(1)
+                + np.sqrt(R[1, 1]) * np.random.randn(1)[0]
             )
     else:
         # No features were found within the sensing range
@@ -184,7 +188,7 @@ def UKF(x, P, v_m, y_m, a, f_map, Q, R, kappa):
                             )
                             - x_sig[2, j]
                         ]
-                    )
+                    )[0]
                     - np.pi
                 )
 
@@ -223,8 +227,8 @@ def UKF(x, P, v_m, y_m, a, f_map, Q, R, kappa):
 # SIMULATE THE SYSTEM
 
 # Set the covariance matrices
-Q = np.diag([SIGMA_SPEED ** 2, SIGMA_SPEED ** 2])
-R = np.diag([SIGMA_RANGE ** 2, SIGMA_BEARING ** 2])
+Q = np.diag([SIGMA_SPEED**2, SIGMA_SPEED**2])
+R = np.diag([SIGMA_RANGE**2, SIGMA_BEARING**2])
 
 # Initialize state, input, and estimator variables
 x = np.zeros((3, N))
@@ -256,8 +260,8 @@ for i in range(1, N):
     x[:, i] = rk_four(vehicle.f, x[:, i - 1], v, T)
 
     # Model the rate sensors
-    v_m[0, i] = v[0] + np.sqrt(Q[0, 0]) * np.random.randn(1)
-    v_m[1, i] = v[1] + np.sqrt(Q[1, 1]) * np.random.randn(1)
+    v_m[0, i] = v[0] + np.sqrt(Q[0, 0]) * np.random.randn(1)[0]
+    v_m[1, i] = v[1] + np.sqrt(Q[1, 1]) * np.random.randn(1)[0]
 
     # Run the measurement model
     y_m, a = RandB_sensor(x[:, i], f_map, R)
@@ -279,15 +283,15 @@ for i in range(1, N):
 # PLOT THE SIMULATION OUTPUTS
 
 # Find the scaling factors for covariance bounds
-alpha = 0.01
-s1 = chi2.isf(alpha, 1)
-s2 = chi2.isf(alpha, 2)
+ALPHA = 0.01
+s1 = chi2.isf(ALPHA, 1)
+s2 = chi2.isf(ALPHA, 2)
 
 # Set some plot limits for better viewing
-x_range = 0.5
-y_range = 0.5
-theta_range = 0.1
-phi_range = 0.1
+X_RANGE = 0.5
+Y_RANGE = 0.5
+THETA_RANGE = 0.1
+PHI_RANGE = 0.1
 
 # Plot the errors with covariance bounds
 sigma = np.zeros((3, N))
@@ -298,7 +302,7 @@ plt.fill_between(t, -sigma[0, :], sigma[0, :], color="C0", alpha=0.2)
 plt.plot(t, x[0, :] - x_hat_UKF[0, :], "C0")
 plt.ylabel(r"$e_1$ [m]")
 plt.setp(ax1, xticklabels=[])
-ax1.set_ylim([-x_range, x_range])
+ax1.set_ylim([-X_RANGE, X_RANGE])
 plt.grid(color="0.95")
 ax2 = plt.subplot(312)
 sigma[1, :] = np.sqrt(s1 * P_hat_UKF[1, 1, :])
@@ -306,7 +310,7 @@ plt.fill_between(t, -sigma[1, :], sigma[1, :], color="C0", alpha=0.2)
 plt.plot(t, x[1, :] - x_hat_UKF[1, :], "C0")
 plt.ylabel(r"$e_2$ [m]")
 plt.setp(ax2, xticklabels=[])
-ax2.set_ylim([-y_range, y_range])
+ax2.set_ylim([-Y_RANGE, Y_RANGE])
 plt.grid(color="0.95")
 ax3 = plt.subplot(313)
 sigma[2, :] = np.sqrt(s1 * P_hat_UKF[2, 2, :])
@@ -314,7 +318,7 @@ plt.fill_between(t, -sigma[2, :], sigma[2, :], color="C0", alpha=0.2)
 plt.plot(t, x[2, :] - x_hat_UKF[2, :], "C0")
 plt.ylabel(r"$e_3$ [rad]")
 plt.setp(ax3, xticklabels=[])
-ax3.set_ylim([-theta_range, theta_range])
+ax3.set_ylim([-THETA_RANGE, THETA_RANGE])
 plt.xlabel(r"$t$ [s]")
 plt.grid(color="0.95")
 
