@@ -133,6 +133,7 @@ def UKF(x, P, v_m, y_m, a, f_map, Q, R, kappa):
     # Define a set of sigma points for for the a priori estimate
     xi_sig = np.zeros((n_xi, 2 * n_xi + 1))
     P_xi_sig = np.linalg.cholesky((n_xi + kappa) * P_xi)
+    xi_sig[:, 0] = xi
     for i in range(0, n_xi):
         xi_sig[:, i + 1] = xi + P_xi_sig[:, i]
         xi_sig[:, n_xi + i + 1] = xi - P_xi_sig[:, i]
@@ -166,6 +167,7 @@ def UKF(x, P, v_m, y_m, a, f_map, Q, R, kappa):
         # Compute a new set of sigma points using the latest x_hat and P_hat
         x_sig = np.zeros((n_x, 2 * n_x + 1))
         P_sig = np.linalg.cholesky((n_x + kappa) * P_hat)
+        x_sig[:, 0] = x_hat
         for i in range(0, n_x):
             x_sig[:, i + 1] = x_hat + P_sig[:, i]
             x_sig[:, n_x + i + 1] = x_hat - P_sig[:, i]
