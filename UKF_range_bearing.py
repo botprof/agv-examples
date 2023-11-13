@@ -284,6 +284,12 @@ for i in range(1, N):
 # %%
 # PLOT THE SIMULATION OUTPUTS
 
+# Change some plot settings (optional)
+plt.rc("text", usetex=True)
+plt.rc("text.latex", preamble=r"\usepackage{cmbright,amsmath,bm}")
+plt.rc("savefig", format="pdf")
+plt.rc("savefig", bbox="tight")
+
 # Find the scaling factors for covariance bounds
 ALPHA = 0.01
 s1 = chi2.isf(ALPHA, 1)

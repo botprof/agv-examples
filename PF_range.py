@@ -97,15 +97,15 @@ plt.show()
 # CREATE A MAP OF FEATURES
 
 # Set the number of features in the map
-m = 50
+m = 20
 
 # Set the size [m] of a square map
-d_map = 100
+D_MAP = 100
 
 # Create a map of randomly placed feature locations
 f_map = np.zeros((2, m))
 for i in range(0, m):
-    f_map[:, i] = d_map * (2.0 * np.random.rand(2) - 1.0)
+    f_map[:, i] = D_MAP * (2.0 * np.random.rand(2) - 1.0)
 
 plt.figure(2)
 plt.plot(f_map[0, :], f_map[1, :], "C2*", label="Feature")
@@ -286,6 +286,15 @@ for i in range(1, N):
     # Run the particle filter
     x_pf[:, :, i] = diffdrive_pf(x_pf[:, :, i - 1], v, y_m, a, f_map, Q, R, T)
 
+# %%
+# PLOT THE SIMULATION OUTPUTS
+
+# Change some plot settings (optional)
+plt.rc("text", usetex=True)
+plt.rc("text.latex", preamble=r"\usepackage{cmbright,amsmath,bm}")
+plt.rc("savefig", format="pdf")
+plt.rc("savefig", bbox="tight")
+
 # Plot the results of the particle filter simulation
 plt.figure(3)
 plt.plot(x_pf[0, :, 0], x_pf[1, :, 0], ".", label="Particles", alpha=0.2)
@@ -308,9 +317,9 @@ for i in range(0, N):
     P_hat[:, :, i] = np.cov(x_pf[:, :, i])
 
 # Find the scaling factors for plotting covariance bounds
-alpha = 0.01
-s1 = chi2.isf(alpha, 1)
-s2 = chi2.isf(alpha, 2)
+ALPHA = 0.01
+s1 = chi2.isf(ALPHA, 1)
+s2 = chi2.isf(ALPHA, 2)
 
 fig5 = plt.figure(4)
 sigma = np.zeros((3, N))
