@@ -46,7 +46,7 @@ M = 1000
 x_pf = np.zeros((3, M, N))
 
 # Set the covariance matrices
-Q = np.diag([SIGMA_SPEED ** 2, SIGMA_SPEED ** 2])
+Q = np.diag([SIGMA_SPEED**2, SIGMA_SPEED**2])
 
 # Initialize the vehicle's true state
 x = np.zeros((3, N))
@@ -119,16 +119,17 @@ plt.show()
 # FUNCTION TO MODEL RANGE TO FEATURES
 
 
-def range_sensor(x, f_map, R, r_max, r_min):
+def range_sensor(x, f_map, R, R_MAX, R_MIN):
+    """Function to model the range sensor."""
 
     # Determine how many total features are available
     m = np.shape(f_map)[1]
 
-    # Find the indices of features that are within range (r_min, r_max)
+    # Find the indices of features that are within range (R_MIN, R_MAX)
     a = np.array([])
     for i in range(0, m):
         r = np.sqrt((f_map[0, i] - x[0]) ** 2 + (f_map[1, i] - x[1]) ** 2)
-        if np.all([r < r_max, r > r_min]):
+        if np.all([r < R_MAX, r > R_MIN]):
             a = np.append(a, i)
 
     # Simulate for each time
@@ -164,6 +165,7 @@ def range_sensor(x, f_map, R, r_max, r_min):
 
 
 def pf_resample(x_pf, x_likelihood):
+    """Function to resample particles."""
 
     # Get the number of particles
     M = x_pf.shape[1]
@@ -181,6 +183,7 @@ def pf_resample(x_pf, x_likelihood):
 
 
 def diffdrive_pf(x_pf, v, y, a, f_map, Q, R, T):
+    """Particle filter for differential drive vehicle function."""
 
     # Get the number of particles
     M = x_pf.shape[1]
@@ -255,14 +258,14 @@ x_hat[:, 0] = x[:, 0] + np.array([0, 5.0, 0.1])
 P_hat[:, :, 0] = np.diag(np.square([5.0, 5.0, 0.1]))
 
 # Set the covariance matrices
-Q = np.diag([SIGMA_SPEED ** 2, SIGMA_SPEED ** 2])
+Q = np.diag([SIGMA_SPEED**2, SIGMA_SPEED**2])
 
 # Set sensor range
-r_max = 25.0
-r_min = 1.0
+R_MAX = 25.0
+R_MIN = 1.0
 
 # Set the range and bearing covariance
-R = np.diag([SIGMA_RANGE ** 2])
+R = np.diag([SIGMA_RANGE**2])
 
 # Initialize the first particles on the basis of the initial uncertainty
 for i in range(1, M):
@@ -278,7 +281,7 @@ for i in range(1, N):
     x[:, i] = rk_four(vehicle.f, x[:, i - 1], v, T)
 
     # Run the range and bearing sensor model
-    y_m, a = range_sensor(x[:, i], f_map, R, r_max, r_min)
+    y_m, a = range_sensor(x[:, i], f_map, R, R_MAX, R_MIN)
 
     # Run the particle filter
     x_pf[:, :, i] = diffdrive_pf(x_pf[:, :, i - 1], v, y_m, a, f_map, Q, R, T)
