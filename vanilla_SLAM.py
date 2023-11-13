@@ -24,7 +24,7 @@ N = np.size(t)
 # CREATE A MAP OF FEATURES TO BE MAPPED AND USED FOR LOCALIZATION
 
 # Set the map expanse (square) [m]
-d_map = 20
+D_MAP = 20
 
 # Set the number of features
 m = 10
@@ -32,7 +32,7 @@ m = 10
 # Create the map of features
 f_map = np.zeros((2, m))
 for i in range(1, m):
-    f_map[:, i] = d_map * np.random.rand(2)
+    f_map[:, i] = D_MAP * np.random.rand(2)
 
 # %%
 # VEHICLE, SENSOR MODELS AND KALMAN FILTER FUNCTIONS
@@ -153,10 +153,16 @@ for i in range(0, N):
 # %%
 # PLOT THE SIMULATION OUTPUTS
 
+# Change some plot settings (optional)
+plt.rc("text", usetex=True)
+plt.rc("text.latex", preamble=r"\usepackage{cmbright,amsmath,bm}")
+plt.rc("savefig", format="pdf")
+plt.rc("savefig", bbox="tight")
+
 # Find the scaling factor for plotting covariance bounds
-alpha = 0.05
-s1 = chi2.isf(alpha, 1)
-s2 = chi2.isf(alpha, 2)
+ALPHA = 0.05
+s1 = chi2.isf(ALPHA, 1)
+s2 = chi2.isf(ALPHA, 2)
 
 # Plot the errors and covariance bounds for the vehicle state
 sigma = np.zeros((2, N))
@@ -170,7 +176,7 @@ plt.fill_between(
     sigma[0, :],
     color="C1",
     alpha=0.2,
-    label=str(100 * (1 - alpha)) + "% confidence",
+    label=str(100 * (1 - ALPHA)) + "% confidence",
 )
 plt.ylabel(r"$e_1$ [m]")
 plt.setp(ax1, xticklabels=[])
