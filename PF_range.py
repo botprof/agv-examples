@@ -97,7 +97,7 @@ plt.show()
 # CREATE A MAP OF FEATURES
 
 # Set the number of features in the map
-m = 20
+m = 50
 
 # Set the size [m] of a square map
 D_MAP = 100
