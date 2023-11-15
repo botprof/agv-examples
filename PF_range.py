@@ -64,6 +64,10 @@ P_hat[:, :, 0] = np.diag(np.square([0.1, 0.1, 0.01]))
 for i in range(1, M):
     x_pf[:, i, 0] = x_hat[:, 0] + np.sqrt(P_hat[:, :, 0]) @ np.random.standard_normal(3)
 
+# Initialize the first particles on a uniform distribution over the space
+# for i in range(1, M):
+#     x_pf[:, i, 0] = 100 * np.random.uniform(-1, 1, 3)
+
 for i in range(1, N):
 
     # Compute some inputs (i.e., drive around)
@@ -122,9 +126,6 @@ plt.show()
 def range_sensor(x, f_map, R, R_MAX, R_MIN):
     """Function to model the range sensor."""
 
-    # Determine how many total features are available
-    m = np.shape(f_map)[1]
-
     # Find the indices of features that are within range (R_MIN, R_MAX)
     a = np.array([])
     for i in range(0, m):
@@ -167,9 +168,6 @@ def range_sensor(x, f_map, R, R_MAX, R_MIN):
 def pf_resample(x_pf, x_likelihood):
     """Function to resample particles."""
 
-    # Get the number of particles
-    M = x_pf.shape[1]
-
     # Initialize a set of output particles
     x_pf_resampled = np.zeros((3, M))
 
@@ -184,9 +182,6 @@ def pf_resample(x_pf, x_likelihood):
 
 def diffdrive_pf(x_pf, v, y, a, f_map, Q, R, T):
     """Particle filter for differential drive vehicle function."""
-
-    # Get the number of particles
-    M = x_pf.shape[1]
 
     # Find the number of observed features
     m_k = a.shape[0]
@@ -271,6 +266,10 @@ R = np.diag([SIGMA_RANGE**2])
 for i in range(1, M):
     x_pf[:, i, 0] = x_hat[:, 0] + np.sqrt(P_hat[:, :, 0]) @ np.random.standard_normal(3)
 
+# Initialize the first particles on the basis of the initial uncertainty
+# for i in range(1, M):
+#     x_pf[:, i, 0] = 100 * np.random.uniform(-1, 1, 3)
+
 # Simulate for each time
 for i in range(1, N):
 
@@ -301,6 +300,7 @@ plt.plot(x_pf[0, :, 0], x_pf[1, :, 0], ".", label="Particles", alpha=0.2)
 for k in range(1, N, 1):
     plt.plot(x_pf[0, :, k], x_pf[1, :, k], ".", alpha=0.2)
 plt.plot(x[0, :], x[1, :], "C0", label="Actual path")
+plt.plot(f_map[0, :], f_map[1, :], "C2*", label="Feature")
 plt.axis("equal")
 plt.xlabel("$x$ [m]")
 plt.ylabel("$y$ [m]")
@@ -342,3 +342,5 @@ plt.plot(t, x[2, :] - x_hat[2, :], "C0")
 plt.ylabel(r"$e_3$ [rad]")
 plt.xlabel(r"$t$ [s]")
 plt.show()
+
+# %%
