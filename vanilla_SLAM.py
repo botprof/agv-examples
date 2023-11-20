@@ -27,12 +27,12 @@ N = np.size(t)
 D_MAP = 20
 
 # Set the number of features
-m = 10
+m = 20
 
 # Create the map of features
 f_map = np.zeros((2, m))
 for i in range(1, m):
-    f_map[:, i] = D_MAP * np.random.rand(2)
+    f_map[:, i] = D_MAP * np.random.uniform(0, 1, 2)
 
 # %%
 # VEHICLE, SENSOR MODELS AND KALMAN FILTER FUNCTIONS
@@ -50,30 +50,32 @@ def f_sensor(x, f_map, R):
     m = np.shape(f_map)[1]
 
     # Find the relative position measurement with measurement noise
-    y = np.zeros(2 * m)
+    y_new = np.zeros(2 * m)
     for i in range(0, m):
-        y[2 * i] = f_map[0, i] - x[0] + np.sqrt(R[0, 0]) * np.random.randn()
-        y[2 * i + 1] = f_map[1, i] - x[1] + np.sqrt(R[1, 1]) * np.random.randn()
+        y_new[2 * i] = (
+            f_map[0, i] - x[0] + np.sqrt(R[0, 0]) * np.random.normal(0, 1, 1)[0]
+        )
+        y_new[2 * i + 1] = (
+            f_map[1, i] - x[1] + np.sqrt(R[1, 1]) * np.random.normal(0, 1, 1)[0]
+        )
 
     # Return the measurement array
-    return y
+    return y_new
 
 
 # Prediction step for a KF with process noise covariance Q
-def KF_predict(x, u, F, Q, P, T):
-    x_hat = vehicle(x, u + np.sqrt(Q) @ np.random.randn(2), T)
-    P_hat = F @ P @ np.transpose(F) + Q
-    P_hat = (P_hat + np.transpose(P_hat)) / 2
-    return x_hat, P_hat
+def KF_predict(x, u_m, F, Q, P, T):
+    x_new = vehicle(x, u_m, T)
+    P_new = F @ P @ np.transpose(F) + Q
+    return x_new, P_new
 
 
 # Correction step for a KF with measurement noise covariance R
 def KF_correct(x, y, H, R, P):
     K = P @ np.transpose(H) @ np.linalg.inv(H @ P @ np.transpose(H) + R)
-    x_hat = x + K @ (y - H @ x)
-    P_hat = (np.identity(np.shape(x)[0]) - K @ H) @ P
-    P_hat = (P_hat + np.transpose(P_hat)) / 2
-    return x_hat, P_hat
+    x_new = x + K @ (y - H @ x)
+    P_new = (np.identity(np.shape(x)[0]) - K @ H) @ P
+    return x_new, P_new
 
 
 # %%
@@ -88,7 +90,7 @@ x_hat = np.zeros((2 * m, N))
 P_hat = np.zeros((2 * m, 2 * m, N))
 
 # Set the process and measurement noise covariances
-Q_x = np.diag(np.square([0.01, 0.01]))
+Q_x = np.diag(np.square([0.05, 0.05]))
 R_y = np.diag(np.square([5.0, 5.0]))
 
 # Choose a location where the vehicle starts (relative to map origin)
@@ -142,10 +144,15 @@ for i in range(0, N):
 
         # Run the KF prediction step
         x_hat[0:2, i], P_hat[0:2, 0:2, i] = KF_predict(
-            x_hat[0:2, i - 1], u, F, Q_x, P_hat[0:2, 0:2, i - 1], T
+            x_hat[0:2, i - 1],
+            u + np.sqrt(Q_x) @ np.random.normal(0, 1, 2),
+            F,
+            Q_x,
+            P_hat[0:2, 0:2, i - 1],
+            T,
         )
         x_hat[2 : 2 * m, i] = x_hat[2 : 2 * m, i - 1]
-        P_hat[0 : 2 * m, 0 : 2 * m, i] = P_hat[0 : 2 * m, 0 : 2 * m, i - 1]
+        P_hat[2 : 2 * m, 0 : 2 * m, i] = P_hat[2 : 2 * m, 0 : 2 * m, i - 1]
 
         # Run the KF correction step
         x_hat[:, i], P_hat[:, :, i] = KF_correct(x_hat[:, i], y, H, R, P_hat[:, :, i])
@@ -205,8 +212,8 @@ for i in range(1, m):
     j_min = np.argmin(W)
     ell = patches.Ellipse(
         (x_hat[2 * i, N - 1], x_hat[2 * i + 1, N - 1]),
-        2 * np.sqrt(s2 * W[j_max]),
-        2 * np.sqrt(s2 * W[j_min]),
+        2.0 * np.sqrt(s2 * W[j_max]),
+        2.0 * np.sqrt(s2 * W[j_min]),
         angle=np.arctan2(V[j_max, 1], V[j_max, 0]),
         alpha=0.1,
         color="C1",
