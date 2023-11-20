@@ -166,7 +166,10 @@ plt.rc("text.latex", preamble=r"\usepackage{cmbright,amsmath,bm}")
 plt.rc("savefig", format="pdf")
 plt.rc("savefig", bbox="tight")
 
-# Find the scaling factor for plotting covariance bounds
+# Uncomment for interactive plots in IPython
+# %matplotlib widget
+
+# Find the scaling factor for plotting covarianc`e bounds
 ALPHA = 0.05
 s1 = chi2.isf(ALPHA, 1)
 s2 = chi2.isf(ALPHA, 2)
