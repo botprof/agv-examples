@@ -841,7 +841,7 @@ class LongitudinalUSV:
     def animate(self, x, T,
                 wave_positions=[], wave_data=[],
                 save_ani=False, filename="animate_longitudinalUSV.gif",
-                relative=False):
+                relative=False, xlim=None, ylim=None):
         """Create an animation of an uncrewed surface vessel (longitudinal model).
 
         Returns animation object for array of vehicle positions x with time
@@ -851,6 +851,12 @@ class LongitudinalUSV:
         filename (default 'animate_diffdrive.gif').
         """
         # Create plot and labels
+
+        if xlim is None:
+            xlim = (x[0, 0] - 10 * self.ell, x[0, 0] + 10 * self.ell)
+        if ylim is None:
+            ylim = (x[1, 0] - 10 * self.ell, x[1, 0] + 10 * self.ell)
+
         # backend = matplotlib.get_backend()
         # matplotlib.use('Agg')
         fig, ax = plt.subplots()
@@ -858,7 +864,7 @@ class LongitudinalUSV:
 
         plt.xlabel(r"$x$ [m]")
         plt.ylabel(r"$y$ [m]")
-        plt.axis("equal")
+        plt.axis("square")
         (wave,) = ax.plot([], [], color="grey", zorder=0)
         water = ax.fill_between([0, 1], [0, 1], [0, 0],
                                 color="deepskyblue", alpha=0.5, zorder=3.1)
@@ -866,7 +872,7 @@ class LongitudinalUSV:
         (mast,) = ax.fill([], [], color="orange", zorder=1.1)
         water_path = water.get_paths()[0]
 
-        time_text = ax.text(0.05, 0.9, "", transform=ax.transAxes)
+        time_text = ax.text(0.025, 0.85, "", transform=ax.transAxes)
 
         def init():
             """Function that initializes the animation."""
@@ -904,13 +910,13 @@ class LongitudinalUSV:
             # Add the simulation time
             time_text.set_text(r"$t$ = %.1f s" % (k * T))
             # Dynamically set the axis limits
-            ax.axis('equal')
+            ax.axis('square')
             if relative:
                 ax.set(xlim=(x[0, k] - 10 * self.ell, x[0, k] + 10 * self.ell),
                        ylim=(x[1, k] - 10 * self.ell, x[1, k] + 10 * self.ell))
             else:
-                ax.set(xlim=(x[0, 0] - 10 * self.ell, x[0, 0] + 10 * self.ell),
-                       ylim=(x[1, 0] - 10 * self.ell, x[1, 0] + 10 * self.ell))
+                ax.set(xlim=(xlim[0], xlim[1]), ylim=(ylim[0], ylim[1]))
+
             ax.figure.canvas.draw()
             # Return the objects to animate
             return body, mast, time_text
