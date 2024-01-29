@@ -1,6 +1,8 @@
 """
 Python module models.py for various vehicle models.
-Author: Joshua A. Marshall <joshua.marshall@queensu.ca>
+Authors: 
+    Original development by Joshua A. Marshall <joshua.marshall@queensu.ca>
+    USV model by Thomas M. C. Sears <thomas.sears@queensu.ca>
 GitHub: https://github.com/botprof/agv-examples
 """
 
