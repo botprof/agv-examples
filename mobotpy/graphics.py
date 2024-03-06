@@ -32,7 +32,40 @@ def draw_rectangle(x, y, length, width, angle):
     l = 0.5 * length
     w = 0.5 * width
     V = np.array([[-l, -l, l, l, -l], [-w, w, w, -w, -w]])
-    R = np.array([[np.cos(angle), np.sin(-angle)], [np.sin(angle), np.cos(angle)]])
+    R = np.array([[np.cos(angle), np.sin(-angle)],
+                 [np.sin(angle), np.cos(angle)]])
+    V = R @ V
+    X = V[0, :] + x
+    Y = V[1, :] + y
+    return X, Y
+
+
+def draw_triangle(x, y, length, height, angle):
+    """Finds points that draw a triangle.
+
+    The triangle has a vertex at (x, y), a length (long dimension), 
+    height, and angle [rad].
+
+    Negative height will invert the triangle. 
+    Angles are positive counter-clockwise.
+
+    The triangle is drawn as follows:
+
+              /\
+            /    \
+          /        \          [height]
+        /            \
+      /                \
+    /____________________\
+          [length]       ^ [x,y], rotation point
+
+    """
+    V = np.zeros((2, 4))
+    l = length
+    h = height
+    V = np.array([[0, -l, -l/2, 0], [0, 0, h, 0]])
+    R = np.array([[np.cos(angle), np.sin(-angle)],
+                 [np.sin(angle), np.cos(angle)]])
     V = R @ V
     X = V[0, :] + x
     Y = V[1, :] + y
