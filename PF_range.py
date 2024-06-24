@@ -62,7 +62,8 @@ P_hat[:, :, 0] = np.diag(np.square([0.1, 0.1, 0.01]))
 
 # Initialize the first particles on the basis of the initial uncertainty
 for i in range(1, M):
-    x_pf[:, i, 0] = x_hat[:, 0] + np.sqrt(P_hat[:, :, 0]) @ np.random.standard_normal(3)
+    x_pf[:, i, 0] = x_hat[:, 0] + \
+        np.sqrt(P_hat[:, :, 0]) @ np.random.standard_normal(3)
 
 # Initialize the first particles on a uniform distribution over the space
 # for i in range(1, M):
@@ -172,7 +173,8 @@ def pf_resample(x_pf, x_likelihood):
     x_pf_resampled = np.zeros((3, M))
 
     # Do the resampling (one way)
-    indices = np.searchsorted(np.cumsum(x_likelihood), np.random.random_sample(M))
+    indices = np.searchsorted(np.cumsum(x_likelihood),
+                              np.random.random_sample(M))
     for j in range(0, M):
         x_pf_resampled[:, j] = x_pf[:, indices[j]]
 
@@ -225,7 +227,7 @@ def diffdrive_pf(x_pf, v, y, a, f_map, Q, R, T):
             y_dif = y - y_hat[:, j]
             x_likelihood[j] = (
                 1.0
-                / ((2.0 * np.pi) ** (k / 2) * np.sqrt(R_det))
+                / ((2.0 * np.pi) ** (m_k / 2) * np.sqrt(R_det))
                 * np.exp(-0.5 * y_dif.T @ R_inv @ y_dif)
             )
 
@@ -264,7 +266,8 @@ R = np.diag([SIGMA_RANGE**2])
 
 # Initialize the first particles on the basis of the initial uncertainty
 for i in range(1, M):
-    x_pf[:, i, 0] = x_hat[:, 0] + np.sqrt(P_hat[:, :, 0]) @ np.random.standard_normal(3)
+    x_pf[:, i, 0] = x_hat[:, 0] + \
+        np.sqrt(P_hat[:, :, 0]) @ np.random.standard_normal(3)
 
 # Initialize the first particles on the basis of the initial uncertainty
 # for i in range(1, M):

@@ -1,15 +1,23 @@
 """
 Python module models.py for various vehicle models.
-Author: Joshua A. Marshall <joshua.marshall@queensu.ca>
+Authors: 
+    Original development by Joshua A. Marshall <joshua.marshall@queensu.ca>
+    USV model by Thomas M. C. Sears <thomas.sears@queensu.ca>
 GitHub: https://github.com/botprof/agv-examples
 """
 
 import numpy as np
-from mobotpy import graphics
+
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-from scipy.stats import chi2
+import matplotlib.path as pth
+
 from matplotlib import patches
+# import matplotlib
+
+from scipy.stats import chi2
+
+from . import graphics
 
 
 class Cart:
@@ -220,7 +228,7 @@ class DiffDrive:
         def movie(k):
             """Function called at each step of the animation."""
             # Draw the path followed by the vehicle
-            line.set_data(x[0, 0 : k + 1], x[1, 0 : k + 1])
+            line.set_data(x[0, 0: k + 1], x[1, 0: k + 1])
             # Draw the differential drive vehicle
             X_L, Y_L, X_R, Y_R, X_B, Y_B, X_C, Y_C = self.draw(
                 x[0, k], x[1, k], x[2, k]
@@ -291,9 +299,9 @@ class DiffDrive:
         def movie(k):
             """Function called at each step of the animation."""
             # Draw the desired trajectory
-            desired.set_data(xd[0, 0 : k + 1], xd[1, 0 : k + 1])
+            desired.set_data(xd[0, 0: k + 1], xd[1, 0: k + 1])
             # Draw the path followed by the vehicle
-            line.set_data(x[0, 0 : k + 1], x[1, 0 : k + 1])
+            line.set_data(x[0, 0: k + 1], x[1, 0: k + 1])
             # Draw the differential drive vehicle
             X_L, Y_L, X_R, Y_R, X_B, Y_B, X_C, Y_C = self.draw(
                 x[0, k], x[1, k], x[2, k]
@@ -372,9 +380,9 @@ class DiffDrive:
         def movie(k):
             """Function called at each step of the animation."""
             # Draw the desired trajectory
-            estimated.set_data(x_hat[0, 0 : k + 1], x_hat[1, 0 : k + 1])
+            estimated.set_data(x_hat[0, 0: k + 1], x_hat[1, 0: k + 1])
             # Draw the path followed by the vehicle
-            line.set_data(x[0, 0 : k + 1], x[1, 0 : k + 1])
+            line.set_data(x[0, 0: k + 1], x[1, 0: k + 1])
             # Draw the differential drive vehicle
             X_L, Y_L, X_R, Y_R, X_B, Y_B, X_C, Y_C = self.draw(
                 x[0, k], x[1, k], x[2, k]
@@ -542,7 +550,7 @@ class Tricycle:
         def movie(k):
             """The function called at each step of the animation."""
             # Draw the path followed by the vehicle
-            line.set_data(x[0, 0 : k + 1], x[1, 0 : k + 1])
+            line.set_data(x[0, 0: k + 1], x[1, 0: k + 1])
             # Draw the tricycle vehicle
             X_L, Y_L, X_R, Y_R, X_F, Y_F, X_B, Y_B = self.draw(
                 x[0, k], x[1, k], x[2, k], x[3, k]
@@ -628,10 +636,12 @@ class Ackermann:
             The left and right wheel angles (phi_L, phi_R).
         """
         phi_L = np.arctan(
-            2 * self.ell_W * np.tan(x[3]) / (2 * self.ell_W - self.ell_T * np.tan(x[3]))
+            2 * self.ell_W *
+            np.tan(x[3]) / (2 * self.ell_W - self.ell_T * np.tan(x[3]))
         )
         phi_R = np.arctan(
-            2 * self.ell_W * np.tan(x[3]) / (2 * self.ell_W + self.ell_T * np.tan(x[3]))
+            2 * self.ell_W *
+            np.tan(x[3]) / (2 * self.ell_W + self.ell_T * np.tan(x[3]))
         )
         ackermann_angles = np.array([phi_L, phi_R])
         return ackermann_angles
@@ -731,7 +741,7 @@ class Ackermann:
         def movie(k):
             """The function called at each step of the animation."""
             # Draw the path followed by the vehicle
-            line.set_data(x[0, 0 : k + 1], x[1, 0 : k + 1])
+            line.set_data(x[0, 0: k + 1], x[1, 0: k + 1])
             # Draw the Ackermann steered drive vehicle
             X_BL, Y_BL, X_BR, Y_BR, X_FL, Y_FL, X_FR, Y_FR, X_BD, Y_BD = self.draw(
                 x[0, k], x[1, k], x[2, k], phi_L[k], phi_R[k]
@@ -762,5 +772,166 @@ class Ackermann:
         )
         if save_ani == True:
             ani.save(filename, fps=min(1 / T, 10))
+        # Return the figure object
+        return ani
+
+
+class LongitudinalUSV:
+    """3 DOF model of a USV (Surge, Heave, Pitch) for Longitudinal Control.
+
+    Parameters
+    ----------
+    ell : float
+        The hull length of the vehicle [m].
+    """
+
+    def __init__(self, ell):
+        """Constructor method."""
+        self.ell = ell
+
+    def __str__(self):
+        return f'mobotpy: Longitudinal USV model'
+
+    def draw(self, x, y, theta):
+        """
+        Finds points that draw an uncrewed surface vessel.
+
+        The centre of the vessel is (x, y), the vehicle has pitch angle
+        theta, and the vehicle's hull length is ell.
+
+        Returns X_ ...
+        """
+        L_TO_W = 4
+
+        # Body
+        X_B, Y_B = graphics.draw_rectangle(
+            x, y, self.ell, (1/L_TO_W) * self.ell, theta,
+        )
+
+        # Mast/top of USV
+        X_M, Y_M = graphics.draw_triangle(
+            x - (1/(2*L_TO_W)) * self.ell * np.sin(theta),
+            y + (1/(2*L_TO_W)) * self.ell * np.cos(theta),
+            self.ell,
+            0.5 * self.ell,
+            theta - np.pi / 2,
+        )
+        # Return the arrays of points
+        return X_B, Y_B, X_M, Y_M
+
+    def fill_path(self, x, y, y_min):
+        """Make a fill path for the water.
+
+        Inspect a fill_between PATH if you are curious about the format.
+
+        """
+        # Water
+        N = len(x)
+
+        v_x = np.hstack([x[0], x, x[-1], x[::-1], x[0]])
+        v_y = np.hstack([y_min, y, y[-1], [y_min]*N, y_min])
+        vertices = np.vstack([v_x, v_y]).T
+
+        codes = np.array([1]+(2*N+1)*[2]+[79]).astype('uint8')
+
+        path = pth.Path(vertices, codes)
+
+        return vertices, codes
+
+    def animate(self, x, T,
+                wave_positions=[], wave_data=[],
+                save_ani=False, filename="animate_longitudinalUSV.gif",
+                relative=False, xlim=None, ylim=None):
+        """Create an animation of an uncrewed surface vessel (longitudinal model).
+
+        Returns animation object for array of vehicle positions x with time
+        increments T [s], track ell [m].
+
+        To save the animation to a GIF file, set save_ani to True and provide a
+        filename (default 'animate_diffdrive.gif').
+        """
+        # Create plot and labels
+
+        if xlim is None:
+            xlim = (x[0, 0] - 10 * self.ell, x[0, 0] + 10 * self.ell)
+        if ylim is None:
+            ylim = (x[1, 0] - 10 * self.ell, x[1, 0] + 10 * self.ell)
+
+        # backend = matplotlib.get_backend()
+        # matplotlib.use('Agg')
+        fig, ax = plt.subplots()
+        # matplotlib.use(backend)
+
+        plt.xlabel(r"$x$ [m]")
+        plt.ylabel(r"$y$ [m]")
+        plt.axis("square")
+        (wave,) = ax.plot([], [], color="grey", zorder=0)
+        water = ax.fill_between([0, 1], [0, 1], [0, 0],
+                                color="deepskyblue", alpha=0.5, zorder=3.1)
+        (body,) = ax.fill([], [], color="black", zorder=1)
+        (mast,) = ax.fill([], [], color="orange", zorder=1.1)
+        water_path = water.get_paths()[0]
+
+        time_text = ax.text(0.025, 0.85, "", transform=ax.transAxes)
+
+        def init():
+            """Function that initializes the animation."""
+            wave.set_data([], [])
+            # water.set_paths([])
+            body.set_xy(np.empty([5, 2]))
+            mast.set_xy(np.empty([4, 2]))
+
+            time_text.set_text("")
+            return body, mast, wave, water, time_text
+
+        def movie(k):
+            """Function called at each step of the animation."""
+            # Draw the path followed by the vehicle
+            # line.set_data(x[0, 0: k + 1], x[1, 0: k + 1])
+            # Draw the differential drive vehicle
+            X_B, Y_B, X_M, Y_M = self.draw(
+                x[0, k], x[1, k], x[2, k]
+            )
+            mast.set_xy(np.transpose([X_M, Y_M]))
+            body.set_xy(np.transpose([X_B, Y_B]))
+
+            if len(wave_data) > 0 and len(wave_positions) > 0:
+                # Draw the wave
+                wave.set_data(wave_positions, wave_data[:, k])
+
+                # Draw the water
+                vert, codes = self.fill_path(
+                    wave_positions, wave_data[:, k], -10 * self.ell)
+                water_path.vertices = vert
+                water_path.codes = codes
+                # water.set_paths(self.fill_path(
+                #     wave_positions, wave_data[:, k], -10 * self.ell))
+
+            # Add the simulation time
+            time_text.set_text(r"$t$ = %.1f s" % (k * T))
+            # Dynamically set the axis limits
+            ax.axis('square')
+            if relative:
+                ax.set(xlim=(x[0, k] - 10 * self.ell, x[0, k] + 10 * self.ell),
+                       ylim=(x[1, k] - 10 * self.ell, x[1, k] + 10 * self.ell))
+            else:
+                ax.set(xlim=(xlim[0], xlim[1]), ylim=(ylim[0], ylim[1]))
+
+            ax.figure.canvas.draw()
+            # Return the objects to animate
+            return body, mast, time_text
+
+        # Create the animation
+        ani = animation.FuncAnimation(
+            fig,
+            movie,
+            np.arange(1, len(x[0, :]), max(1, int(1 / T / 20))),
+            init_func=init,
+            interval=T * 1000 * max(1, int(1 / T / 20)),
+            blit=True,
+            repeat=False,
+        )
+        if save_ani == True:
+            ani.save(filename, fps=min(1 / T, 5))
         # Return the figure object
         return ani
