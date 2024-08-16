@@ -15,7 +15,7 @@ from numpy.linalg import inv
 
 # Set the simulation time [s] and the sample period [s]
 SIM_TIME = 30.0
-T = 0.01
+T = 0.1
 
 # Create an array of time values [s]
 t = np.arange(0.0, SIM_TIME, T)
@@ -40,7 +40,7 @@ B = np.array([[0], [1 / m]])
 # UNCONSTRAINED MPC CONTROLLER DESIGN
 
 # Lookahead time steps
-p = 1000
+p = 100
 
 # Construct the matrices M and L
 L = np.zeros((n * p, n))
@@ -135,7 +135,9 @@ plt.ylabel(r"$u$ [N]")
 plt.xlabel(r"$t$ [s]")
 
 # Save the plot
-plt.savefig("../agv-book/figs/ch4/MPC_linear_tracking_fig1.pdf")
+# plt.savefig("../agv-book/figs/ch4/MPC_linear_tracking_fig1.pdf")
 
 # Show the plots
 plt.show()
+
+# %%
