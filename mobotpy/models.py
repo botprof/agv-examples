@@ -75,7 +75,7 @@ class Cart:
             X, Y = self.draw(x[k])
             a = [X, Y]
             polygon.set_xy(np.transpose(a))
-            line.set_data(x[k], 0)
+            line.set_data([x[k]], [0])
             time_text.set_text(r"$t$ = %.1f s" % (k * T))
             return polygon, line, time_text
 
