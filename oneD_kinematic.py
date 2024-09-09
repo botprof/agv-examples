@@ -53,8 +53,8 @@ plt.rc("savefig", format="pdf")
 plt.rc("savefig", bbox="tight")
 
 # Change these to the locations where you wish to store outputs
-pdf_path = "../agv-book/figs/ch2/"
-gif_path = "../agv-book/gifs/ch2/"
+PDF_PATH = "../agv-book/figs/ch2/"
+GIF_PATH = "../agv-book/gifs/ch2/"
 
 # Plot the state (x) and input (u) vs time (t)
 fig1 = plt.figure(1)
@@ -70,7 +70,7 @@ plt.ylabel(r"$u$ [m/s]")
 plt.xlabel(r"$t$ [s]")
 
 # Save the plot
-plt.savefig(pdf_path + "oneD_kinematic_fig1.pdf")
+plt.savefig(PDF_PATH + "oneD_kinematic_fig1.pdf")
 
 # %%
 # MAKE AN ANIMATION
@@ -82,7 +82,7 @@ LENGTH = 1.0
 vehicle = Cart(LENGTH)
 
 # Create and save the animation
-ani = vehicle.animate(x, T, True, gif_path + "oneD_kinematic.gif")
+ani = vehicle.animate(x, T, True, GIF_PATH + "oneD_kinematic.gif")
 
 # %%
 # DISPLAY PLOTS
