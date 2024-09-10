@@ -1,8 +1,8 @@
 # Autonomous Ground Vehicle Navigation & Control Simulation Examples in Python
 
-__THIS PROJECT IS CURRENTLY A WORK IN PROGRESS AND THUS THIS REPOSITORY IS INCOMPLETE__
+__This project remains a work in progress.__
 
-This is a repository of introductory autonomous ground vehicle (i.e., wheeled mobile robot) simulation examples in Python.  The purpose of these examples is to provide easy-to-follow code that is illustrative of a number of fundamental mobile robot modelling, control, and navigation (localization, mapping) concepts.  Motion planning problems lie beyond the scope of this example set.  The focus here is on ground vehicles, although the presented techniques are also applicable more broadly.  This code was initially developed to supplement topics covered in the course [ELEC 845 Autonomous Vehicle Control & Navigation](https://offroad.engineering.queensu.ca/courses/elec-845/) in the [Department of Electrical & Computer Engineering](http://www.ece.queensu.ca) at [Queen's University](http://www.queensu.ca).
+This is a repository of introductory autonomous ground vehicle (i.e., wheeled mobile robot) simulation examples in Python.  The purpose of these examples is to provide easy-to-follow code that is illustrative of a number of fundamental mobile robot modelling, control, and navigation (localization, mapping) concepts.  At present, motion planning problems lie beyond the scope of this example set.  The focus here is on ground vehicles, although the presented techniques are also applicable more broadly.  This code was initially developed to supplement topics covered in robotics courses offered in the [Department of Electrical & Computer Engineering](https://smithengineering.queensu.ca/ece/) at [Queen's University](https://www.queensu.ca).
 
 ## Requirements
 
@@ -14,7 +14,7 @@ The examples in this repository were created for use with [Python](https://www.p
 * [Matplotlib](https://matplotlib.org) 3.5.X or later   
 ``` pip install matplotlib``` or ```conda install matplotlib```
 
-The plotting routines also use [LaTeX](https://www.latex-project.org) for maths.  If you don't want to install LaTeX then you will have to comment out and edit those parts in the plotting routines.  However, using LaTeX is encouraged.
+The plotting routines also use [LaTeX](https://www.latex-project.org) for maths.  If you don't want to install LaTeX then you will have to comment out and edit those parts in the plotting routines.  However, using LaTeX is encouraged (and useful).
 
 ## MoBotPy Package
 
