@@ -4,7 +4,7 @@ Author: Joshua A. Marshall <joshua.marshall@queensu.ca>
 GitHub: https://github.com/botprof/agv-examples
 """
 
-# %% 
+# %%
 # SIMULATION SETUP
 
 import numpy as np
@@ -19,7 +19,7 @@ T = 0.04
 t = np.arange(0, SIM_TIME, T)
 N = np.size(t)
 
-# %% 
+# %%
 # FUNCTION DEFINITIONS
 
 # Set the mass of the vehicle [kg]
@@ -42,7 +42,7 @@ def controller(x, K):
     return u
 
 
-# %% 
+# %%
 # RUN SIMULATION
 
 # Initialize arrays that will be populated with our inputs and states
@@ -62,7 +62,7 @@ for k in range(1, N):
     x[:, k] = vehicle(x[:, k - 1], u[k - 1], F, G)
     u[k] = controller(x[:, k], K)
 
-# %% 
+# %%
 # MAKE A PLOT
 
 # Change some plot settings (optional)
@@ -92,7 +92,7 @@ plt.xlabel(r"$t$ [s]")
 # Save the plot
 plt.savefig("../agv-book/figs/ch2/oneD_dynamic_control_fig1.pdf")
 
-# %% 
+# %%
 # MAKE AN ANIMATION
 
 # Set the side length of the vehicle [m]
