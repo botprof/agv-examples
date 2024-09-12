@@ -27,7 +27,7 @@ m = 10.0
 
 # Define the vehicle model matrices
 F = np.array([[1, T], [0, 1]])
-G = np.array([[T ** 2 / (2 * m)], [T / m]])
+G = np.array([[T**2 / (2 * m)], [T / m]])
 
 
 def vehicle(x, u, F, G):
@@ -38,8 +38,8 @@ def vehicle(x, u, F, G):
 
 def controller(x, K):
     """Proportional controller."""
-    u = -K @ x
-    return u
+    u_new = -K @ x
+    return u_new
 
 
 # %%
