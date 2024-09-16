@@ -90,7 +90,7 @@ class Cart:
             repeat=False,
         )
         # Save to a file if requested
-        if save_ani == True:
+        if save_ani is True:
             ani.save(filename, fps=min(1 / T, 10))
         # Return the figure object
         return ani
@@ -132,7 +132,7 @@ class DiffDrive:
 
     def uni2diff(self, u_in):
         """
-        Convert speed and anular rate inputs to differential drive wheel speeds.
+        Convert speed and angular rate inputs to differential drive wheel speeds.
 
         Parameters
         ----------
@@ -248,7 +248,7 @@ class DiffDrive:
             blit=True,
             repeat=False,
         )
-        if save_ani == True:
+        if save_ani is True:
             ani.save(filename, fps=min(1 / T, 10))
         # Return the figure object
         return ani
@@ -321,7 +321,7 @@ class DiffDrive:
             blit=True,
             repeat=False,
         )
-        if save_ani == True:
+        if save_ani is True:
             ani.save(filename, fps=min(1 / T, 10))
         # Return the figure object
         return ani
@@ -416,7 +416,7 @@ class DiffDrive:
             blit=True,
             repeat=False,
         )
-        if save_ani == True:
+        if save_ani is True:
             ani.save(filename, fps=min(1 / T, 10))
         # Return the figure object
         return ani
@@ -570,7 +570,7 @@ class Tricycle:
             blit=True,
             repeat=False,
         )
-        if save_ani == True:
+        if save_ani is True:
             ani.save(filename, fps=min(1 / T, 10))
         # Return the figure object
         return ani
@@ -760,7 +760,7 @@ class Ackermann:
             blit=True,
             repeat=False,
         )
-        if save_ani == True:
+        if save_ani is True:
             ani.save(filename, fps=min(1 / T, 10))
         # Return the figure object
         return ani
