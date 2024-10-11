@@ -141,10 +141,10 @@ plt.ylabel(r"$y$ [m]")
 plt.legend()
 
 # Save the plot
-plt.savefig("../agv-book/figs/ch3/diffdrive_kinematic_fig2.pdf")
+# plt.savefig("../agv-book/figs/ch3/diffdrive_kinematic_fig2.pdf")
 
 # Show all the plots to the screen
-plt.show()
+# plt.show()
 
 # %%
 # MAKE AN ANIMATION
@@ -155,8 +155,9 @@ ani = vehicle.animate(x, T, True, "../agv-book/gifs/ch3/diffdrive_kinematic.gif"
 # Show the movie to the screen
 plt.show()
 
-# # Show animation in HTML output if you are using IPython or Jupyter notebooks
+# Show animation in HTML output if you are using IPython or Jupyter notebooks
 # from IPython.display import display
-# plt.rc('animation', html='jshtml')
+
+# plt.rc("animation", html="jshtml")
 # display(ani)
 # plt.close()

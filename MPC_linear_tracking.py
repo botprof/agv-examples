@@ -51,7 +51,7 @@ for i in range(0, p):
         M[n * (p - i) - n : n * (p - i), j : j + 1] = matrix_power(F, p - i - j - 1) @ G
 
 # Decide on state and input cost matrices
-smallQ = np.array([[1.0, 0.0], [0.0, 1.0]])
+smallQ = np.array([[2.0, 0.0], [0.0, 1.0]])
 Q = 1.0 * np.kron(np.eye(p), smallQ)
 R = 0.1 * np.eye(p)
 
@@ -135,7 +135,7 @@ plt.ylabel(r"$u$ [N]")
 plt.xlabel(r"$t$ [s]")
 
 # Save the plot
-plt.savefig("../agv-book/figs/ch4/MPC_linear_tracking_fig1.pdf")
+# plt.savefig("../agv-book/figs/ch4/MPC_linear_tracking_fig1.pdf")
 
 # Show the plots
 plt.show()

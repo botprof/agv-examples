@@ -9,12 +9,12 @@ GitHub: https://github.com/botprof/agv-examples
 
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy import signal
 from mobotpy.models import DiffDrive
 from mobotpy.integration import rk_four
-from scipy import signal
 
 # Set the simulation time [s] and the sample period [s]
-SIM_TIME = 15.0
+SIM_TIME = 20.0
 T = 0.04
 
 # Create an array of time values [s]
@@ -78,12 +78,12 @@ for k in range(1, N):
     )
     B = np.array([[np.cos(x_d[2, k - 1]), 0], [np.sin(x_d[2, k - 1]), 0], [0, 1]])
 
-    # Compute the gain matrix to place poles of (A-BK) at p
+    # Compute the gain matrix to place poles of (A - BK) at p
     p = np.array([-1.0, -2.0, -0.5])
     K = signal.place_poles(A, B, p)
 
     # Compute the controls (v, omega) and convert to wheel speeds (v_L, v_R)
-    u_unicycle = -K.gain_matrix @ (x[:, k - 1] - x_d[:, k - 1]) + u_d[:, k - 1]
+    u_unicycle = -K.gain_matrix @ (x[:, k - 1] - x_d[:, k - 1]) + u_d[:, k]
     u[:, k] = vehicle.uni2diff(u_unicycle)
 
 # %%
@@ -126,7 +126,7 @@ plt.xlabel(r"$t$ [s]")
 plt.legend()
 
 # Save the plot
-plt.savefig("../agv-book/figs/ch4/control_approx_linearization_fig1.pdf")
+# plt.savefig("../agv-book/figs/ch4/control_approx_linearization_fig1.pdf")
 
 # Plot the position of the vehicle in the plane
 fig2 = plt.figure(2)
@@ -150,23 +150,28 @@ plt.ylabel(r"$y$ [m]")
 plt.legend()
 
 # Save the plot
-plt.savefig("../agv-book/figs/ch4/control_approx_linearization_fig2.pdf")
+# plt.savefig("../agv-book/figs/ch4/control_approx_linearization_fig2.pdf")
 
-# Show all the plots to the screen
-plt.show()
+# Show the plots to the screen
+# plt.show()
 
 # %%
 # MAKE AN ANIMATION
 
-# Create and save the animation
-ani = vehicle.animate_trajectory(
-    x, x_d, T, True, "../agv-book/gifs/ch4/control_approx_linearization.gif"
-)
+# Create the animation
+ani = vehicle.animate_trajectory(x, x_d, T)
 
-# Show the movie to the screen
+# Create and save the animation
+# ani = vehicle.animate_trajectory(
+#     x, x_d, T, True, "../agv-book/gifs/ch4/control_approx_linearization.gif"
+# )
+
+# Show all the plots to the screen
 plt.show()
 
-# # Show animation in HTML output if you are using IPython or Jupyter notebooks
-# plt.rc('animation', html='jshtml')
+# Show animation in HTML output if you are using IPython or Jupyter notebooks
+# from IPython.display import display
+
+# plt.rc("animation", html="jshtml")
 # display(ani)
 # plt.close()

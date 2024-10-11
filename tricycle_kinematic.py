@@ -103,7 +103,7 @@ plt.ylabel(r"$v_2$ [deg/s]")
 plt.xlabel(r"$t$ [s]")
 
 # Save the plot
-plt.savefig("../agv-book/figs/ch3/tricycle_kinematic_fig1.pdf")
+# plt.savefig("../agv-book/figs/ch3/tricycle_kinematic_fig1.pdf")
 
 # Let's now use the class Tricycle for plotting
 vehicle = Tricycle(ELL_W, ELL_T)
@@ -131,21 +131,25 @@ plt.ylabel(r"$y$ [m]")
 plt.legend()
 
 # Save the plot
-plt.savefig("../agv-book/figs/ch3/tricycle_kinematic_fig2.pdf")
+# plt.savefig("../agv-book/figs/ch3/tricycle_kinematic_fig2.pdf")
 
-# Show all the plots to the screen
-plt.show()
+# Show the plots to the screen
+# plt.show()
 
 # %%
 # MAKE AN ANIMATION
 
 # Create and save the animation
-ani = vehicle.animate(x, T, True, "../agv-book/gifs/ch3/tricycle_kinematic.gif")
+ani = vehicle.animate(x, T)
 
-# Show the movie to the screen
+# Create and save the animation
+# ani = vehicle.animate(x, T, True, "../agv-book/gifs/ch3/tricycle_kinematic.gif")
+
+# Show all the plots to the screen
 plt.show()
 
-# # Show animation in HTML output if you are using IPython or Jupyter notebooks
+# Show animation in HTML output if you are using IPython or Jupyter notebooks
+# from IPython.display import display
 # plt.rc('animation', html='jshtml')
 # display(ani)
 # plt.close()
