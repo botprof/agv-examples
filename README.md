@@ -63,6 +63,7 @@ Filename | Description
 [control_approx_linearization.py](control_approx_linearization.py) | Trajectory tracking for a differential drive vehicle using control by approximate linearization.
 [dynamic_extension_tracking.py](dynamic_extension_tracking.py) | Trajectory tracking for a differential drive vehicle using feedback linearization with dynamic extension.
 [MPC_linear_tracking.py](MPC_linear_tracking.py) | Trajectory tracking for a 1D dynamic vehicle using unconstrained model predictive control (MPC).
+[diffdrive_control_mpc.py](diffdrive_control_mpc.py) | MPC-based trajectory tracking for a differential-drive vehicle using [CVXPY](https://www.cvxpy.org) convex optimizer.
 
 ### Vehicle Navigation Examples
 
