@@ -27,7 +27,7 @@ M = 10.0
 
 # Function that models the vehicle and sensor(s) in discrete time
 F = np.array([[1, T], [0, 1]])
-G = np.array([[T ** 2 / (2 * M)], [T / M]])
+G = np.array([[T**2 / (2 * M)], [T / M]])
 H = np.array([[1, 0]])
 
 
