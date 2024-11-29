@@ -6,15 +6,17 @@ GitHub: https://github.com/botprof/agv-examples
 
 # %%
 # SIMULATION SETUP
-
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import chi2
 from matplotlib import patches
 
+# Uncomment for interactive plots in Jupyter
+# %matplotlib ipympl
+
 # Set the simulation time [s] and the sample period [s]
 SIM_TIME = 60.0
-T = 0.01
+T = 0.1
 
 # Create an array of time values [s]
 t = np.arange(0.0, SIM_TIME, T)
@@ -36,6 +38,7 @@ for i in range(1, m):
 
 # %%
 # VEHICLE, SENSOR MODELS AND KALMAN FILTER FUNCTIONS
+
 
 # Discrete-time omnidirectional vehicle model
 def vehicle(x, u, T):
@@ -154,7 +157,7 @@ for i in range(0, N):
         x_hat[2 : 2 * m, i] = x_hat[2 : 2 * m, i - 1]
         P_hat[2 : 2 * m, 0 : 2 * m, i] = P_hat[2 : 2 * m, 0 : 2 * m, i - 1]
 
-        # Run the KF correction step
+        # Run the KF correction step (try commenting out and see what happens)
         x_hat[:, i], P_hat[:, :, i] = KF_correct(x_hat[:, i], y, H, R, P_hat[:, :, i])
 
 # %%
@@ -166,11 +169,8 @@ plt.rc("text.latex", preamble=r"\usepackage{cmbright,amsmath,bm}")
 plt.rc("savefig", format="pdf")
 plt.rc("savefig", bbox="tight")
 
-# Uncomment for interactive plots in IPython
-# %matplotlib widget
-
-# Find the scaling factor for plotting covarianc`e bounds
-ALPHA = 0.05
+# Find the scaling factor for plotting covariance bounds
+ALPHA = 0.01
 s1 = chi2.isf(ALPHA, 1)
 s2 = chi2.isf(ALPHA, 2)
 
