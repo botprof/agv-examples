@@ -66,13 +66,13 @@ for k in range(1, N):
     x[:, k] = F @ x[:, k - 1] + G * u[k - 1]
 
     # Run the a priori estimation step
-    x_hat[:, k] = F @ x_hat[:, k - 1] + G * (u[k - 1] + np.sqrt(Q) @ np.random.randn(2))
+    x_hat[:, k] = F @ x_hat[:, k - 1] + G * (u[k - 1] + np.sqrt(Q) @ np.random.standard_normal(2))
     P_hat[:, :, k] = F @ P_hat[:, :, k - 1] @ F.T + Q
     # Help the covariance matrix stay symmetric
     P_hat[:, :, k] = 0.5 * (P_hat[:, :, k] + P_hat[:, :, k].T)
 
     # Take a sensor measurement (with zero-mean Gaussian noise)
-    y[k] = H @ x[:, k] + np.sqrt(R) * np.random.randn()
+    y[k] = H @ x[:, k] + np.sqrt(R) * np.random.standard_normal()
 
     # Run the a posteriori estimation step
     K = P_hat[:, :, k] @ H.T / (H @ P_hat[:, :, k] @ H.T + R)
